@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reproducible research</title>
+    <meta charset="utf-8">
+      <link rel="stylesheet" type="text/css" href="./img/slides.css">
+      <link rel="stylesheet" href="./img/font-awesome-4.7.0/css/font-awesome.min.css">
+      <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+    .section_background {background-color:#c2c444; color: #fff}
+    .subsection_background {background-color:#e87837; color: #fff}
+    .exercise_background {background-color:#ececec; color: #000}
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Tidy data exercise
+### data organization in spreadsheets
+        
+http://datacarpentry.org
+
+Biodiversity Data Management workshop,<br>
+28 February 2018
+
+Stijn Van Hoey
+
+<a href="https://twitter.com/svanhoey"><i class="fa fa-twitter" aria-hidden="true"></i> @SVanHoey</a>
+<a href="https://github.com/stijnvanhoey"><i class="fa fa-github" aria-hidden="true"></i> stijnvanhoey</a>
+
+---
+class: center, middle, section_background
+
+# Introduction
+
+---
+class: left, middle
+
+## [INBO](https://www.inbo.be/), [Lifewatch project](https://lifewatch.inbo.be)
+<br>
+
+.center[
+![:scale 80%](./img/lifewatch_1.png)]
+
+---
+class: center, middle
+
+![:scale 80%](./img/lifewatch_2.png)
+https://www.inbo.be/en/open-data-policy
+
+---
+class: center, middle
+
+<iframe src="https://demo.gbif.org/dataset/83e20573-f7dd-4852-9159-21566e1e691e" height="600px" width="800px"></iframe>
+
+---
+class: center, middle
+
+## We do things 
+## `reproducible` and `open`
+### data, code, analysis, publications,...
+
+---
+class: center, middle
+count: false
+background-image: url(./img/InnoScholComm_figure_jan2015.png)
+        
+<div class="alert alert-warning">
+    <h2>Tools, tools, tools...</h2>
+</div>
+        
+---
+class: center, middle
+background-image: url(./img/good_enough_practices_computational_science.png)
+
+<div class="alert alert-success">
+    <h2>Good practices >>> tools</h2>
+</div>
+        
+.footnote[Bryan, J., Cranston, K., Kitzes, J., Nederbragt, L., Teal, T., Wilson, G. (2016). <br> Good Enough Practices for Scientific Computing, 1–30.]
+
+---
+class: center, middle
+
+## In this workshop, 
+## we focus on the `data`
+
+---
+class: center, middle, section_background
+        
+# Tidy your data
+        
+---
+class: left, middle
+.emphasize[`Data organization` is the foundation<br> of your research project]
+
+---
+class: center, middle
+
+.emphasize.left[
+<i class="fa fa-quote-left fa-3x fa-pull-left" aria-hidden="true"></i>Data that is easy to model,<br> visualise and aggregate
+]
+<br><br><br><br>
+
+.emphasize.right[
+<i class="fa fa-quote-left fa-3x fa-pull-right" aria-hidden="true"></i>Create the data you wish<br> to see in the world
+]
+
+---
+class: center, middle
+background-image: url(./img/carpentry_workshop.png)
+
+.footnote[Copyright (c) Data Carpentry, http://datacarpentry.org]
+
+---
+class: left, middle
+
+We'll introduce the principles using the course provided by http://www.datacarpentry.org/spreadsheet-ecology-lesson/
+
+<br>
+Today, we focus on:
+* [Introduction](http://www.datacarpentry.org/spreadsheet-ecology-lesson/00-intro/)
+* [Formatting data tables in Spreadsheets](http://www.datacarpentry.org/spreadsheet-ecology-lesson/01-format-data/)
+* [Formatting problems](http://www.datacarpentry.org/spreadsheet-ecology-lesson/02-common-mistakes/)
+* [Exporting data](http://www.datacarpentry.org/spreadsheet-ecology-lesson/05-exporting-data/)
+
+<br><br>
+Get the data here:<br> https://ndownloader.figshare.com/files/2252083
+
+---
+class: center, middle
+background-image: url(./img/tidy-data_paper.png)
+        
+.footnote[Hadley Wickham, Tidy Data, Vol. 59, Issue 10, Sep 2014,<br> Journal of Statistical Software. doi:10.18637/jss.v059.i10]
+
+---
+class: center, middle
+
+## un-tidy
+        
+| WWTP | Treatment A | Treatment B |
+|:------|-------------|-------------|
+| Destelbergen | 8.  | 6.3 |
+| Landegem | 7.5  | 5.2 |
+| Dendermonde | 8.3  | 6.2 |
+| Eeklo | 6.5  | 7.2 |
+
+--
+
+## tidy
+
+| WWTP | Treatment | pH |
+|:------|:-------------:|:-------------:|
+| Destelbergen | A  | 8. |
+| Landegem | A  | 7.5 |
+| Dendermonde | A  | 8.3 |
+| Eeklo | A  | 6.5 |
+| Destelbergen | B  | 6.3 |
+| Landegem | B  | 5.2 |
+| Dendermonde | B  | 6.2 |
+| Eeklo | B  | 7.2 |
+
+---
+class: left, middle
+count: false
+
+.center[## tidy]
+<br>
+    
+<div class="alert alert-success">
+    <ul>
+      <li>Each <code>variable</code> forms a <b>column</b> and contains <code>values</code></li>
+      <li>Each <code>observation</code> forms a <b>row</b></li>
+        <li>Each type of <code>observational unit</code> forms a <b>table</b>.</li>
+    </ul>
+</div>
+
+<br>
+
+| WWTP | Treatment | pH |
+|:------|:-------------:|:-------------:|
+| Destelbergen | A  | 8. |
+| Landegem | A  | 7.5 |
+| Dendermonde | A  | 8.3 |
+| Eeklo | A  | 6.5 |
+| Destelbergen | B  | 6.3 |
+| Landegem | B  | 5.2 |
+| Dendermonde | B  | 6.2 |
+| Eeklo | B  | 7.2 |
+
+
+---
+class: left, middle
+
+.emphasize.center[Working with spreadsheets...]
+<div class="alert alert-warning">
+<h3>Remember: </h3>
+    <ul>
+        <li>NEVER modify your <b>raw</b> data!</li>
+        <li><b>Keep track</b> of all of the steps you take to clean your data</li>
+        <li>Organize your data according to <b>tidy data</b> principles</li>
+        <li>Save your data as an <a href="http://www.datacarpentry.org/spreadsheet-ecology-lesson/05-exporting-data/" target="_blank">open and static format</a> such as <code>csv</code></li>
+    </ul>
+</div>
+
+---
+class: center, middle
+background-image: url(./img/good_enough_practices_computational_science.png)
+
+.footnote[Bryan, J., Cranston, K., Kitzes, J., Nederbragt, L., Teal, T., Wilson, G. (2016). <br> Good Enough Practices for Scientific Computing, 1–30.]
+
+---
+class: left, middle
+
+## More?
+
+* [Data carpentry](http://www.datacarpentry.org/lessons/) and [Software carpentry](https://software-carpentry.org/lessons/) courses
+* ROpensci [reproducibility guide](http://ropensci.github.io/reproducibility-guide/)
+* Many resources [enlisted](https://github.com/ecoinfAEET/Reproducibilidad/blob/master/Recursos.Rmd)...
+
+
+
+
+</textarea>
+<!--* <a href="./python_intro.html">Introduction to (scientific) Python</a> ->
+<!--    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+        </script>-->
+    <script src="./img/remark.min.js" type="text/javascript">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+    <script>
+        remark.macros.scale = function (percentage) {
+          var url = this;
+          return '<img src="' + url + '" style="width: ' + percentage + '" />';
+      };
+      var slideshow = remark.create();
+    </script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>
