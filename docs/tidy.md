@@ -138,7 +138,7 @@ class: center, middle
 ## un-tidy
 
 | WWTP | Treatment A | Treatment B |
-|:------|-------------|-------------|
+|:------|:-------------:|:-------------:|
 | Destelbergen | 8.  | 6.3 |
 | Landegem | 7.5  | 5.2 |
 | Dendermonde | 8.3  | 6.2 |
