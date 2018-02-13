@@ -136,7 +136,7 @@ background-image: url(./static/images/tidy_data_paper.png)
 class: center, middle
 
 ## un-tidy
-        
+
 | WWTP | Treatment A | Treatment B |
 |:------|-------------|-------------|
 | Destelbergen | 8.  | 6.3 |
