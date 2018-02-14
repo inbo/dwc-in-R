@@ -284,6 +284,13 @@ class: center, middle, section_background
 ---
 class: left, middle
 
+This course:
+
+* [Data Organization in Spreadsheets](http://www.datacarpentry.org/spreadsheet-ecology-lesson/), on which this course is based
+* [GitHub repository for this course](https://github.com/inbo/dwc-in-R)
+
+Other resources:
+
 * [Data Carpentry](http://www.datacarpentry.org/lessons/) and [Software Carpentry](https://software-carpentry.org/lessons/) courses
 * rOpenSci [reproducibility guide](http://ropensci.github.io/reproducibility-guide/)
 * [Many other resources](https://github.com/ecoinfAEET/Reproducibilidad/blob/master/Recursos.Rmd)
