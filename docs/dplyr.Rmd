@@ -338,7 +338,6 @@ colnames(data)
 
 2. Replace `weight` values with values in kg
 ```{r weight in kg}
-data %<>% mutate(weight = weight/ 1000)
 data %>% mutate(weight = weight/ 1000)
 ```
 
@@ -352,7 +351,67 @@ data %>% mutate(country = "US")
 data %>% mutate(parse_date = as.Date(date))
 ```
 
-```{r}
-data %<>% mutate(parse_date = as.Date(date))
-head(data)
+## Recode your data
+Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example from [dplyr documentation](http://dplyr.tidyverse.org/reference/recode.html#examples):
+```r
+x <- sample(c("a", "b", "c"), 10, replace = TRUE)
+recode(x, a = "Apple")
+#>  [1] "b"     "b"     "Apple" "c"     "c"     "Apple" "c"     "c"     "Apple"
+#> [10] "c"
 ```
+You can specify a `default` value: it will be given to all values not otherwise matched. And if you want replace missing values (NA), then you can specify a value to the parameter `limit`.
+
+A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. A simple example from [dplyr documentation page](http://dplyr.tidyverse.org/reference/case_when.html#examples):
+```r
+x <- 1:50
+case_when(
+  x %% 35 == 0 ~ "fizz buzz",
+  x %% 5 == 0 ~ "fizz",
+  x %% 7 == 0 ~ "buzz",
+  TRUE ~ as.character(x)
+)
+```
+`case_when` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing variables. Another example from the same documentation page:
+```r
+starwars %>%
+  select(name:mass, gender, species) %>%
+  mutate(
+    type = case_when(
+      height > 200 | mass > 200 ~ "large",
+      species == "Droid"        ~ "robot",
+      TRUE                      ~  "other"
+    )
+  )
+```
+
+Based on mass, gender and species, a new variable, `type`, is created relying on the conditions  listed in `case_when()`.
+
+### Exercise
+1. Add column `scientific_name` with full scientific name based on the table below:
+
+| species | scientific name                          |
+
+| DM      | Dimarella riparia (Navás, 1918)          |
+| DO      | Dondice occidentalis (Engel, 1925)       |
+| DS      | Distonemurus desertus Krivokhatsky, 1992 |
+| OL      | Olios scepticus Chamberlin, 1924         |
+| PE      | Petrochelidon nigricans (Vieillot, 1817) |
+| PF      | Piffliella eduardi Hammer, 1979          |
+| OT      | Ottoicus dissitus Drake, 1960            |
+| OX      | Oxybelus pallidus Arnold, 1927           |
+| NA      | Not Available                            |
+
+```{r}
+data %>% mutate(scientific_name = case_when(
+  species == "DM" ~ "Dimarella riparia (Navás, 1918)",
+  species == "DO" ~ "Dondice occidentalis (Engel, 1925)",
+  species == "DS" ~ "Distonemurus desertus Krivokhatsky, 1992",
+  species == "OL" ~ "Olios scepticus Chamberlin, 1924",
+  species == "PE" ~ "Petrochelidon nigricans (Vieillot, 1817)",
+  species == "PF" ~ "Piffliella eduardi Hammer, 1979",
+  species == "OT" ~ "Ottoicus dissitus Drake, 1960",
+  species == "OX" ~ "Oxybelus pallidus Arnold, 1927",
+  is.na(species) ~ "Not Available"
+  ))
+```
+
