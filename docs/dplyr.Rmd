@@ -30,6 +30,7 @@ library(readr)
 ```
 ```{r manipulate data}
 library(dplyr)
+library(tidyr)
 library(magrittr)
 ```
 
@@ -222,5 +223,87 @@ data %>% select(sex) %>% unique()
 2. Show the unique species values
 ```{r unique species}
 data %>% select(species) %>% unique()
+```
+
+## `group_by()` and `summarise()`
+Some data analysis tasks aplly the *split-apply-combine paradigm*: split the data into groups, apply some analysis to each group, and then combine the results together. For example, you have a dataframe `df` with the prices of the items bought during your last shopping. You labelled them by `category` (food, clothes, toys, other), so that `df` looks like this:
+
+| item     | category | price |
+
+| sweather | clothes  | 74    |
+| apples   | fruit    |  3    |
+| ball     | toys     | 23    |
+| trousers | clothes  | 92    |
+| t-shirt  | clothes  | 25    |
+| peers    | fruit    |  5    |
+
+You would like to calculate the sum for each category of items. We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarise()`:
+```r
+df %>% group_by(category) %>% summarise(sum = sum(price))
+```
+
+`group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
+```r
+class(df%>% group_by(col_name))
+```
+which results in `"grouped_df" "tbl_df" "tbl" "data.frame"`. 
+
+If you want to count the number of rows with each unique value of a column variable, you can use the function `count` instead of `summarise`:
+```r
+df %>% group_by(col_name) %>% count()
+```
+or even more compact:
+```r
+df %>% count(col_name)
+```
+
+### Exercise
+1. Count records per sex
+```{r}
+data %>% count(sex)
+```
+
+2. Show mean weight per sex
+```{r group_by & summarise()}
+data %>% filter(!is.na(weight_in_g)) %>% 
+  group_by(sex) %>% summarise(sum = sum(weight_in_g))
+```
+
+3. Show mean weight per sex and species
+```{r summarise mean}
+data %>% filter(!is.na(weight_in_g)) %>% 
+  group_by(sex, species) %>% 
+  summarise(mean_weight = mean(weight_in_g))
+```
+
+4. Show min, max, mean weight per sex and species and save output as `weight_per_species_sex`
+```{r multiple summarise}
+weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>% 
+  group_by(sex, species) %>% 
+  summarise(min_weight = min(weight_in_g),
+            max_weight = max(weight_in_g),
+            mean_weight = mean(weight_in_g))
+weight_per_species_sex
+```
+
+##  `spread()`and  `gather()`
+This two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
+
+![spread](./static/images/spread_data_R.png)
+![gather](./static/images/gather_data_R.png)
+
+### Exercise
+1. Spread `weight_per_species_sex` to key on  `sex` and values from `mean_weight` and save output as `weight_per_species_sex_spread`
+```{r}
+weight_per_species_sex_spread <- weight_per_species_sex %>% 
+  spread(key = sex, value = mean_weight)
+weight_per_species_sex_spread
+```
+
+2. Gather back the data and save output as `weight_per_species_sex_gather`. Is `weight_per_species_sex_gather` equal to `weight_per_species_sex`?
+```{r}
+weight_per_species_sex_gather <- weight_per_species_sex_spread %>%
+  gather(sex, mean_weight, "F", "M", na.rm = TRUE, convert = TRUE)
+weight_per_species_sex_gather
 ```
 
