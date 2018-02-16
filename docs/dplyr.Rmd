@@ -339,16 +339,19 @@ colnames(data)
 2. Replace `weight` values with values in kg
 ```{r weight in kg}
 data %<>% mutate(weight = weight/ 1000)
-head(data)
+data %>% mutate(weight = weight/ 1000)
 ```
 
 3. Add column `country` with value `US`
-```{r}
-data %<>% mutate(country = "US")
-head(data)
+```{r add country}
+data %>% mutate(country = "US")
 ```
 
 4. Add column `parsed_date` using function `Date()`
+```{r parse date}
+data %>% mutate(parse_date = as.Date(date))
+```
+
 ```{r}
 data %<>% mutate(parse_date = as.Date(date))
 head(data)
