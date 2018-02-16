@@ -145,18 +145,21 @@ filter(data, weight_in_g > 30)
 filter(data, weight_in_g > 30, sex == "F")
 ```
 
-4. Save output as a variable: `females_weight_above_30`
-```{r save output}
-females_weight_above_30 <- filter(data, weight_in_g > 30, sex == "F")
-```
-
-5. Display only `weight_in_g` of females with `weight_in_g > 30`
+4. Display only `weight_in_g` of females with `weight_in_g > 30`
 ```{r select }
-select(females_weight_above_30, weight_in_g)
+females_weight_above_30_all <- filter(data, weight_in_g > 30, sex == "F")
+select(females_weight_above_30_all, weight_in_g)
 ```
 
-6. Select everything from `females_weight_above_30` except device_remarks
+5. Save output of (4) as a variable: `females_weight_above_30`
+```{r save output}
+females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
+```
+
+6. Select everything from `data` except device_remarks
 ```{r }
-select(females_weight_above_30, -device_remark)
+select(data, -device_remark)
+```
+
 ```
 
