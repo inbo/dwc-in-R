@@ -351,7 +351,7 @@ data %>% mutate(country = "US")
 data %>% mutate(parse_date = as.Date(date))
 ```
 
-## Recode your data
+## Recode your data: recode and case_when
 Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example from [dplyr documentation](http://dplyr.tidyverse.org/reference/recode.html#examples):
 ```r
 x <- sample(c("a", "b", "c"), 10, replace = TRUE)
@@ -415,3 +415,25 @@ data %>% mutate(scientific_name = case_when(
   ))
 ```
 
+## Export your data
+After hours of data analysis maybe you would like to save the output, isn't it?
+ You can save a dataframe object by means of function `write_table()`:
+ ```r
+ write.table(df, file = "./save/it/here/df.csv", ...)
+ ```
+ You can use plenty of optional parameters. The most used are:
+ -`sep`, to specify which character should be used to separate the values, e.g. a comma `","` for comma separated values or a tab `"\t"` for tab-delimited values.
+ - `row.names`, a logical, TRUE or FALSE, whether you want or not row numbers or names (if specified in your dataframe) in the file
+ - `col.names`, a logical, TRUE or FALSE, indicating the presence of column names in the first line of the file.
+ - `append`, a logical, TURE or FALSE. Default value: FALSE. If the specified file already exists, it would be overwritten, while `append = TRUE` will append the dataframe at the end of the file.
+ 
+### Exercise
+1. Export `females_weight_above_30` to a tab delimited csv file in
+../data/processed/females_weight_above_30.csv with column names but no row names/indexes.
+```{r}
+write.table(females_weight_above_30, 
+            file = "../data/processed/females_weight_above_30.csv",
+            sep = "\t",
+            col.names = TRUE,
+            row.names = FALSE)
+```
