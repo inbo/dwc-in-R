@@ -225,7 +225,7 @@ data %>% select(sex) %>% unique()
 data %>% select(species) %>% unique()
 ```
 
-## `group_by()` and `summarise()`
+## group_by and summarise
 Some data analysis tasks aplly the *split-apply-combine paradigm*: split the data into groups, apply some analysis to each group, and then combine the results together. For example, you have a dataframe `df` with the prices of the items bought during your last shopping. You labelled them by `category` (food, clothes, toys, other), so that `df` looks like this:
 
 | item     | category | price |
@@ -286,13 +286,14 @@ weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>%
 weight_per_species_sex
 ```
 
-##  `spread()`and  `gather()`
+##  Reshpaing: spread and gather
 This two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
 ![spread](./static/images/spread_data_R.png)
 ![gather](./static/images/gather_data_R.png)
+Notice that  `spread()` and `gather()` aren't dplyr functions but come from the tidyr library.
 
-### Exercise
+### Exercises
 1. Spread `weight_per_species_sex` to key on  `sex` and values from `mean_weight` and save output as `weight_per_species_sex_spread`
 ```{r}
 weight_per_species_sex_spread <- weight_per_species_sex %>% 
@@ -307,3 +308,48 @@ weight_per_species_sex_gather <- weight_per_species_sex_spread %>%
 weight_per_species_sex_gather
 ```
 
+## rename and mutate
+
+Sometimes you need to rename one or more columns. You can do it using function `rename()`:
+```r
+df %>% rename(new_colname = old_colname)
+```
+
+Another typical data analysis task is to create new columns based on the values of existing ones, like converting units or calculating the ratio of values in two columns. We can use the function `mutate()`:
+```r
+df %<>% mutate(new_column = ...)
+```
+or you can create a new variable via assignment symbol `->` if you prefer to not modify original dataframe:
+```r
+new_df <- df %>% mutate(new_column = )
+```
+
+You can also use `mutate()` to change the values in a column without creating a new one:
+```r
+df %<>% mutate(column = ...)
+```
+
+### Exercises
+1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`
+```{r rename weight}
+data %<>% rename(weight =  weight_in_g)
+colnames(data)
+```
+
+2. Replace `weight` values with values in kg
+```{r weight in kg}
+data %<>% mutate(weight = weight/ 1000)
+head(data)
+```
+
+3. Add column `country` with value `US`
+```{r}
+data %<>% mutate(country = "US")
+head(data)
+```
+
+4. Add column `parsed_date` using function `Date()`
+```{r}
+data %<>% mutate(parse_date = as.Date(date))
+head(data)
+```
