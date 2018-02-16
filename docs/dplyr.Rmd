@@ -161,5 +161,66 @@ females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
 select(data, -device_remark)
 ```
 
+## Pipes
+As you probably noticed, we need to create new (temporary?) variables everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, higher memory space usage, and higher chance of typos.
+
+An alternative is to wrap (*nest*) functions one within each other, so that the output of a function would be considered the input of the other one. For example, if we have to apply `f1` to a dataframe `df` and `f2` to the output of `f1`, we write: 
+```r
+f2(f1(df, ...), ...)
+```
+
+This way of working with functions is typical of programming and is implemented in many other programming languages. The disadvantage of this approach is readibility: you have to read from right to left! Following our theoretical example, we apply  `f1` to `df` and then `f2`.
+
+Can we avoid deciphering nested function calls, and making excessive use of temporary variables? Since 2014, the answer is yes, thanks to *pipe* operators. The most used one is the *forward pipe*: `%>%`. We can then rewrite the example above by using `%>%`:
+```r
+df %>% f1(...) %>% f2(...)
+```
+Easy, isn't?
+As Stefan Milton, author of magrittr package, wrote in [this](https://www.r-statistics.com/2014/08/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/) blogpost:
+> The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.
+
+If you want to create a variable based on the output of a series of functions:
+```r
+df2 <- df %>% f1(...) %>% f2(...)
+```
+If you want to overwrite the input dataframe, you can use the *compound assignment operator*, `%<>%` which is the composition of a forward `%>%`, and a backward `%<%` pipe:
+```r
+df %<>% f1(...) %>% f2(...)
+```
+The backward pipe works like the ypical asignment symbol `<-`
+
+### Exercise
+1. Display the column `weight_in_g` with values > 30 using pipes
+```{r pipes1}
+data %>% select(weight_in_g) %>% filter(weight_in_g > 30)
+```
+
+2. Select females with `weight_in_g > 30` using pipes
+```{r pipes2}
+data %>% filter(sex == "F", weight_in_g > 30)
+```
+3. Display only weight_in_g of females with weight in g > 30 
+```{r pipes3}
+data %>% filter(sex == "F", weight_in_g > 30) %>%
+  select(weight_in_g)
+```
+
+4.  Save output of (3) as a variable: `females_weight_above_30`
+```{r pipes4}
+females_weight_above_30 <- data %>% filter(sex == "F", weight_in_g > 30) %>% select(weight_in_g)
+```
+
+## `distinct()`
+The function `distinct()` retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows.
+
+### Exercises
+1. Show the unique sex values
+```{r unique sex}
+data %>% select(sex) %>% unique()
+```
+
+2. Show the unique species values
+```{r unique species}
+data %>% select(species) %>% unique()
 ```
 
