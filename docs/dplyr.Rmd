@@ -9,7 +9,7 @@ date: "`r Sys.Date()`"
 output:
   html_document:
     toc: true
-    toc_depth: 4
+    toc_depth: 3
     toc_float: true
     number_sections: true
     theme: yeti
@@ -18,7 +18,7 @@ knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding =
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(include = FALSE)
 ```
 
 This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
@@ -62,15 +62,16 @@ data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";",
 
 ## Explore data
 Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
-- **view(df)** opens the entire dataframe in viewer
-- **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
-- **str(df)** displays the internal structure of the dataframe
-- **col_names(df)** display column names
-- **nrow(df)** returns the number of rows of the dataframe
-- **ncol(df)** return the number of rows of the dataframe
-- **mean(vector)** returns the (arithmetic) mean
-- **max(vector)** returns the maximum
-- **min(vector)** returns the minimum
+
+* **view(df)** opens the entire dataframe in viewer
+* **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
+* **str(df)** displays the internal structure of the dataframe
+* **col_names(df)** display column names
+* **nrow(df)** returns the number of rows of the dataframe
+* **ncol(df)** return the number of rows of the dataframe
+* **mean(vector)** returns the (arithmetic) mean
+* **max(vector)** returns the maximum
+* **min(vector)** returns the minimum
 
 You can apply `mean()`, `min()` and `max()` to dataframes as well: the functions will return respectively mean, minimum and maximum of each column. However, in case one or more columns are not numeric, an error occurs. In case one or more `NA` are present in the data, you need to add `na.rm = TRUE` as parameter in the function call!
 
@@ -153,7 +154,7 @@ filter(data, weight_in_g > 30, sex == "F")
 ```
 
 4. Display only `weight_in_g` of females with `weight_in_g > 30`
-```{r select }
+```{r filter and select}
 females_weight_above_30_all <- filter(data, weight_in_g > 30, sex == "F")
 select(females_weight_above_30_all, weight_in_g)
 ```
@@ -395,17 +396,18 @@ Based on mass, gender and species, a new variable, `type`, is created relying on
 ### Exercise
 1. Add column `scientific_name` with the full scientific name of each species based on the table below:
 
-| species | scientific name                          |
+| species   | scientific name                          |
+| --------- | ---------------------------------------- |
+| DM        | Dimarella riparia (Navas, 1918)          |
+| DO        | Dondice occidentalis (Engel, 1925)       |
+| DS        | Distonemurus desertus Krivokhatsky, 1992 |
+| OL        | Olios scepticus Chamberlin, 1924         |
+| PE        | Petrochelidon nigricans (Vieillot, 1817) |
+| PF        | Piffliella eduardi Hammer, 1979          |
+| OT        | Ottoicus dissitus Drake, 1960            |
+| OX        | Oxybelus pallidus Arnold, 1927           |
+| NA        | Not Available                            |
 
-| DM      | Dimarella riparia (Navás, 1918)          |
-| DO      | Dondice occidentalis (Engel, 1925)       |
-| DS      | Distonemurus desertus Krivokhatsky, 1992 |
-| OL      | Olios scepticus Chamberlin, 1924         |
-| PE      | Petrochelidon nigricans (Vieillot, 1817) |
-| PF      | Piffliella eduardi Hammer, 1979          |
-| OT      | Ottoicus dissitus Drake, 1960            |
-| OX      | Oxybelus pallidus Arnold, 1927           |
-| NA      | Not Available                            |
 
 ```{r}
 data %>% mutate(scientific_name = case_when(
