@@ -230,12 +230,14 @@ The function `distinct()` retains only unique/distinct values of an input vector
 ### Exercises
 1. Show the unique sex values
 ```{r unique sex}
-data %>% select(sex) %>% unique()
+data %>% select(sex) %>% 
+    distinct()
 ```
 
 2. Show the unique species values
 ```{r unique species}
-data %>% select(species) %>% unique()
+data %>% select(species) %>% 
+    distinct()
 ```
 
 ## group_by and summarise
