@@ -55,18 +55,18 @@ A dataframe is automatically generated and, very handy, the code to generate it 
 2. save the data into `data`
 ```{r read and save data}
 data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
-           escape_double = FALSE, 
-           trim_ws = TRUE)
+                   escape_double = FALSE, 
+                   trim_ws = TRUE)
 ```
 
 
 ## Explore data
 Before to start manipulate data, it is good practice to explore the data in order to check whether everything is correctly imported. Moreover, it gives an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
 
-* **view(df)** opens the entire dataframe in viewer
-* **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
+* **View(df)** opens the entire dataframe in viewer
+* **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `head(df, n = )`, default `n = 6`
 * **str(df)** displays the internal structure of the dataframe
-* **col_names(df)** display column names
+* **colnames(df)** display column names
 * **nrow(df)** returns the number of rows of the dataframe
 * **ncol(df)** return the number of rows of the dataframe
 * **mean(vector)** returns the (arithmetic) mean
