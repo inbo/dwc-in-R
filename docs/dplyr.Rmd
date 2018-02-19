@@ -445,7 +445,7 @@ When satisfied about the cleaned data, maybe you would like to save the output. 
  
 ### Exercise
 1. Export `females_weight_above_30` to a tab delimited csv file:
-../data/processed/females_weight_above_30.csv. Add column names but no row names/indexes.
+`../data/processed/females_weight_above_30.csv`. Add column names but no row names/indexes.
 ```{r}
 write.table(females_weight_above_30, 
             file = "../data/processed/females_weight_above_30.csv",
