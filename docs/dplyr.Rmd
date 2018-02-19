@@ -135,7 +135,9 @@ data <- arrange(data)
 ```
 
 ## Select columns and rows
-You can select specific columns of a dataframe by `select()`. To select rows use `filter()`. Only columns/rows where conditions are true are selected. For example, selecting a column by its column name:  `select(df, column_name)`. To select everything except a specific column use the minus symbol before its name: `select(df, -column_name)`.
+You can select specific columns of a dataframe by `select()`. Only columns where conditions are true are selected. For example, selecting a column by its column name:  `select(df, column_name)`. To select all columns except a specific column use the minus symbol before its name: `select(df, -column_name)`.
+
+To select rows use `filter()`. Again, one or multiple filters can be applied to filter the targeted rows: `filter(df, condition1, condition2,...)`. A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to get only those rows for which the `weight_in_g` is smaller than 40, use `filter(data, weight_in_g < 40)`.
 
 ### Exercise
 1. Display the column `weight_in_g`
