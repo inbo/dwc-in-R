@@ -23,7 +23,7 @@ knitr::opts_chunk$set(include = FALSE)
 
 This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
 
-First of all, we need to load some libraries which are part of the tidyr package:
+First of all, we need to load some libraries which are part of the tidyverse ecosystem:
 
 ```{r read data, echo = TRUE}
 library(readr)
@@ -42,7 +42,7 @@ First of all, we need to import data in R. The most user friendly way to do it i
 - check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name,
 - change variable name in *code preview* if you prefer to save the data with a different name than filename,
 - click on *Import*
-A dataframe is automatically generated and, very handy, the code to generate it too!
+A dataframe is automatically generated and, very handy, the code to generate it as well!
 
 ### Exercise
 1. Read `survey_data_spreadsheet_tidy.csv`. Check whether the columns match the following types
@@ -61,7 +61,7 @@ data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";",
 
 
 ## Explore data
-Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
+Before to start manipulate data, it is good practice to explore the data in order to check whether everything is correctly imported. Moreover, it gives an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
 
 * **view(df)** opens the entire dataframe in viewer
 * **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
