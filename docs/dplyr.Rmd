@@ -433,12 +433,11 @@ data %>% mutate(scientific_name = case_when(
 ```
 
 ## Export your data
-After hours of data analysis maybe you would like to save the output, isn't it?
- You can save a dataframe object by means of function `write_table()`:
+When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of function `write_table()`:
  ```r
  write.table(df, file = "./save/it/here/df.csv", ...)
  ```
- You can use plenty of optional parameters. The most used are:
+ You can use optional arguments to specify the output. The most used are:
  -`sep`, to specify which character should be used to separate the values, e.g. a comma `","` for comma separated values or a tab `"\t"` for tab-delimited values.
  - `row.names`, a logical, TRUE or FALSE, whether you want or not row numbers or row names (if specified in your dataframe) in the file.
  - `col.names`, a logical, TRUE or FALSE, indicating the presence of column names in the first line of the file.
