@@ -23,7 +23,7 @@ knitr::opts_chunk$set(include = FALSE)
 
 This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
 
-First of all, we need to load some libraries which are part of the tidyr package:
+First of all, we need to load some libraries which are part of the tidyverse ecosystem:
 
 ```{r read data, echo = TRUE}
 library(readr)
@@ -42,7 +42,7 @@ First of all, we need to import data in R. The most user friendly way to do it i
 - check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name,
 - change variable name in *code preview* if you prefer to save the data with a different name than filename,
 - click on *Import*
-A dataframe is automatically generated and, very handy, the code to generate it too!
+A dataframe is automatically generated and, very handy, the code to generate it as well!
 
 ### Exercise
 1. Read `survey_data_spreadsheet_tidy.csv`. Check whether the columns match the following types
@@ -55,18 +55,18 @@ A dataframe is automatically generated and, very handy, the code to generate it 
 2. save the data into `data`
 ```{r read and save data}
 data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
-           escape_double = FALSE, 
-           trim_ws = TRUE)
+                   escape_double = FALSE, 
+                   trim_ws = TRUE)
 ```
 
 
 ## Explore data
-Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
+Before to start manipulate data, it is good practice to explore the data in order to check whether everything is correctly imported. Moreover, it gives an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
 
-* **view(df)** opens the entire dataframe in viewer
-* **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
+* **View(df)** opens the entire dataframe in viewer
+* **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `head(df, n = )`, default `n = 6`
 * **str(df)** displays the internal structure of the dataframe
-* **col_names(df)** display column names
+* **colnames(df)** display column names
 * **nrow(df)** returns the number of rows of the dataframe
 * **ncol(df)** return the number of rows of the dataframe
 * **mean(vector)** returns the (arithmetic) mean
@@ -135,7 +135,9 @@ data <- arrange(data)
 ```
 
 ## Select columns and rows
-You can select specific columns of a dataframe by `select()`. To select rows use `filter()`. Only columns/rows where conditions are true are selected. For example, selecting a column by its column name:  `select(df, column_name)`. To select everything except a specific column use the minus symbol before its name: `select(df, -column_name)`.
+You can select specific columns of a dataframe by `select()`. Only columns where conditions are true are selected. For example, selecting a column by its column name:  `select(df, column_name)`. To select all columns except a specific column use the minus symbol before its name: `select(df, -column_name)`.
+
+To select rows use `filter()`. Again, one or multiple filters can be applied to filter the targeted rows: `filter(df, condition1, condition2,...)`. A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to get only those rows for which the `weight_in_g` is smaller than 40, use `filter(data, weight_in_g < 40)`.
 
 ### Exercise
 1. Display the column `weight_in_g`
@@ -164,7 +166,7 @@ select(females_weight_above_30_all, weight_in_g)
 females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
 ```
 
-6. Select everything from `data` except device_remarks
+6. Select all columns from `data` except the device_remarks column
 ```{r }
 select(data, -device_remark)
 ```
@@ -185,6 +187,7 @@ df %>% f1(...) %>% f2(...)
 ```
 Easy, isn't?
 As Stefan Milton, author of magrittr, wrote in [this](https://www.r-statistics.com/2014/08/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/) blogpost:
+
 > The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.
 
 If you want to create a variable based on the output of a series of functions:
@@ -200,7 +203,8 @@ We apply all steps on the right of `%<>%` to `df` and overwrite it with the fina
 ### Exercise
 1. Display the column `weight_in_g` with values > 30 using pipes
 ```{r pipes1}
-data %>% select(weight_in_g) %>% filter(weight_in_g > 30)
+data %>% select(weight_in_g) %>% 
+    filter(weight_in_g > 30)
 ```
 
 2. Select females with `weight_in_g > 30` using pipes
@@ -215,7 +219,9 @@ data %>% filter(sex == "F", weight_in_g > 30) %>%
 
 4.  Save output of (3) as a variable: `females_weight_above_30`
 ```{r pipes4}
-females_weight_above_30 <- data %>% filter(sex == "F", weight_in_g > 30) %>% select(weight_in_g)
+females_weight_above_30 <- data %>% 
+    filter(sex == "F", weight_in_g > 30) %>% 
+    select(weight_in_g)
 ```
 
 ## distinct
@@ -224,12 +230,14 @@ The function `distinct()` retains only unique/distinct values of an input vector
 ### Exercises
 1. Show the unique sex values
 ```{r unique sex}
-data %>% select(sex) %>% unique()
+data %>% select(sex) %>% 
+    distinct()
 ```
 
 2. Show the unique species values
 ```{r unique species}
-data %>% select(species) %>% unique()
+data %>% select(species) %>% 
+    distinct()
 ```
 
 ## group_by and summarise
@@ -246,7 +254,8 @@ Some data analysis tasks aplly the *split-apply-combine paradigm*: *split* the d
 
 You would like to calculate the sum for each category of items. We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarise()`:
 ```r
-df %>% group_by(category) %>% summarise(sum = sum(price))
+df %>% group_by(category) %>% 
+    summarise(sum = sum(price))
 ```
 
 `group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
@@ -273,7 +282,7 @@ data %>% count(sex)
 2. Show mean weight per sex
 ```{r group_by & summarise()}
 data %>% filter(!is.na(weight_in_g)) %>% 
-  group_by(sex) %>% summarise(sum = sum(weight_in_g))
+  group_by(sex) %>% summarise(mean_weight = mean(weight_in_g))
 ```
 
 3. Show mean weight per sex and species
@@ -293,8 +302,8 @@ weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>%
 weight_per_species_sex
 ```
 
-##  Reshpaing: spread and gather
-This two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
+##  Reshaping: spread and gather
+These two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
 ![spread](./static/images/spread_data_R.png)
 ![gather](./static/images/gather_data_R.png)
@@ -339,23 +348,23 @@ df %<>% mutate(column = ...)
 ### Exercises
 1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`
 ```{r rename weight}
-data %<>% rename(weight =  weight_in_g)
+data %<>% rename(weight = weight_in_g)
 colnames(data)
 ```
 
-2. Replace `weight` values with values in kg
+2. Convert `weight` values in gram to kg
 ```{r weight in kg}
-data %>% mutate(weight = weight/ 1000)
+data %>% mutate(weight = weight / 1000)
 ```
 
-3. Add column `country` with value `US`
+3. Add column `country` with a fixed value `US`
 ```{r add country}
 data %>% mutate(country = "US")
 ```
 
-4. Add column `parsed_date` using function `as.Date(column)`
+4. Add column `parsed_date` by applying the function `as.Date(column)` to the `date` column
 ```{r parse date}
-data %>% mutate(parse_date = as.Date(date))
+data %>% mutate(parsed_date = as.Date(date))
 ```
 
 ## Recode your data: recode and case_when
@@ -424,12 +433,11 @@ data %>% mutate(scientific_name = case_when(
 ```
 
 ## Export your data
-After hours of data analysis maybe you would like to save the output, isn't it?
- You can save a dataframe object by means of function `write_table()`:
+When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of function `write_table()`:
  ```r
  write.table(df, file = "./save/it/here/df.csv", ...)
  ```
- You can use plenty of optional parameters. The most used are:
+ You can use optional arguments to specify the output. The most used are:
  -`sep`, to specify which character should be used to separate the values, e.g. a comma `","` for comma separated values or a tab `"\t"` for tab-delimited values.
  - `row.names`, a logical, TRUE or FALSE, whether you want or not row numbers or row names (if specified in your dataframe) in the file.
  - `col.names`, a logical, TRUE or FALSE, indicating the presence of column names in the first line of the file.
@@ -437,7 +445,7 @@ After hours of data analysis maybe you would like to save the output, isn't it?
  
 ### Exercise
 1. Export `females_weight_above_30` to a tab delimited csv file:
-../data/processed/females_weight_above_30.csv. Add column names but no row names/indexes.
+`../data/processed/females_weight_above_30.csv`. Add column names but no row names/indexes.
 ```{r}
 write.table(females_weight_above_30, 
             file = "../data/processed/females_weight_above_30.csv",
