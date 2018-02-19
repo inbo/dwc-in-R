@@ -203,7 +203,8 @@ We apply all steps on the right of `%<>%` to `df` and overwrite it with the fina
 ### Exercise
 1. Display the column `weight_in_g` with values > 30 using pipes
 ```{r pipes1}
-data %>% select(weight_in_g) %>% filter(weight_in_g > 30)
+data %>% select(weight_in_g) %>% 
+    filter(weight_in_g > 30)
 ```
 
 2. Select females with `weight_in_g > 30` using pipes
@@ -218,7 +219,9 @@ data %>% filter(sex == "F", weight_in_g > 30) %>%
 
 4.  Save output of (3) as a variable: `females_weight_above_30`
 ```{r pipes4}
-females_weight_above_30 <- data %>% filter(sex == "F", weight_in_g > 30) %>% select(weight_in_g)
+females_weight_above_30 <- data %>% 
+    filter(sex == "F", weight_in_g > 30) %>% 
+    select(weight_in_g)
 ```
 
 ## distinct
