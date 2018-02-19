@@ -166,7 +166,7 @@ select(females_weight_above_30_all, weight_in_g)
 females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
 ```
 
-6. Select everything from `data` except device_remarks
+6. Select all columns from `data` except the device_remarks column
 ```{r }
 select(data, -device_remark)
 ```
@@ -187,6 +187,7 @@ df %>% f1(...) %>% f2(...)
 ```
 Easy, isn't?
 As Stefan Milton, author of magrittr, wrote in [this](https://www.r-statistics.com/2014/08/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/) blogpost:
+
 > The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.
 
 If you want to create a variable based on the output of a series of functions:
