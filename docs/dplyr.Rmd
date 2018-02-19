@@ -302,8 +302,8 @@ weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>%
 weight_per_species_sex
 ```
 
-##  Reshpaing: spread and gather
-This two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
+##  Reshaping: spread and gather
+These two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
 ![spread](./static/images/spread_data_R.png)
 ![gather](./static/images/gather_data_R.png)
@@ -348,23 +348,23 @@ df %<>% mutate(column = ...)
 ### Exercises
 1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`
 ```{r rename weight}
-data %<>% rename(weight =  weight_in_g)
+data %<>% rename(weight = weight_in_g)
 colnames(data)
 ```
 
-2. Replace `weight` values with values in kg
+2. Convert `weight` values in gram to kg
 ```{r weight in kg}
-data %>% mutate(weight = weight/ 1000)
+data %>% mutate(weight = weight / 1000)
 ```
 
-3. Add column `country` with value `US`
+3. Add column `country` with a fixed value `US`
 ```{r add country}
 data %>% mutate(country = "US")
 ```
 
-4. Add column `parsed_date` using function `as.Date(column)`
+4. Add column `parsed_date` by applying the function `as.Date(column)` to the `date` column
 ```{r parse date}
-data %>% mutate(parse_date = as.Date(date))
+data %>% mutate(parsed_date = as.Date(date))
 ```
 
 ## Recode your data: recode and case_when
