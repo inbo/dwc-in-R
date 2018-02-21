@@ -1,5 +1,4 @@
-
-class: center, middle
+class: middle, center
 
 # Tidy data exercise
 
@@ -17,42 +16,42 @@ for the Biodiversity Data Management workshop<br>
 [<i class="fa fa-twitter"></i> @LifeWatchINBO](https://twitter.com/LifeWatchINBO) [<i class="fa fa-github"></i> github/inbo](https://github.com/inbo)
 
 ---
-class: center, middle, section_background
+class: middle, center, section_background
 
 # Introduction
 
 ---
-class: center, middle
+class: middle, center
 
 ## Hi!
 ### We are the [LifeWatch team](https://pureportal.inbo.be/portal/en/organisations/lifewatch(0ab4aa1e-b25f-4dc3-90c1-ddcfbc726fe8.html) at INBO
 
 ---
-class: center, middle
+class: middle, center
 
 ## We offer technical support to researchers
 
 ---
-class: center, middle
+class: middle, center
 
 ## Open data publication
 
 [![:scale 100%](./static/images/open_data_policy.png)](https://www.inbo.be/en/open-data-policy)
 
 ---
-class: center, middle
+class: middle, center
 
 ## Research software development
 
 [![:scale 100%](./static/images/wateRinfo.png)](https://inbo.github.io/wateRinfo/)
 
 ---
-class: center, middle
+class: middle, center
 
 ## We do things `open`, `reproducible` and `community-oriented`.
 
 ---
-class: center, middle
+class: middle, center
 background-image: url(./static/images/InnoScholComm_figure_jan2015.png)
         
 .alert.alert-warning[
@@ -60,29 +59,29 @@ background-image: url(./static/images/InnoScholComm_figure_jan2015.png)
 ]
         
 ---
-class: center, middle
+class: middle, center
 background-image: url(./static/images/good_enough_practices_computational_science.png)
 
 .alert.alert-success[
 ## Good practices >>> tools
 ]
-        
+
 .footnote[Wilson et al. (2017). <https://doi.org/10.1371/journal.pcbi.1005510>]
 
 ---
-class: center, middle
+class: middle, center
 
 ## In this workshop, we focus on `data`
         
 ---
-class: center, middle
+class: middle, center
 
 ## Data organization
 
 is the foundation of your research project
 
 ---
-class: center, middle
+class: middle, center
 
 .emphasize.left[
 <i class="fa fa-quote-left fa-3x fa-pull-left"></i> Data that is easy to model,<br> visualize and aggregate
@@ -94,46 +93,46 @@ class: center, middle
 ]
 
 ---
-class: center, middle
+class: middle, center
 
 ## Course from Data Carpentry
 
 [![:scale 100%](./static/images/carpentry_workshop.png)](http://www.datacarpentry.org/spreadsheet-ecology-lesson)
 
 ---
-class: center, middle, section_background
+class: middle, center, section_background
 
 # Spreadsheets
 
 ---
-class: center, middle
+class: middle, center
 
 ## Survey
 
 <https://hackmd.io/s/ryiIwtYIG>
 
 ---
-class: center, middle
+class: middle, center
 
 ## Discussion
 
 (and what we will not cover here)
 
 ---
-class: center, middle, section_background
+class: middle, center, section_background
         
 # Tidy your data
 
 (how to format data in spreadsheets)
 
 ---
-class: center, middle
+class: middle, center
 background-image: url(./static/images/tidy_data_paper.png)
         
 .footnote[Hadley Wickham (2014) Tidy Data. Journal of Statistical Software, Vol. 59, Issue 10. <https://doi.org/10.18637/jss.v059.i10>]
 
 ---
-class: center, middle
+class: middle, center
 
 ## un-tidy
 
@@ -230,7 +229,7 @@ count: false
 | ... | ...  | ... | ... |
 
 ---
-class: center, middle
+class: middle, center
 
 ## Exercise
 
@@ -243,41 +242,41 @@ class: center, middle
 ]
 
 ---
-class: center, middle
+class: middle, center
 
 ## Discussion
 
 <https://hackmd.io/s/ryiIwtYIG>
 
 ---
-class: center, middle, section_background
+class: middle, center, section_background
 
 # Exporting data
 
 ---
-class: center, middle
+class: middle, center
 
 ## Exercise
 
 Export your data as a `csv`
 
 ---
-class: center, middle
+class: middle, center
 
 ## Discussion
 
 ---
-class: center, middle, section_background
+class: middle, center, section_background
 
 # Importing data
 
 ---
-class: center, middle
+class: middle, center
 
 ## Demo
 
 ---
-class: center, middle, section_background
+class: middle, center, section_background
 
 # Resources
 
