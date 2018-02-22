@@ -8,7 +8,7 @@ output:
     config:
       toc:
         scroll_highlight: yes
-      edit: https://github.com/enram/dwc-in-R/blob/master/src/%s
+      edit: https://github.com/inbo/dwc-in-R/blob/master/src/%s
       search: no
       sharing: no
 github-repo: "inbo/dwc-in-R"
