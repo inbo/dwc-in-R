@@ -37,22 +37,22 @@ library(magrittr)
 
 # Read data
 First of all, we need to import data in R. The most user friendly way to do it is by using the interface provided by RStudio. In the Environment window, click on *Import Dataset* and select *From Text (readr)...*. A window will pop-up. Follow the next steps:
-- click on *Browse* to selet the text file you want to import,
-- select the right delimiter,
-- check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name,
-- change variable name in *code preview* if you prefer to save the data with a different name than filename,
-- click on *Import*
+1. click on *Browse* to selet the text file you want to import,
+2. select the right delimiter,
+3. check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name,
+4. change variable name in *code preview* if you prefer to save the data with a different name than filename,
+5. click on *Import*
 A dataframe is automatically generated and, very handy, the code to generate it too!
 
-# Exercise
+# Exercises
 
 1. Read `survey_data_spreadsheet_tidy.csv`. Check whether the columns match the following types
-  * `date`: `double`
-  * `species`: `character`
-  * `plot`: `integer`
-  * `sex`: `character`
-  * `weight_in_g`: `integer`
-  * `device_remarks`: `character`
+  1. `date`: `double`
+  2. `species`: `character`
+  3. `plot`: `integer`
+  4. `sex`: `character`
+  5. `weight_in_g`: `integer`
+  6. `device_remarks`: `character`
 
 2. save the data into `data`
 
