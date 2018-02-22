@@ -43,6 +43,7 @@ First of all, we need to import data in R. The most user friendly way to do it i
 4. change variable name in *code preview* if you prefer to save the data with a different name than filename,
 5. click on *Import*
 A dataframe is automatically generated and, very handy, the code to generate it too!
+We suggest to use this graphic interface at the beginning in order to be familiar with the most typical parameters (e.g. `sep`,  `col_types`, `col_names`, `row_names`). After a while you will find that writing the code is way faster than a long series of mouse clicks.
 
 # Exercises
 
