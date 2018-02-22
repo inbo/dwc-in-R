@@ -118,12 +118,7 @@ View(data)
 str(data)
 ```
 
-7. What is the mean weight?
-```{r}
-mean(data$weight_in_g, na.rm = TRUE)
-```
-
-8. What is the min weight?
+7. What is the min weight?
 ```{r}
 min(data$weight_in_g, na.rm = TRUE)
 ```
@@ -300,20 +295,25 @@ df %>% count(col_name)
 data %>% count(sex)
 ```
 
-2. Show mean weight per sex
+2. What is the mean weight?
+```{r}
+data %>% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))
+```
+
+3. Show mean weight per sex
 ```{r group_by & summarise()}
 data %>% filter(!is.na(weight_in_g)) %>% 
   group_by(sex) %>% summarise(sum = sum(weight_in_g))
 ```
 
-3. Show mean weight per sex and species
+4. Show mean weight per sex and species
 ```{r summarise mean}
 data %>% filter(!is.na(weight_in_g)) %>% 
   group_by(sex, species) %>% 
   summarise(mean_weight = mean(weight_in_g))
 ```
 
-4. Show min, max, mean weight per sex and species and save output as `weight_per_species_sex`
+5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`
 ```{r multiple summarise}
 weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>% 
   group_by(sex, species) %>% 
