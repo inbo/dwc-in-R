@@ -1,0 +1,29 @@
+---
+title: "Standardizing data to Darwin Core using R"
+author: Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Dimitri Brosens, Tanja Milotic, Peter Desmet
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output:
+  bookdown::gitbook:
+    config:
+      toc:
+        scroll_highlight: yes
+      edit: https://github.com/inbo/dwc-in-R/blob/master/src/%s
+      search: no
+      sharing: no
+github-repo: "inbo/dwc-in-R"
+---
+
+# Introduction
+
+This workshop material was developed for the [2018 Biodiversity Data Management](http://odnature.naturalsciences.be/safred/workshops) at the Safeguarding Biodiversity Data for the Future conference. It covers:
+
+* Good enough practices in data management
+* Tidy data exercise
+* Introduction to Darwin Core
+* Introduction to dplyr
+* Transforming data to Darwin Core with dplyr
+
+# Tidy data exercise
+
+See the [tidy data exercise presentation](tidy.html).
