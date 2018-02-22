@@ -1,0 +1,4 @@
+[
+["index.html", "Standardizing data to Darwin Core using R 1 Introduction", " Standardizing data to Darwin Core using R Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Dimitri Brosens, Tanja Milotic, Peter Desmet 2018-02-22 1 Introduction This workshop material was developed for the 2018 Biodiversity Data Management at the Safeguarding Biodiversity Data for the Future conference. It covers: Good enough practices in data management Tidy data exercise Introduction to Darwin Core Introduction to dplyr Transforming data to Darwin Core with dplyr "],
+["tidy-data-exercise.html", "2 Tidy data exercise", " 2 Tidy data exercise All info can be found in the tidy data exercise presentation. "]
+]
