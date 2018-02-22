@@ -68,17 +68,17 @@ head(data, n = 20)
 
 Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
 
-* **view(df)** opens the entire dataframe in viewer
-* **head(df)** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
-* **str(df)** displays the internal structure of the dataframe
-* **col_names(df)** display column names
-* **nrow(df)** returns the number of rows of the dataframe
-* **ncol(df)** return the number of rows of the dataframe
-* **mean(vector)** returns the (arithmetic) mean
-* **max(vector)** returns the maximum
-* **min(vector)** returns the minimum
+1. **`head(df)`** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
+2. **`view(df)`** opens the entire dataframe in viewer. If dataframe is very big, then your computer can slow down sensibly and Rstudio can eventually crash. Be aware of it!
+3. **`class(df)`** if `df` is a dataframe then `"data.frame"` will show up
+4. **`str(df)`** displays the internal structure of the dataframe
+5. **`col_names(df)`** display column names
+6. **`nrow(df)`** returns the number of rows of the dataframe
+7. **`ncol(df)`** return the number of rows of the dataframe
+9. **`max(df)`** returns the maximum of all elements of a (numeric) dataframe
+10. **`min(df)`** returns the minimum of all elements of a (numeric) dataframe
 
-You can apply `mean()`, `min()` and `max()` to dataframes as well: the functions will return respectively mean, minimum and maximum of each column. However, in case one or more columns are not numeric, an error occurs. In case one or more `NA` are present in the data, you need to add `na.rm = TRUE` as parameter in the function call!
+While applying `max()` or `min()` an error will occur if one or more `NA` are present. What you need is just adding `na.rm = TRUE` as parameter in the function call.
 
 # Exercise
 
