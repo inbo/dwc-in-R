@@ -25,11 +25,11 @@ This tutorial will provide you the know-how for importing and analysing (tidy) d
 
 First of all, we need to load some libraries which are part of the tidyr package:
 
-```{r read data, echo = TRUE}
+```{r warning = FALSE read data, echo = TRUE}
 library(readr)
 ```
 
-```{r manipulate data, echo = TRUE}
+```{r warning = FALSE manipulate data, echo = TRUE}
 library(dplyr)
 library(tidyr)
 library(magrittr)
@@ -57,6 +57,7 @@ A dataframe is automatically generated and, very handy, the code to generate it 
 data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
            escape_double = FALSE, 
            trim_ws = TRUE)
+head(data, n = 20)
 ```
 
 
