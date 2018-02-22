@@ -60,7 +60,10 @@ A dataframe is automatically generated and, very handy, the code to generate it 
 data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
            escape_double = FALSE, 
            trim_ws = TRUE)
-head(data, n = 20)
+```
+
+```{r second way via read_csv and read_csv2}
+data <- read_csv2 ("../data/interim/survey_data_spreadsheet_tidy.csv")
 ```
 
 
