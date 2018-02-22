@@ -2,6 +2,8 @@
 title: "Standardizing data to Darwin Core using R"
 author: Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Dimitri Brosens, Tanja Milotic, Peter Desmet
 date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
 ---
 
 # Introduction
