@@ -71,19 +71,15 @@ data <- read_csv2 ("../data/interim/survey_data_spreadsheet_tidy.csv")
 
 # Explore data
 
-Before to start manipulate data, it is good practice to explore the data in order to check whether everything is correctly imported. Moreover, it gives an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
+Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it, which you can test immediately by using one of the many dataframes from the [R Datasets package](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html), automatically loaded when you open R. We will use the `CO2` dataframe about the carbon dioxide uptake in grass plant *Echinochloa crus-galli* (details can be found [here](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/zCO2.html))
 
-1. **`head(df)`** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
-2. **`View(df)`** opens the entire dataframe in viewer. If dataframe is very big, then your computer can slow down sensibly and Rstudio can eventually crash. Be aware of it!
-3. **`class(df)`** if `df` is a dataframe then `"data.frame"` will show up
-4. **`str(df)`** displays the internal structure of the dataframe
-5. **`colnames(df)`** display column names
-6. **`nrow(df)`** returns the number of rows of the dataframe
-7. **`ncol(df)`** return the number of rows of the dataframe
-9. **`max(df)`** returns the maximum of all elements of a (numeric) dataframe
-10. **`min(df)`** returns the minimum of all elements of a (numeric) dataframe
-
-While applying `max()` or `min()` an error will occur if one or more `NA` are present. What you need is just adding `na.rm = TRUE` as parameter in the function call.
+1. **`head(CO2)`** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(CO2, n = )`, default `n = 6`
+2. **`view(CO2)`** opens the entire dataframe in viewer. If dataframe is very big, then your computer can slow down sensibly and Rstudio can eventually crash. Be aware of it!
+3. **`class(CO2)`** if `CO2` is a dataframe then `"data.frame"` will show up
+4. **`str(CO2)`** displays the internal structure of the dataframe
+5. **`col_names(CO2)`** display column names
+6. **`nrow(CO2)`** returns the number of rows of the dataframe
+7. **`ncol(CO2)`** return the number of rows of the dataframe
 
 # Exercise
 
@@ -118,12 +114,6 @@ View(data)
 ```{r}
 str(data)
 ```
-
-7. What is the min weight?
-```{r}
-min(data$weight_in_g, na.rm = TRUE)
-```
-
 
 # Sort data
 
@@ -303,7 +293,7 @@ df %>% count(col_name)
 data %>% count(sex)
 ```
 
-2. What is the mean weight?
+2. What is the mean weight? Consider to use function `mean()` combined with parameter `na.rm = TRUE` in order to ignore (remove) `NA` while calculating the mean.
 ```{r}
 data %>% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))
 ```
@@ -321,7 +311,7 @@ data %>% filter(!is.na(weight_in_g)) %>%
   summarise(mean_weight = mean(weight_in_g))
 ```
 
-5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`
+5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`. Consider to use `min()` and `max()`) combined with parameter `na.rm = TRUE` in order to ignore `NA` while calculating minimum and maximum.
 ```{r multiple summarise}
 weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>% 
   group_by(sex, species) %>% 
