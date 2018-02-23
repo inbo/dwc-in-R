@@ -11,6 +11,7 @@ output:
       edit: https://github.com/inbo/dwc-in-R/blob/master/src/%s
       search: no
       sharing: no
+    df_print: paged
 github-repo: "inbo/dwc-in-R"
 ---
 
