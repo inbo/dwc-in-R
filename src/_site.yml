@@ -1,0 +1,21 @@
+name: "Standardizing to Darwin Core with R"
+output_dir: "../docs"
+include: ["static/", "tidy.html"]
+navbar:
+  title: "Standardizing to Darwin Core with R"
+  left:
+    - text: "Tidy data"
+      href: tidy.html
+    - text: "dplyr"
+      href: dplyr.html
+    - text: "Darwin Core mapping"
+      href: dwc-mapping.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/inbo/dwc-in-R
+
+output:
+  html_document:
+    theme: yeti
+    df_print: paged
+    css: "static/css/inbo.css"
