@@ -1,15 +1,18 @@
 ---
-title: "Creating Darwin Core with R"
+title: "Darwin Core mapping"
 author: 
 - Lien Reyserhove
-- Stijn Van Hoey
-- Damiano Oldoni
 - Peter Desmet
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
 ---
 
-# Creating Darwin Core with R
-
-## Introduction
+# Introduction
 
 This tutorial describes how to map checklist data to Darwin Core in a **stepwise manner**. It is good practice to use this approach each time you map your data.
 
@@ -32,7 +35,7 @@ This tutorial describes how to map checklist data to Darwin Core in a **stepwise
 
 We'll walk through the tutorial step-by-step by using the [Inventory of alien macroinvertebrates in Flanders, Belgium](https://doi.org/10.15468/yxcq07) as an example. Afterwards, you can try it yourself by mapping the [Checklist of non-native freshwater fishes in Flanders, Belgium](https://doi.org/10.15468/xvuzfh).
 
-## Setup
+# Setup
 
 ```{r setup, echo = FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
@@ -53,9 +56,9 @@ Before we load the data, we define the `locale`:
 Sys.setlocale("LC_CTYPE", "en_US.UTF-8")
 ```
 
-## Import and clean data
+# Import and clean data
 
-### Import data
+## Import data
 
 Our raw datasat is an Excel file (`AI_2016_Boets_etal_Supplement.xls`). The import specifications for Excel files are more limited than those for delimited files (`csv`, `tsv`, `txt`). However, we think it's useful to use Excel as a format in this exercise as this is often used to manage datasets.
 
@@ -73,7 +76,7 @@ Our raw datasat is an Excel file (`AI_2016_Boets_etal_Supplement.xls`). The impo
 raw_data <- read_excel("../data/raw/AI_2016_Boets_etal_Supplement.xls", sheet = "checklist")
 ```
 
-### Inspect data
+## Inspect data
 
 The simplest way for a quick overview of the raw data is by using the functions `str()` and `head()`: 
 
@@ -85,7 +88,7 @@ str(raw_data)
 head(raw_data) # Displays the first 6 lines of the dataframe
 ```
 
-### Clean data
+## Clean data
 
 We assume here that your dataset is tidy. If this is not the case, we refer to the [Tidy data exercise]. Unfortunately, starting with untidy data will make your script a lot more complex, with many preparatory steps before you can even start mapping! In a tidy dataset, you can start the mapping immediately.
 
@@ -118,7 +121,7 @@ colnames(raw_data)
 
 We're now all set to start mapping!
 
-## Map to Darwin Core Archive
+# Map to Darwin Core Archive
 
 Even though `raw_data` contains all necessary information in a single data frame, a Darwin Core Archive might consist of multiple files, e.g. a core and extensions. We recommend to create the core file first and then the extensions. For each file, there are 3 steps:
 
@@ -130,7 +133,7 @@ Even though `raw_data` contains all necessary information in a single data frame
 
 This is repeated for each core/extension file. Below, we'll use the **taxon core** as an example.
 
-### Pre-processing
+## Pre-processing
 
 We use a **copy** of `raw_data` as the starting point for the mapping of the taxon core. This is because `raw_data` is the **starting point** for the mapping of both the taxon core and the extensions. It needs to be untouched each time we start the mapping process.
 
@@ -140,7 +143,7 @@ taxon <- raw_data # Generate taxon by making a copy of raw_data
 
 Sometimes there are further pre-processing steps needed. E.g. in a vernacular name extension each name is a _row_, while in the original data the names could be _columns_ or _delimited values within a column_. That kind of data requires `separate()` en `gather()` steps first. Here however, each record is taxon and no further pre-processing steps are required.
 
-### Mapping
+## Mapping
 
 The mapping process is **sequential**: we add the Darwin Core terms to `taxon` step by step. The Darwin Core terms for each core/extension file can be found on the [GBIF Resources page](http://rs.gbif.org/):
 
@@ -150,7 +153,7 @@ It is good practice to inspect the Darwin Core terms on this webpage one by one 
 
 We distinguish **three types** of Darwin Core terms mappings (static values, unaltered values and altered values) and for each one we will use `mutate()` and `%<>%` (double pipe).
 
-### Static values
+## Static values
 
 Static values are used for Darwin Core terms that need the same value for all records. Most often, they are absent in `raw_data`. This mostly concerns **metadata fields** in the taxon core file:
 
@@ -190,7 +193,7 @@ All these fields are added as extra columns to the data frame, in the same order
 head(taxon)
 ```
 
-### Unaltered values
+## Unaltered values
 
 Unaltered values are used for Darwin Core terms for which the content is an exact copy of the corresponding field in `raw_data`. This contrasts with **altered fields**, in which use a certain field in `raw_data` is the **basis** for further processing.
 
@@ -226,13 +229,13 @@ View those 3 fields:
 taxon %>% select(-(taxonID:family))
 ```
 
-### Altered values
+## Altered values
 
 Altered values are used for Darwin Core terms for which the content  in `raw_data` is used as a basis, but it needs to be standardized. This applies to Darwin Core terms for which we use a [vocabulary](http://rs.gbif.org/vocabulary/gbif/) or where we want to transform for clarity or to correct obvious mistakes.
 
 The main functions we use for these are: `mutate()` + `recode()` or  `mutate()` + `case_when()`.
 
-#### `mutate()` + `recode()`
+### `mutate()` + `recode()`
 
 In this case, we aim to replace specific information in `raw_data` by new information specified in the code. For instance, `raw_order` will be mapped to the Darwin Core term `order`:
 
@@ -298,7 +301,7 @@ distribution %<>% mutate(locality = recode(value,
 ))
 ```
 
-#### `mutate()` + `case_when()`
+### `mutate()` + `case_when()`
 
 `case_when` is often used together with `mutate()` when you want to make a new column (or change an existing one) based on the content of other existing variables.
 
@@ -358,7 +361,7 @@ distribution %<>%
   ))
 ```
 
-### Post-processing
+## Post-processing
 
 When all terms have been mapped, we remove the raw column names from `taxon`:
 
