@@ -399,8 +399,9 @@ data %>% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))
 3. Show mean weight per sex
 
 ```{r group_by_summarize()}
-data %>% filter(!is.na(weight_in_g)) %>% 
-  group_by(sex) %>% summarize(sum = sum(weight_in_g))
+data %>%
+  group_by(sex) %>% 
+  summarize(mean_weight_in_g = mean(weight_in_g, na.rm = TRUE))
 ```
 
 4. Show mean weight per sex and species
