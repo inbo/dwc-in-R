@@ -125,7 +125,17 @@ str(data)
 
 # Sort data
 
-It is normally useful to sort data. The package `dplyr` offers the function `arrange()` to do it. If no columns are specified, the dataframe is sorted by values of the first column (`arrange(df)`). Use `desc()` to sort in descending order.
+It is normally useful to sort data. The package `dplyr` offers the function `arrange()` to do it:
+```{r arrange_example}
+arrange(CO2, conc, uptake)
+```
+
+Use parameter `desc(col_name)` to sort in descending order:
+
+```{r arrange_desc_example}
+arrange(CO2, desc(conc), desc(uptake))
+```
+
 
 ## Exercises
 
@@ -145,9 +155,27 @@ data <- arrange(data)
 
 # Select columns and rows
 
-You can select specific columns of a dataframe by `select()`. Only columns where conditions are true are selected. For example, selecting a column by its column name: `select(df, column_name)`. To select all columns except a specific column use the minus symbol before its name: `select(df, -column_name)`.
+You can select specific columns of a dataframe by `select()`. Only columns where conditions are true are selected. For example, selecting a column by its column name: 
 
-To select rows use `filter()`. Again, one or multiple filters can be applied to filter the targeted rows: `filter(df, condition1, condition2,...)`. A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to get only those rows for which the `weight_in_g` is smaller than 40, use `filter(data, weight_in_g < 40)`.
+```{r example_select}
+select(CO2, uptake)
+```
+
+To select all columns except a specific column use the minus symbol before its name:
+
+```{r example_select_minus}
+select(CO2, -uptake)
+```
+
+To select rows use `filter()`. Again, one or multiple filters can be applied to filter the targeted rows:
+
+```{r}
+filter(CO2, 
+       Type == "Quebec", 
+       Treatment == "nonchilled", 
+       conc  < 200)
+```
+A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to get only those rows for which the `weight_in_g` is smaller than 40, use `filter(data, weight_in_g < 40)`.
 
 ## Exercises
 
@@ -198,12 +226,22 @@ An alternative is to wrap (*nest*) functions one within each other, so that the 
 f2(f1(df, ...), ...)
 ```
 
+```{r nesting_example}
+filter(select(CO2, uptake), uptake > 30, uptake < 31.8)
+```
+
 This way of working with functions is typical of programming and is implemented in many other programming languages. The disadvantage of this approach is readibility: you have to read from right to left in order to understand what happens with our data!
 
 Can we avoid deciphering nested function calls, and making excessive use of temporary variables? The answer is yes, thanks to *pipe* operators. The most used one is the *forward pipe*: `%>%`, from the magrittr package. We can then rewrite the example above by using `%>%`:
 
 ```r
 df %>% f1(...) %>% f2(...)
+```
+
+```{r piping_example1}
+CO2 %>% 
+  select(uptake) %>% 
+  filter(uptake > 30, uptake < 31.8)
 ```
 
 Easy, isn't?
@@ -217,13 +255,26 @@ If you want to create a variable based on the output of a series of functions:
 df2 <- df %>% f1(...) %>% f2(...)
 ```
 
-If you want to overwrite the input dataframe, you can use the *compound assignment operator*, `%<>%` which is the composition of forward pipe `%>%`, and asignment symbol `<-`:
+```{r piping_example2}
+small_uptakes <- CO2 %>% 
+  select(uptake) %>% 
+  filter(uptake > 30, uptake < 31.8)
+```
+
+If you want to overwrite the input dataframe, you can use the *compound assignment operator*, `%<>%` which can be read as the composition of the forward pipe `%>%`, and asignment symbol `<-`:
 
 ```r
 df %<>% f1(...) %>% f2(...)
 ```
 
 We apply all steps on the right of `%<>%` to `df` and overwrite it with the final ouput.
+
+```{r}
+small_uptakes %<>% filter(uptake < 31)
+small_uptakes
+```
+
+Notice that `%<>%` is part of magrittr package.
 
 ## Exercises
 
@@ -258,61 +309,77 @@ females_weight_above_30 <- data %>%
 
 # distinct
 
-The function `distinct()` retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows.
+The function `distinct()` retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows. For example, to know which types of plants were used:
+```{r}
+CO2 %>%
+  select(Type) %>%
+  distinct()
+```
 
 ## Exercises
 
 1. Show the unique sex values
 
 ```{r unique_sex}
-data %>% select(sex) %>%
+data %>% 
+  select(sex) %>%
   unique()
 ```
 
 2. Show the unique species values
 
 ```{r unique_species}
-data %>% select(species) %>% unique()
+data %>% 
+  select(species) %>% 
+  unique()
 ```
 
 # group_by and summarize
 
-Some data analysis tasks aplly the *split-apply-combine paradigm*: *split* the data into groups, *apply* some analysis to each group, and then *combine* the results together. For example, you have a dataframe `df` with the prices of the items bought during your last shopping day. You labelled them by `category` (food, clothes, toys, other), so that `df` looks like this:
+By using  `select()` you can for example calculate minimum or maximum of a specific column. 
+The minimum uptake:
 
-item | category | price
---- | --- | ---
-sweather | clothes | 74
-apples | fruit | 3
-ball | toys | 23
-trousers | clothes | 92
-t-shirt | clothes | 25
-peers | fruit | 5
-
-You would like to calculate the sum for each category of items. We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarize()`:
-
-```r
-df %>% group_by(category) %>%
-  summarize(sum = sum(price))
+```{r}
+CO2 %>% 
+  select(uptake) %>%
+  min()
 ```
 
-`group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
+And the maximum uptake:
 
-```r
-class(df%>% group_by(category))
+```{r}
+CO2 %>% 
+  select(uptake) %>%
+  max()
 ```
 
-which results in `"grouped_df" "tbl_df" "tbl" "data.frame"`. 
+But what if you want to calculate the minimum and maximum uptake for each plant?
+You need then to split the data by `Plant` values and calculate the mimnimum and maximum for each group.  We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarize()`:
 
-If you want to count the number of rows with each unique value of a column variable, you can use the function `count` instead of `summarize`:
+```{r}
+CO2 %>%
+  group_by(Plant) %>%
+  summarize(min_uptake = min(uptake),
+            max_uptake = max(uptake))
+```
 
-```r
-df %>% group_by(col_name) %>% count()
+
+Theoreticallyn this kind of workflow is called the *split-apply-combine paradigm*: *split* the data into groups, *apply* some analysis to each group, and then *combine* the results together.Interesting to notice that `group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
+
+```{r class_after_groupby}
+class(CO2%>% group_by(Plant))
+```
+
+For counting how many rows (with unique) in each group you can use `count()` instead of `summarize()`:
+
+```{r count_example}
+CO2 %>% group_by(Plant) %>% count()
 ```
 
 or even more compact:
 
-```r
-df %>% count(col_name)
+```{r count_example_compact}
+CO2 %>% count(Plant)
 ```
 
 ## Exercises
@@ -347,7 +414,8 @@ data %>% filter(!is.na(weight_in_g)) %>%
 5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`. Consider to use `min()` and `max()`) combined with parameter `na.rm = TRUE` in order to ignore `NA` while calculating minimum and maximum
 
 ```{r multiple_summarize}
-weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>% 
+weight_per_species_sex <- data %>% 
+  filter(!is.na(weight_in_g)) %>% 
   group_by(sex, species) %>% 
   summarize(min_weight = min(weight_in_g),
             max_weight = max(weight_in_g),
@@ -390,23 +458,39 @@ Sometimes you need to rename one or more columns. You can do it using function `
 ```r
 df %>% rename(new_colname = old_colname)
 ```
+An example:
+
+```{r rename_example}
+CO2 %>% rename(Conc = conc)
+```
 
 Another typical data analysis task is to create new columns based on the values of existing ones, like converting units or calculating the ratio of values in two columns. We can use the function `mutate()`:
+
+```r
+new_df <- df %>% mutate(new_column = ...)
+```
+An example using `CO2` dataframe: 
+
+```{r mutate_example2}
+CO2_dev_mean <- CO2 %>% mutate(dev_mean_uptake = uptake - mean(uptake))
+```
+
+or you can modify the original dataframe:
 
 ```r
 df %<>% mutate(new_column = ...)
 ```
 
-or you can create a new variable via assignment symbol `->` if you prefer to not modify the original dataframe:
-
-```r
-new_df <- df %>% mutate(new_column = )
+```{r mutate_example}
+CO2 %<>% mutate(dev_mean_uptake = uptake - mean(uptake))
+head(CO2)
 ```
 
-You can also use `mutate()` to change the values in a column without creating a new one:
+You can also use `mutate()` to change the values in a column without creating a new one. In the example below we change the new column `dev_mean_uptake` by applying absolute value:
 
-```r
-df %<>% mutate(column = ...)
+```{r}
+CO2 %<>% mutate(dev_mean_uptake = abs(dev_mean_uptake))
+head(CO2)
 ```
 
 ## Exercises
@@ -438,41 +522,35 @@ data %>% mutate(parsed_date = as.Date(date))
 
 # Recode your data: recode and case_when
 
-Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example from [dplyr documentation](http://dplyr.tidyverse.org/reference/recode.html#examples):
-```r
-x <- sample(c("a", "b", "c"), 10, replace = TRUE)
-recode(x, a = "Apple")
-#>  [1] "b"     "b"     "Apple" "c"     "c"     "Apple" "c"     "c"     "Apple"
-#> [10] "c"
+Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example:
+
+```{r recode_example1}
+types <- CO2$Type # extract Type from dataframe
+recode(types, 
+       Quebec = "Canada",
+       Mississippi = "USA")
 ```
 
 You can specify a `default` value: it will be given to all values not otherwise matched. And if you want replace missing values (NA), then you can specify a value to the parameter `missing`.
 
-A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. A simple example from [dplyr documentation page](http://dplyr.tidyverse.org/reference/case_when.html#examples):
-```r
-x <- 1:50
-case_when(
-  x %% 35 == 0 ~ "fizz buzz",
-  x %% 5 == 0 ~ "fizz",
-  x %% 7 == 0 ~ "buzz",
-  TRUE ~ as.character(x)
-)
+```{r recode_example2}
+recode(types, 
+       Quebec = "Canada",
+       .default = "World")
 ```
 
-`case_when` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing variables. Another example from the same documentation page:
-```r
-starwars %>%
-  select(name:mass, gender, species) %>%
-  mutate(
-    type = case_when(
-      height > 200 | mass > 200 ~ "large",
-      species == "Droid"        ~ "robot",
-      TRUE                      ~  "other"
+A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. `case_when()` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing variables. An example:
+
+```{r case_when_example}
+CO2 %>% mutate(
+    response_level = case_when(
+      uptake / conc > 0.15 ~ "high",
+      uptake / conc > 0.1 ~ "medium",
+      TRUE ~  "low")
     )
-  )
 ```
 
-Based on mass, gender and species, a new variable, `type`, is created relying on the conditions  listed in `case_when()`.
+Based on the ratio between uptake and carbon dioxide concentration, a new variable, `response_level`, is created with values based on the conditions listed in `case_when()`.
 
 ## Exercise
 
@@ -536,7 +614,7 @@ write.table(females_weight_above_30,
 ```
 
 2. Export `data_scientificname` to a comma separated file:
-`../data/processed/data_scientificname.csv`. Add column names and row names/indexes
+`../data/processed/data_scientificname.csv`. Add column names and row names/indexes as well.
 
 ```{r}
 write.table(data_scientificname, 
