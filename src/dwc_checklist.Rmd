@@ -1,20 +1,13 @@
 ---
-title: "Transforming data to Darwin Core with R"
+title: "Creating Darwin Core with R"
 author: 
 - Lien Reyserhove
 - Stijn Van Hoey
 - Damiano Oldoni
 - Peter Desmet
-date:  "`r Sys.Date()`"
-output:
-  html_document:
-    toc: true
-    toc_depth: 3
-    toc_float: true
-    number_sections: true
-    theme: yeti
-    df_print: paged
 ---
+
+# Creating Darwin Core with R
 
 This tutorial describes how to map checklist data to Darwin Core in a **stepwise manner**. It is good practice to use this approach each time you map your data.
 
