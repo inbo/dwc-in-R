@@ -587,39 +587,23 @@ data_scientificname <- data %>%
 
 # Export your data
 
-When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of function `write_table()`:
+When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of following functions:
+1. `write_tsv()` to write tab delimited files
+2. `write_csv()` to write comma separated files
 
-```r
-write.table(df, file = "./save/it/here/df.csv", ...)
-```
-
-You can use optional arguments to specify the output. The most used are:
-
-- `sep`, to specify which character should be used to separate the values, e.g. a comma `","` for comma separated values or a tab `\t` for tab-delimited values
-- `row.names`, a logical, TRUE or FALSE, whether you want or not row numbers or row names (if specified in your dataframe) in the file.
-- `col.names`, a logical, TRUE or FALSE, indicating the presence of column names in the first line of the file
-- `append`, a logical, TRUE or FALSE. Default value: FALSE. If the specified file already exists, it would be overwritten, while `append = TRUE` will append the dataframe at the end of the file.
- 
 ## Exercises
 
-1. Export `females_weight_above_30` to a tab delimited csv file:
-`../data/processed/females_weight_above_30.csv`. Add column names but no row names/indexes
+1. Export `females_weight_above_30` to `../data/processed/females_weight_above_30.csv`. Notice that the dataframe has only one column, so the choice of the separator makes no difference
 
 ```{r}
-write.table(females_weight_above_30, 
-            file = "../data/processed/females_weight_above_30.csv",
-            sep = "\t",
-            col.names = TRUE,
-            row.names = FALSE)
+write_tsv(females_weight_above_30, 
+          path = "../data/processed/females_weight_above_30.csv")
 ```
 
-2. Export `data_scientificname` to a comma separated file:
-`../data/processed/data_scientificname.csv`. Add column names and row names/indexes as well.
+2. Export `data_scientificname` to a comma separated file with name
+`../data/processed/data_scientificname.csv` and include column names.
 
 ```{r}
-write.table(data_scientificname, 
-            file = "../data/processed/data_scientificname.csv",
-            sep = ",",
-            col.names = TRUE,
-            row.names = TRUE)
+write_csv(data_scientificname, 
+          path = "../data/processed/data_scientificname.csv")
 ```
