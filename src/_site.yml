@@ -1,6 +1,6 @@
 name: "Standardizing to Darwin Core with R"
 output_dir: "../docs"
-include: ["static/", "tidy-content.html", "tidy.md"]
+include: ["static/", "tidy.html"]
 navbar:
   title: "Darwin Core with R"
   left:
