@@ -9,148 +9,115 @@ author:
 
 # Creating Darwin Core with R
 
+## Introduction
+
 This tutorial describes how to map checklist data to Darwin Core in a **stepwise manner**. It is good practice to use this approach each time you map your data.
 
-1. General setup of the Rmd file
-* Define locale
-* Load libraries
+1. Setup
+    - Load libraries
+    - Define locale
 2. Import and clean data
-* Import data
-* Inspect data
-* Clean data
-* Further processing
-3. Mapping to Darwin Core Archive
-* Pre-processing
-* Mapping
-	+ General concept
-	+ Static Darwin Core fields
-	+ Unaltered Darwin Core fields
-	+ Altered Darwin Core fields
-* Post-processing
+    - Import data
+    - Inspect data
+    - Clean data
+    - Further processing
+3. Map to Darwin Core Archive
+    - Pre-processing
+    - Mapping
+        - General concept
+        - Static Darwin Core fields
+        - Unaltered Darwin Core fields
+        - Altered Darwin Core fields
+    - Post-processing
 
-We'll walk through the tutorial step-by-step by using the [Inventory of alien macroinvertebrates in Flanders, Belgium](https://www.gbif.org/dataset/289244ee-e1c1-49aa-b2d7-d379391ce265) as an example. Afterwards, you can try it yourself by mapping the [Checklist of non-native freshwater fishes in Flanders, Belgium](https://www.gbif.org/dataset/98940a79-2bf1-46e6-afd6-ba2e85a26f9f)
+We'll walk through the tutorial step-by-step by using the [Inventory of alien macroinvertebrates in Flanders, Belgium](https://doi.org/10.15468/yxcq07) as an example. Afterwards, you can try it yourself by mapping the [Checklist of non-native freshwater fishes in Flanders, Belgium](https://doi.org/10.15468/xvuzfh).
 
-# General setup R
+## Setup
 
-```{r setup, echo=FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-Before we load the data, we define the *locale*:
-
-```{r, eval = F}
-Sys.setlocale("LC_CTYPE", "en_US.UTF-8")
-```
-
-We load the libraries necessary to *import*, *clean* and *map* the data:
+We load the libraries necessary to _import_, _clean_ and _map_ the data:
 
 ```{r}
 library(tidyverse) # For data mapping
 library(magrittr)  # For %<>% pipes
-library(readxl)    # To read excel files
-library(janitor)   # Basic cleaning of the data
+library(readxl)    # For reading excel files
+library(janitor)   # For basic cleaning of the data
 ```
 
-# Import and clean data
+Before we load the data, we define the `locale`:
 
-## Import data
-
-Our raw datasat is an Excel file (AI_2016_Boets_etal_Supplement.xls). The import specifications for Excel files are more limited than those for other extensions such as `.tsv` or `.txt`. However, we think it's useful to use Excel as a format in this exercise as this is often used to manage datasets. 
-
-* Select *Import dataset* in the *Environment* window --> *From Excel...*
-* File/URL: *Browse* --> select `AI_2016_Boets_etal_Supplement.xls`
-* Specify the *Import Options*:
-    + Name = raw_data
-    + Sheet = checklist
-    + Specify empty values ("NA" or " ") 
-    + Check on *First Row as Names*
-* *Data preview*: data OK? --> *Import* to generate the dataframe.
-
-```{r, echo = F}
-raw_data <- read_excel("../data/raw/AI_2016_Boets_etal_Supplement.xls", 
-     sheet = "checklist")
+```{r, eval = FALSE}
+Sys.setlocale("LC_CTYPE", "en_US.UTF-8")
 ```
 
-## Inspect data:
+## Import and clean data
 
-The simplest way for a quick overview of the raw data is by using the tools **head()** and **str()**: 
+### Import data
 
-```{r}
-head(raw_data)  # Displays the first 6 lines of the dataframe
+Our raw datasat is an Excel file (`AI_2016_Boets_etal_Supplement.xls`). The import specifications for Excel files are more limited than those for delimited files (`csv`, `tsv`, `txt`). However, we think it's useful to use Excel as a format in this exercise as this is often used to manage datasets.
+
+1. Go to `Environment` panel: `Import dataset > From Excel...`
+2. For `File/URL`, click `Browse` and select `AI_2016_Boets_etal_Supplement.xls`
+3. Specify the `Import Options`:
+    * `Name`: `raw_data`
+    * `Sheet`: `checklist`
+    * `NA`: `NA` or leave empty
+    * `First Row as Names`: check
+4. Click on `Data preview` to verify if everything looks OK
+5. Click `Import` to generate the dataframe
+
+```{r, echo = FALSE}
+raw_data <- read_excel("../data/raw/AI_2016_Boets_etal_Supplement.xls", sheet = "checklist")
 ```
+
+### Inspect data
+
+The simplest way for a quick overview of the raw data is by using the functions `str()` and `head()`: 
 
 ```{r}
 str(raw_data) 
 ```
 
-## Clean data
+```{r}
+head(raw_data) # Displays the first 6 lines of the dataframe
+```
+
+### Clean data
 
 We assume here that your dataset is tidy. If this is not the case, we refer to the previous session on *tidyverse* for a full overview of data cleaning skills. Unfortunately, starting with untidy data will make your script a lot more complex, with many preparatory steps before you can even start mapping! In a tidy dataset, you can start the mapping immediately.
 
-In some cases, some small cleaning steps could be made to clean `raw_data`. 
-Here, the column names of `raw_data` contain capital letters:
-
-```{r, echo=FALSE}
-colnames(raw_data)
-```
-
-It's easier to use lower case letters only and to discard all spaces in the column names. The package *janitor* provides some useful tools for this.
+In some cases, some small cleaning steps could be made to clean `raw_data`. Here, the column names of `raw_data` contain capital letters:
 
 ```{r}
-raw_data %<>%  clean_names()    
-```
-
-```{r, echo=FALSE}
 colnames(raw_data)
 ```
 
-# Mapping to Darwin Core Archive
+It's easier to use lower case letters only and to discard all spaces in the column names. The package `janitor` provides some useful tools for this:
 
-The mapping of checklist data to Darwin Core is a **stepwise process**:
+```{r}
+raw_data %<>% clean_names()    
+```
 
-1. **Pre-processing step**: Basic preparations before the mapping
-2. **Mapping**: sequential addition of the Darwin Core fields
-* Add static fields
-* Add unaltered fields
-* Add altered fields
-3. **Post-processing step**: 
+```{r, echo = FALSE}
+colnames(raw_data)
+```
 
-![Schematic overview of the mapping process](../docs/static/images/scheme_mapping_process.png)
-
-We always map the **taxon core** first, as this is the central file and contains the checklist metadata, followed by the extensions. The example discussed here, we focus on the mapping of the taxon core. 
-
-
-## Pre-processing:
-
-1. We use a **copy of** `raw_data` as the starting point for the mapping of the taxon core. This is because `raw_data` is the **starting point** for the mapping of both the taxon core and the extensions. It needs to be untouched each time we start the mapping process. 
-
-2. During the mapping, we will sequentially add new Darwin Core terms to `taxon`(see further). To make a clear distinction between the columns from `raw_data` and those from `taxon`, we add the prefix `raw_` to the column names of `raw_data` (as in some cases, some of the column names in `raw_data` will contain Darwin Core terms, such as `phylum` or `order`, which is confusing)
-We do this **BEFORE** we generate `taxon`
+During the mapping, we will sequentially add new Darwin Core terms (see further). To avoid name clashes between the original columns in `raw_data` and the added Darwin Core columns, we add the prefix `raw_` to the column names of `raw_data`:
 
 ```{r}
 # Add prefix `raw_` to the column names of `raw_data`.
 colnames(raw_data) <- paste0("raw_", colnames(raw_data))
 ```
 
-```{r, echo = F}
-head(raw_data)
+```{r, echo = FALSE}
+colnames(raw_data)
 ```
 
-```{r}
-# Generate `taxon` by making a copy of `raw_data`: 
-taxon <- raw_data
-```
+We're now all set to start mapping!
 
-3. After the mapping, we need to **discard the original columns from the raw data file** from `taxon` in order to retain the mapped Darwin Core terms only. The most elegant way to do this is by saving the column names of `raw_data` in a vector (`raw_colnames`), and by using this vector to remove `raw_colnames` from `taxon` (using `select()`) after the mapping. 
-
-```{r}
-# Save the column names as a vector (enables to select all raw_column names efficiently after the mapping)
-raw_colnames <- colnames(raw_data)
-```
-
-```{r, echo = F}
-raw_colnames
-```
 
 
 ## Mapping process:
