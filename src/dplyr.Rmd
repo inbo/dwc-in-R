@@ -1,0 +1,489 @@
+---
+title: "dplyr"
+author:
+- Damiano Oldoni
+- Peter Desmet
+- Stijn Van Hoey
+- Lien Reyserhove
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    theme: yeti
+    df_print: paged
+knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding = encoding, output_file = paste0("./docs/",sub(".Rmd", ".html", basename(input_file))))})
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+```
+
+This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
+
+First of all, we need to load some libraries which are part of the tidyr package:
+
+```{r library to read data, warning = FALSE, echo = TRUE}
+library(readr)
+```
+
+```{r libraries to manipulate data, warning = FALSE  echo = TRUE}
+library(dplyr)
+library(tidyr)
+library(magrittr)
+```
+
+# Read data
+First of all, we need to import data in R. The most user friendly way to do it is by using the interface provided by RStudio. In the Environment window, click on *Import Dataset* and select *From Text (readr)...*. A window will pop-up. Follow the next steps:
+1. click on *Browse* to selet the text file you want to import,
+2. select the right delimiter,
+3. check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name,
+4. change variable name in *code preview* if you prefer to save the data with a different name than filename,
+5. click on *Import*
+A dataframe is automatically generated and, very handy, the code to generate it too!
+We suggest to use this graphic interface at the beginning in order to be familiar with the most typical parameters (e.g. `sep`,  `col_types`, `col_names`, `row_names`). After a while you will find that writing the code is way faster than a long series of mouse clicks.
+
+# Exercises
+
+1. Read `survey_data_spreadsheet_tidy.csv`. Check whether the columns match the following types
+  1. `date`: `double`
+  2. `species`: `character`
+  3. `plot`: `integer`
+  4. `sex`: `character`
+  5. `weight_in_g`: `integer`
+  6. `device_remarks`: `character`
+
+2. save the data into `data`
+
+```{r read and save data}
+data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
+           escape_double = FALSE, 
+           trim_ws = TRUE)
+```
+
+```{r second way via read_csv and read_csv2}
+data <- read_csv2 ("../data/interim/survey_data_spreadsheet_tidy.csv")
+```
+
+
+# Explore data
+
+Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it:
+
+1. **`head(df)`** returns the first part of a data frame. It works with several other data types (vectors, tables, ...). Specifiy how many rows to display with parameter `n`: `haed(df, n = )`, default `n = 6`
+2. **`view(df)`** opens the entire dataframe in viewer. If dataframe is very big, then your computer can slow down sensibly and Rstudio can eventually crash. Be aware of it!
+3. **`class(df)`** if `df` is a dataframe then `"data.frame"` will show up
+4. **`str(df)`** displays the internal structure of the dataframe
+5. **`col_names(df)`** display column names
+6. **`nrow(df)`** returns the number of rows of the dataframe
+7. **`ncol(df)`** return the number of rows of the dataframe
+9. **`max(df)`** returns the maximum of all elements of a (numeric) dataframe
+10. **`min(df)`** returns the minimum of all elements of a (numeric) dataframe
+
+While applying `max()` or `min()` an error will occur if one or more `NA` are present. What you need is just adding `na.rm = TRUE` as parameter in the function call.
+
+# Exercise
+
+Test the functions introduced above to our dataframe `data`. In particular:
+
+1. Display column names
+```{r}
+colnames(data)
+```
+
+2. How many columns are there?
+```{r}
+ncol(data)
+```
+
+3. How many rows are there?
+```{r}
+nrow(data)
+```
+
+4. Display the first 10 records
+```{r}
+head(data, n = 10)
+```
+
+5. Display data in viewer
+```{r}
+View(data)
+```
+
+6. Display structure of data
+```{r}
+str(data)
+```
+
+7. What is the min weight?
+```{r}
+min(data$weight_in_g, na.rm = TRUE)
+```
+
+
+# Sort data
+
+It is normally useful to sort data. The package `dplyr` offers the function `arrange()` to do it. If no columns are specified, the dataframe is sorted by values of the first column (`arrange(df)`). Use `desc()` to sort a variable in descending order.
+
+# Exercise
+
+1. Sort by `date` in ascending order
+```{r sort data by date}
+arrange(data)
+data <- arrange(data)
+```
+
+2. Overwrite `data` with sorted output
+```{r sort and overwrite}
+arrange(data)
+data <- arrange(data)
+```
+
+# Select columns and rows
+
+You can select specific columns of a dataframe by `select()`. To select rows use `filter()`. Only columns/rows where conditions are true are selected. For example, selecting a column by its column name:  `select(df, column_name)`. To select everything except a specific column use the minus symbol before its name: `select(df, -column_name)`.
+
+# Exercise
+
+1. Display the column `weight_in_g`
+```{r select}
+select(data, weight_in_g)
+```
+
+2. Display only the records with `weight_in_g > 30`
+```{r filter}
+filter(data, weight_in_g > 30)
+```
+
+3. Select females with `weight_in_g > 30`
+```{r filter two conditions}
+filter(data, weight_in_g > 30, sex == "F")
+```
+
+4. Display only `weight_in_g` of females with `weight_in_g > 30`
+```{r filter and select}
+females_weight_above_30_all <- filter(data, weight_in_g > 30, sex == "F")
+select(females_weight_above_30_all, weight_in_g)
+```
+
+5. Save output of (4) as `females_weight_above_30`
+```{r save output}
+females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
+```
+
+6. Select everything from `data` except device_remarks
+```{r }
+select(data, -device_remark)
+```
+
+# Pipes
+
+As you probably noticed, we need to create new (temporary) variables everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, high memory space usage, and higher chance of typos.
+
+An alternative is to wrap (*nest*) functions one within each other, so that the output of a function would be considered the input of the other one. For example, if we have to apply `f1` to a dataframe `df` and `f2` to the output of `f1`, we write: 
+```r
+f2(f1(df, ...), ...)
+```
+
+This way of working with functions is typical of programming and is implemented in many other programming languages. The disadvantage of this approach is readibility: you have to read from right to left in order to understand what happens with our data!
+
+Can we avoid deciphering nested function calls, and making excessive use of temporary variables? The answer is yes, thanks to *pipe* operators. The most used one is the *forward pipe*: `%>%`, from the magrittr package. We can then rewrite the example above by using `%>%`:
+```r
+df %>% f1(...) %>% f2(...)
+```
+
+Easy, isn't?
+As Stefan Milton, author of magrittr, wrote in [this](https://www.r-statistics.com/2014/08/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/) blogpost:
+> The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.
+
+If you want to create a variable based on the output of a series of functions:
+```r
+df2 <- df %>% f1(...) %>% f2(...)
+```
+
+If you want to overwrite the input dataframe, you can use the *compound assignment operator*, `%<>%` which is the composition of forward pipe `%>%`, and asignment symbol `<-`:
+```r
+df %<>% f1(...) %>% f2(...)
+```
+
+We apply all steps on the right of `%<>%` to `df` and overwrite it with the final ouput.
+
+# Exercise
+
+1. Display the column `weight_in_g` with values > 30 using pipes
+```{r pipes1}
+data %>% select(weight_in_g) %>% filter(weight_in_g > 30)
+```
+
+2. Select females with `weight_in_g > 30` using pipes
+```{r pipes2}
+data %>% filter(sex == "F", weight_in_g > 30)
+```
+
+3. Display only weight_in_g of females with weight in g > 30 
+```{r pipes3}
+data %>% filter(sex == "F", weight_in_g > 30) %>%
+  select(weight_in_g)
+```
+
+4.  Save output of (3) as a variable: `females_weight_above_30`
+```{r pipes4}
+females_weight_above_30 <- data %>% filter(sex == "F", weight_in_g > 30) %>% select(weight_in_g)
+```
+
+# distinct
+
+The function `distinct()` retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows.
+
+# Exercises
+
+1. Show the unique sex values
+```{r unique sex}
+data %>% select(sex) %>% unique()
+```
+
+2. Show the unique species values
+```{r unique species}
+data %>% select(species) %>% unique()
+```
+
+# group_by and summarise
+
+Some data analysis tasks aplly the *split-apply-combine paradigm*: *split* the data into groups, *apply* some analysis to each group, and then *combine* the results together. For example, you have a dataframe `df` with the prices of the items bought during your last shopping day. You labelled them by `category` (food, clothes, toys, other), so that `df` looks like this:
+
+| item     | category | price |
+
+| sweather | clothes  | 74    |
+| apples   | fruit    |  3    |
+| ball     | toys     | 23    |
+| trousers | clothes  | 92    |
+| t-shirt  | clothes  | 25    |
+| peers    | fruit    |  5    |
+
+You would like to calculate the sum for each category of items. We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarise()`:
+
+```r
+df %>% group_by(category) %>% summarise(sum = sum(price))
+```
+
+`group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
+
+```r
+class(df%>% group_by(category))
+```
+
+which results in `"grouped_df" "tbl_df" "tbl" "data.frame"`. 
+
+If you want to count the number of rows with each unique value of a column variable, you can use the function `count` instead of `summarise`:
+
+```r
+df %>% group_by(col_name) %>% count()
+```
+
+or even more compact:
+```r
+df %>% count(col_name)
+```
+
+# Exercises
+
+1. Count records per sex
+```{r}
+data %>% count(sex)
+```
+
+2. What is the mean weight?
+```{r}
+data %>% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))
+```
+
+3. Show mean weight per sex
+```{r group_by & summarise()}
+data %>% filter(!is.na(weight_in_g)) %>% 
+  group_by(sex) %>% summarise(sum = sum(weight_in_g))
+```
+
+4. Show mean weight per sex and species
+```{r summarise mean}
+data %>% filter(!is.na(weight_in_g)) %>% 
+  group_by(sex, species) %>% 
+  summarise(mean_weight = mean(weight_in_g))
+```
+
+5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`
+```{r multiple summarise}
+weight_per_species_sex <- data %>% filter(!is.na(weight_in_g)) %>% 
+  group_by(sex, species) %>% 
+  summarise(min_weight = min(weight_in_g),
+            max_weight = max(weight_in_g),
+            mean_weight = mean(weight_in_g))
+weight_per_species_sex
+```
+
+#  Reshpaing: spread and gather
+
+This two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
+
+![spread](../docs/static/images/spread_data_R.png)
+![gather](../docs/static/images/gather_data_R.png)
+Notice that  `spread()` and `gather()` aren't dplyr functions but come from the tidyr library.
+
+# Exercises
+
+1. Spread `weight_per_species_sex` to key on  `sex` and values from `mean_weight` and save output as `weight_per_species_sex_spread`
+
+```{r}
+weight_per_species_sex_spread <- weight_per_species_sex %>% 
+  spread(key = sex, value = mean_weight)
+head(weight_per_species_sex_spread, n = 10)
+```
+
+2. Gather back the data and save output as `weight_per_species_sex_gather`. Is `weight_per_species_sex_gather` equal to `weight_per_species_sex`?
+
+```{r}
+weight_per_species_sex_gather <- weight_per_species_sex_spread %>%
+  gather(sex, mean_weight, "F", "M", na.rm = TRUE, convert = TRUE)
+head(weight_per_species_sex_gather, n = 10)
+```
+
+# rename and mutate
+
+Sometimes you need to rename one or more columns. You can do it using function `rename()`:
+```r
+df %>% rename(new_colname = old_colname)
+```
+
+Another typical data analysis task is to create new columns based on the values of existing ones, like converting units or calculating the ratio of values in two columns. We can use the function `mutate()`:
+```r
+df %<>% mutate(new_column = ...)
+```
+
+or you can create a new variable via assignment symbol `->` if you prefer to not modify the original dataframe:
+```r
+new_df <- df %>% mutate(new_column = )
+```
+
+You can also use `mutate()` to change the values in a column without creating a new one:
+```r
+df %<>% mutate(column = ...)
+```
+
+# Exercises
+
+1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`
+```{r rename weight}
+data %<>% rename(weight =  weight_in_g)
+colnames(data)
+```
+
+2. Replace `weight` values with values in kg
+```{r weight in kg}
+data %>% mutate(weight = weight/ 1000)
+```
+
+3. Add column `country` with value `US`
+```{r add country}
+data %>% mutate(country = "US")
+```
+
+4. Add column `parsed_date` using function `as.Date(column)`
+```{r parse date}
+data %>% mutate(parse_date = as.Date(date))
+```
+
+# Recode your data: recode and case_when
+
+Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example from [dplyr documentation](http://dplyr.tidyverse.org/reference/recode.html#examples):
+```r
+x <- sample(c("a", "b", "c"), 10, replace = TRUE)
+recode(x, a = "Apple")
+#>  [1] "b"     "b"     "Apple" "c"     "c"     "Apple" "c"     "c"     "Apple"
+#> [10] "c"
+```
+
+You can specify a `default` value: it will be given to all values not otherwise matched. And if you want replace missing values (NA), then you can specify a value to the parameter `missing`.
+
+A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. A simple example from [dplyr documentation page](http://dplyr.tidyverse.org/reference/case_when.html#examples):
+```r
+x <- 1:50
+case_when(
+  x %% 35 == 0 ~ "fizz buzz",
+  x %% 5 == 0 ~ "fizz",
+  x %% 7 == 0 ~ "buzz",
+  TRUE ~ as.character(x)
+)
+```
+
+`case_when` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing variables. Another example from the same documentation page:
+```r
+starwars %>%
+  select(name:mass, gender, species) %>%
+  mutate(
+    type = case_when(
+      height > 200 | mass > 200 ~ "large",
+      species == "Droid"        ~ "robot",
+      TRUE                      ~  "other"
+    )
+  )
+```
+
+Based on mass, gender and species, a new variable, `type`, is created relying on the conditions  listed in `case_when()`.
+
+# Exercise
+1. Add column `scientific_name` with the full scientific name of each species based on the table below:
+
+| species   | scientific name                          |
+| --------- | ---------------------------------------- |
+| DM        | Dimarella riparia (Navas, 1918)          |
+| DO        | Dondice occidentalis (Engel, 1925)       |
+| DS        | Distonemurus desertus Krivokhatsky, 1992 |
+| OL        | Olios scepticus Chamberlin, 1924         |
+| PE        | Petrochelidon nigricans (Vieillot, 1817) |
+| PF        | Piffliella eduardi Hammer, 1979          |
+| OT        | Ottoicus dissitus Drake, 1960            |
+| OX        | Oxybelus pallidus Arnold, 1927           |
+| NA        | Not Available                            |
+
+
+```{r}
+data %>% mutate(scientific_name = case_when(
+  species == "DM" ~ "Dimarella riparia (Navás, 1918)",
+  species == "DO" ~ "Dondice occidentalis (Engel, 1925)",
+  species == "DS" ~ "Distonemurus desertus Krivokhatsky, 1992",
+  species == "OL" ~ "Olios scepticus Chamberlin, 1924",
+  species == "PE" ~ "Petrochelidon nigricans (Vieillot, 1817)",
+  species == "PF" ~ "Piffliella eduardi Hammer, 1979",
+  species == "OT" ~ "Ottoicus dissitus Drake, 1960",
+  species == "OX" ~ "Oxybelus pallidus Arnold, 1927",
+  is.na(species) ~ "Not Available"
+  ))
+```
+
+# Export your data
+
+After hours of data analysis maybe you would like to save the output, isn't it?
+ You can save a dataframe object by means of function `write_table()`:
+ ```r
+ write.table(df, file = "./save/it/here/df.csv", ...)
+ ```
+
+You can use plenty of optional parameters. The most used are:
+ -`sep`, to specify which character should be used to separate the values, e.g. a comma `","` for comma separated values or a tab `"\t"` for tab-delimited values.
+ - `row.names`, a logical, TRUE or FALSE, whether you want or not row numbers or row names (if specified in your dataframe) in the file.
+ - `col.names`, a logical, TRUE or FALSE, indicating the presence of column names in the first line of the file.
+ - `append`, a logical, TRUE or FALSE. Default value: FALSE. If the specified file already exists, it would be overwritten, while `append = TRUE` will append the dataframe at the end of the file.
+ 
+# Exercise
+
+1. Export `females_weight_above_30` to a tab delimited csv file:
+`../data/processed/females_weight_above_30.csv`. Add column names but no row names/indexes.
+```{r}
+write.table(females_weight_above_30, 
+            file = "../data/processed/females_weight_above_30.csv",
+            sep = "\t",
+            col.names = TRUE,
+            row.names = FALSE)
+```
