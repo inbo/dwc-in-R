@@ -588,6 +588,7 @@ data_scientificname <- data %>%
 # Export your data
 
 When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of following functions:
+
 1. `write_tsv()` to write tab delimited files
 2. `write_csv()` to write comma separated files
 
