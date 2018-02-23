@@ -1,197 +1,257 @@
 <!DOCTYPE html>
-<html >
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Standardizing data to Darwin Core using R</title>
-  <meta name="description" content="Standardizing data to Darwin Core using R">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
-
-  <meta property="og:title" content="Standardizing data to Darwin Core using R" />
-  <meta property="og:type" content="book" />
-  
-  
-  
-  <meta name="github-repo" content="inbo/dwc-in-R" />
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Standardizing data to Darwin Core using R" />
-  
-  
-  
-
-<meta name="author" content="Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Dimitri Brosens, Tanja Milotic, Peter Desmet">
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
 
 
-<meta name="date" content="2018-02-23">
+<meta name="author" content="Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Tanja Milotic, Dimitri Brosens, Peter Desmet" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  
-  
+<meta name="date" content="2018-02-23" />
 
-<link rel="next" href="tidy-data-exercise.html">
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<title>Welcome</title>
 
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
 
-
-
-
-
-<link href="libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
-<script src="libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
 </style>
+
+<link rel="stylesheet" href="static/css/inbo.css" type="text/css" />
 
 </head>
 
 <body>
 
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
 
 
-  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
 
-    <div class="book-summary">
-      <nav role="navigation">
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+</style>
 
-<ul class="summary">
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="tidy-data-exercise.html"><a href="tidy-data-exercise.html"><i class="fa fa-check"></i><b>2</b> Tidy data exercise</a></li>
-<li class="chapter" data-level="3" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html"><i class="fa fa-check"></i><b>3</b> Creating Darwin Core with R</a><ul>
-<li class="chapter" data-level="3.1" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#introduction-1"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
-<li class="chapter" data-level="3.2" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#setup"><i class="fa fa-check"></i><b>3.2</b> Setup</a></li>
-<li class="chapter" data-level="3.3" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#import-and-clean-data"><i class="fa fa-check"></i><b>3.3</b> Import and clean data</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#import-data"><i class="fa fa-check"></i><b>3.3.1</b> Import data</a></li>
-<li class="chapter" data-level="3.3.2" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#inspect-data"><i class="fa fa-check"></i><b>3.3.2</b> Inspect data</a></li>
-<li class="chapter" data-level="3.3.3" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#clean-data"><i class="fa fa-check"></i><b>3.3.3</b> Clean data</a></li>
-</ul></li>
-<li class="chapter" data-level="3.4" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#map-to-darwin-core-archive"><i class="fa fa-check"></i><b>3.4</b> Map to Darwin Core Archive</a><ul>
-<li class="chapter" data-level="3.4.1" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#pre-processing"><i class="fa fa-check"></i><b>3.4.1</b> Pre-processing</a></li>
-<li class="chapter" data-level="3.4.2" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#mapping"><i class="fa fa-check"></i><b>3.4.2</b> Mapping</a></li>
-<li class="chapter" data-level="3.4.3" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#static-values"><i class="fa fa-check"></i><b>3.4.3</b> Static values</a></li>
-<li class="chapter" data-level="3.4.4" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#unaltered-values"><i class="fa fa-check"></i><b>3.4.4</b> Unaltered values</a></li>
-<li class="chapter" data-level="3.4.5" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#altered-values"><i class="fa fa-check"></i><b>3.4.5</b> Altered values</a></li>
-<li class="chapter" data-level="3.4.6" data-path="creating-darwin-core-with-r.html"><a href="creating-darwin-core-with-r.html#post-processing"><i class="fa fa-check"></i><b>3.4.6</b> Post-processing</a></li>
-</ul></li>
-</ul></li>
-</ul>
-
-      </nav>
-    </div>
-
-    <div class="book-body">
-      <div class="body-inner">
-        <div class="book-header" role="navigation">
-          <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Standardizing data to Darwin Core using R</a>
-          </h1>
-        </div>
-
-        <div class="page-wrapper" tabindex="-1" role="main">
-          <div class="page-inner">
-
-            <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Standardizing data to Darwin Core using R</h1>
-<h4 class="author"><em>Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Dimitri Brosens, Tanja Milotic, Peter Desmet</em></h4>
-<h4 class="date"><em>2018-02-23</em></h4>
-</div>
-<div id="introduction" class="section level1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
-<p>This workshop material was developed for the <a href="http://odnature.naturalsciences.be/safred/workshops">2018 Biodiversity Data Management</a> at the Safeguarding Biodiversity Data for the Future conference. It covers:</p>
-<ul>
-<li>Good enough practices in data management</li>
-<li>Tidy data exercise</li>
-<li>Introduction to Darwin Core</li>
-<li>Introduction to dplyr</li>
-<li>Transforming data to Darwin Core with dplyr</li>
-</ul>
-</div>
-            </section>
-
-          </div>
-        </div>
-      </div>
-
-<a href="tidy-data-exercise.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
-    </div>
-  </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
 <script>
-gitbook.require(["gitbook"], function(gitbook) {
-gitbook.start({
-"sharing": false,
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": "https://github.com/inbo/dwc-in-R/blob/master/src/index.Rmd",
-"text": "Edit"
-},
-"download": null,
-"toc": {
-"collapse": "subsection",
-"scroll_highlight": true
-},
-"search": false
-});
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
 });
 </script>
 
-</body>
 
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Standardizing to Darwin Core with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="tidy.html">Tidy data</a>
+</li>
+<li>
+  <a href="dplyr.html">dplyr</a>
+</li>
+<li>
+  <a href="dwc-mapping.html">Darwin Core mapping</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/inbo/dwc-in-R">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Welcome</h1>
+<h4 class="author"><em>Damiano Oldoni, Lien Reyserhove, Stijn Van Hoey, Tanja Milotic, Dimitri Brosens, Peter Desmet</em></h4>
+<h4 class="date"><em>2018-02-23</em></h4>
+
+</div>
+
+
+<p>Hi! This workshop material was developed for the <a href="http://odnature.naturalsciences.be/safred/workshops">Biodiversity Data Management workshop</a> at the 2018 <em>Safeguarding Biodiversity Data for the Future</em> conference. Its main focus is to teach how to standardize biodiversity data to Darwin Core using R, but in order to do that, we also introduce a number of practices and tools:</p>
+<ul>
+<li>Good enough practices in data management</li>
+<li>Tidy data</li>
+<li>Introduction to Darwin Core</li>
+<li>Introduction to dplyr</li>
+<li>Standardizing data to Darwin Core with R</li>
+</ul>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
 </html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Lien Reyserhove" />
+<meta name="author" content="Peter Desmet" />
+
+<meta name="date" content="2018-02-23" />
+
+<title>Darwin Core mapping</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="static/css/inbo.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Standardizing to Darwin Core with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="tidy.html">Tidy data</a>
+</li>
+<li>
+  <a href="dplyr.html">dplyr</a>
+</li>
+<li>
+  <a href="dwc-mapping.html">Darwin Core mapping</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/inbo/dwc-in-R">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Darwin Core mapping</h1>
+<h4 class="author"><em>Lien Reyserhove</em></h4>
+<h4 class="author"><em>Peter Desmet</em></h4>
+<h4 class="date"><em>2018-02-23</em></h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>This tutorial describes how to map checklist data to Darwin Core in a <strong>stepwise manner</strong>. It is good practice to use this approach each time you map your data.</p>
+<ol style="list-style-type: decimal">
+<li>Setup
+<ul>
+<li>Load libraries</li>
+<li>Define locale</li>
+</ul></li>
+<li>Import and clean data
+<ul>
+<li>Import data</li>
+<li>Inspect data</li>
+<li>Clean data</li>
+<li>Further processing</li>
+</ul></li>
+<li>Map to Darwin Core Archive
+<ul>
+<li>Pre-processing</li>
+<li>Mapping
+<ul>
+<li>General concept</li>
+<li>Static Darwin Core fields</li>
+<li>Unaltered Darwin Core fields</li>
+<li>Altered Darwin Core fields</li>
+</ul></li>
+<li>Post-processing</li>
+</ul></li>
+</ol>
+<p>We’ll walk through the tutorial step-by-step by using the <a href="https://doi.org/10.15468/yxcq07">Inventory of alien macroinvertebrates in Flanders, Belgium</a> as an example. Afterwards, you can try it yourself by mapping the <a href="https://doi.org/10.15468/xvuzfh">Checklist of non-native freshwater fishes in Flanders, Belgium</a>.</p>
+</div>
+<div id="setup" class="section level1">
+<h1><span class="header-section-number">2</span> Setup</h1>
+<p>We load the libraries necessary to <em>import</em>, <em>clean</em> and <em>map</em> the data:</p>
+<pre class="r"><code>library(tidyverse) # For data mapping
+library(magrittr)  # For %&lt;&gt;% pipes
+library(readxl)    # For reading excel files
+library(janitor)   # For basic cleaning of the data</code></pre>
+<p>Before we load the data, we define the <code>locale</code>:</p>
+<pre class="r"><code>Sys.setlocale(&quot;LC_CTYPE&quot;, &quot;en_US.UTF-8&quot;)</code></pre>
+<pre><code>## [1] &quot;en_US.UTF-8&quot;</code></pre>
+</div>
+<div id="import-and-clean-data" class="section level1">
+<h1><span class="header-section-number">3</span> Import and clean data</h1>
+<div id="import-data" class="section level2">
+<h2><span class="header-section-number">3.1</span> Import data</h2>
+<p>Our raw datasat is an Excel file (<code>AI_2016_Boets_etal_Supplement.xls</code>). The import specifications for Excel files are more limited than those for delimited files (<code>csv</code>, <code>tsv</code>, <code>txt</code>). However, we think it’s useful to use Excel as a format in this exercise as this is often used to manage datasets.</p>
+<ol style="list-style-type: decimal">
+<li>Go to <code>Environment</code> panel: <code>Import dataset &gt; From Excel...</code></li>
+<li>For <code>File/URL</code>, click <code>Browse</code> and select <code>AI_2016_Boets_etal_Supplement.xls</code></li>
+<li>Specify the <code>Import Options</code>:
+<ul>
+<li><code>Name</code>: <code>raw_data</code></li>
+<li><code>Sheet</code>: <code>checklist</code></li>
+<li><code>NA</code>: <code>NA</code> or leave empty</li>
+<li><code>First Row as Names</code>: check</li>
+</ul></li>
+<li>Click on <code>Data preview</code> to verify if everything looks OK</li>
+<li>Click <code>Import</code> to generate the dataframe</li>
+</ol>
+</div>
+<div id="inspect-data" class="section level2">
+<h2><span class="header-section-number">3.2</span> Inspect data</h2>
+<p>The simplest way for a quick overview of the raw data is by using the functions <code>str()</code> and <code>head()</code>:</p>
+<pre class="r"><code>str(raw_data) </code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    73 obs. of  12 variables:
+##  $ Taxon ID                    : chr  &quot;SAGAEFWEV&quot; &quot;SFGSTHSIM&quot; &quot;XIGXULXGI&quot; &quot;ZVJOBJJJX&quot; ...
+##  $ Phylum                      : chr  &quot;Crustacea&quot; &quot;Crustacea&quot; &quot;Crustacea&quot; &quot;Crustacea&quot; ...
+##  $ Order                       : chr  &quot;Sessilia&quot; &quot;Sessilia&quot; &quot;Sessilia&quot; &quot;Decapoda&quot; ...
+##  $ Family                      : chr  &quot;Balanidae&quot; &quot;Balanidae&quot; &quot;Balanidae&quot; &quot;Astacidae&quot; ...
+##  $ Species                     : chr  &quot;Amphibalanus amphitrite&quot; &quot;Amphibalanus improvisus&quot; &quot;Amphibalanus reticulatus&quot; &quot;Astacus leptodactylus&quot; ...
+##  $ Origin                      : chr  &quot;South-Europe&quot; &quot;West-Atlantic&quot; &quot;Tropical and warm seas&quot; &quot;East-Europe&quot; ...
+##  $ First occurrence in Flanders: chr  &quot;1952&quot; &quot;before 1700&quot; &quot;1997&quot; &quot;1986&quot; ...
+##  $ Pathway of introduction     : chr  &quot;shipping&quot; &quot;shipping&quot; &quot;shipping&quot; &quot;aquaculture&quot; ...
+##  $ Pathway mapping             : chr  &quot;Ship/boat hull fouling&quot; &quot;Ship/boat hull fouling | Ship/boat ballast water | Contaminant on animals (except parasites, species transporte&quot;| __truncated__ &quot;Ship/boat hull fouling&quot; &quot;Aquaculture | Pet/aquarium/terrarium species (including live food for such species )&quot; ...
+##  $ Salinity zone               : chr  &quot;M&quot; &quot;M&quot; &quot;M&quot; &quot;F&quot; ...
+##  $ Reference                   : chr  &quot;Kerckhof and Catrijsse 2001&quot; &quot;Kerckhof and Catrijsse 2001&quot; &quot;Kerckhof and Catrijsse 2001&quot; &quot;Gerard 1986&quot; ...
+##  $ Pathway mapping remarks     : chr  NA &quot;considered transport with oyster lots as &#39;Contaminant on animals&#39;&quot; NA NA ...</code></pre>
+<pre class="r"><code>head(raw_data) # Displays the first 6 lines of the dataframe</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Taxon ID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Phylum"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Order"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Family"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Species"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Origin"],"name":[6],"type":["chr"],"align":["left"]},{"label":["First occurrence in Flanders"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Pathway of introduction"],"name":[8],"type":["chr"],"align":["left"]},{"label":["Pathway mapping"],"name":[9],"type":["chr"],"align":["left"]},{"label":["Salinity zone"],"name":[10],"type":["chr"],"align":["left"]},{"label":["Reference"],"name":[11],"type":["chr"],"align":["left"]},{"label":["Pathway mapping remarks"],"name":[12],"type":["chr"],"align":["left"]}],"data":[{"1":"SAGAEFWEV","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus amphitrite","6":"South-Europe","7":"1952","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA"},{"1":"SFGSTHSIM","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus improvisus","6":"West-Atlantic","7":"before 1700","8":"shipping","9":"Ship/boat hull fouling | Ship/boat ballast water | Contaminant on animals (except parasites, species transported by host/vector)","10":"M","11":"Kerckhof and Catrijsse 2001","12":"considered transport with oyster lots as 'Contaminant on animals'"},{"1":"XIGXULXGI","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus reticulatus","6":"Tropical and warm seas","7":"1997","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA"},{"1":"ZVJOBJJJX","2":"Crustacea","3":"Decapoda","4":"Astacidae","5":"Astacus leptodactylus","6":"East-Europe","7":"1986","8":"aquaculture","9":"Aquaculture | Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Gerard 1986","12":"NA"},{"1":"LBWPWBADN","2":"Crustacea","3":"Decapoda","4":"Atyidae","5":"Atyaephyra desmaresti","6":"South-Europe","7":"1895","8":"aquarium trade","9":"Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Wouters 2002","12":"NA"},{"1":"VSXTPIXXJ","2":"Crustacea","3":"Sessilia","4":"Austrobalanidae","5":"Austrominius modestus","6":"Australia, Asia","7":"1950","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Leloup and Lefevre 1952","12":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="clean-data" class="section level2">
+<h2><span class="header-section-number">3.3</span> Clean data</h2>
+<p>We assume here that your dataset is tidy. If this is not the case, we refer to the [Tidy data exercise]. Unfortunately, starting with untidy data will make your script a lot more complex, with many preparatory steps before you can even start mapping! In a tidy dataset, you can start the mapping immediately.</p>
+<p>In some cases, some small cleaning steps could be made to clean <code>raw_data</code>. Here, the column names of <code>raw_data</code> contain capital letters:</p>
+<pre class="r"><code>colnames(raw_data)</code></pre>
+<pre><code>##  [1] &quot;Taxon ID&quot;                     &quot;Phylum&quot;                      
+##  [3] &quot;Order&quot;                        &quot;Family&quot;                      
+##  [5] &quot;Species&quot;                      &quot;Origin&quot;                      
+##  [7] &quot;First occurrence in Flanders&quot; &quot;Pathway of introduction&quot;     
+##  [9] &quot;Pathway mapping&quot;              &quot;Salinity zone&quot;               
+## [11] &quot;Reference&quot;                    &quot;Pathway mapping remarks&quot;</code></pre>
+<p>It’s easier to use lower case letters only and to discard all spaces in the column names. The package <code>janitor</code> provides some useful tools for this:</p>
+<pre class="r"><code>raw_data %&lt;&gt;% clean_names()    </code></pre>
+<pre><code>##  [1] &quot;taxon_id&quot;                     &quot;phylum&quot;                      
+##  [3] &quot;order&quot;                        &quot;family&quot;                      
+##  [5] &quot;species&quot;                      &quot;origin&quot;                      
+##  [7] &quot;first_occurrence_in_flanders&quot; &quot;pathway_of_introduction&quot;     
+##  [9] &quot;pathway_mapping&quot;              &quot;salinity_zone&quot;               
+## [11] &quot;reference&quot;                    &quot;pathway_mapping_remarks&quot;</code></pre>
+<p>During the mapping, we will sequentially add new Darwin Core terms (see further). To avoid name clashes between the original columns in <code>raw_data</code> and the added Darwin Core columns, we add the prefix <code>raw_</code> to the column names of <code>raw_data</code>:</p>
+<pre class="r"><code># Add prefix `raw_` to the column names of `raw_data`.
+colnames(raw_data) &lt;- paste0(&quot;raw_&quot;, colnames(raw_data))</code></pre>
+<pre><code>##  [1] &quot;raw_taxon_id&quot;                     &quot;raw_phylum&quot;                      
+##  [3] &quot;raw_order&quot;                        &quot;raw_family&quot;                      
+##  [5] &quot;raw_species&quot;                      &quot;raw_origin&quot;                      
+##  [7] &quot;raw_first_occurrence_in_flanders&quot; &quot;raw_pathway_of_introduction&quot;     
+##  [9] &quot;raw_pathway_mapping&quot;              &quot;raw_salinity_zone&quot;               
+## [11] &quot;raw_reference&quot;                    &quot;raw_pathway_mapping_remarks&quot;</code></pre>
+<p>We’re now all set to start mapping!</p>
+</div>
+</div>
+<div id="map-to-darwin-core-archive" class="section level1">
+<h1><span class="header-section-number">4</span> Map to Darwin Core Archive</h1>
+<p>Even though <code>raw_data</code> contains all necessary information in a single data frame, a Darwin Core Archive might consist of multiple files, e.g. a core and extensions. We recommend to create the core file first and then the extensions. For each file, there are 3 steps:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Pre-processing step</strong>: basic preparations before the mapping</li>
+<li><strong>Mapping</strong>: sequential addition of the Darwin Core fields based on the raw values</li>
+<li><strong>Post-processing step</strong>: removing the raw values and saving the file</li>
+</ol>
+<div class="figure">
+<img src="static/images/scheme_mapping_process.png" alt="Schematic overview of the mapping process" />
+<p class="caption"><em>Schematic overview of the mapping process</em></p>
+</div>
+<p>This is repeated for each core/extension file. Below, we’ll use the <strong>taxon core</strong> as an example.</p>
+<div id="pre-processing" class="section level2">
+<h2><span class="header-section-number">4.1</span> Pre-processing</h2>
+<p>We use a <strong>copy</strong> of <code>raw_data</code> as the starting point for the mapping of the taxon core. This is because <code>raw_data</code> is the <strong>starting point</strong> for the mapping of both the taxon core and the extensions. It needs to be untouched each time we start the mapping process.</p>
+<pre class="r"><code>taxon &lt;- raw_data # Generate taxon by making a copy of raw_data</code></pre>
+<p>Sometimes there are further pre-processing steps needed. E.g. in a vernacular name extension each name is a <em>row</em>, while in the original data the names could be <em>columns</em> or <em>delimited values within a column</em>. That kind of data requires <code>separate()</code> en <code>gather()</code> steps first. Here however, each record is taxon and no further pre-processing steps are required.</p>
+</div>
+<div id="mapping" class="section level2">
+<h2><span class="header-section-number">4.2</span> Mapping</h2>
+<p>The mapping process is <strong>sequential</strong>: we add the Darwin Core terms to <code>taxon</code> step by step. The Darwin Core terms for each core/extension file can be found on the <a href="http://rs.gbif.org/">GBIF Resources page</a>:</p>
+<p><a href="http://rs.gbif.org"><img src="static/images/darwin_core_taxon.png" alt="rs.gbif.org" /></a></p>
+<p>It is good practice to inspect the Darwin Core terms on this webpage one by one to see whether a particular term can be used in your checklist. We respect the order of the terms as they listed on the GBIF resource page.</p>
+<p>We distinguish <strong>three types</strong> of Darwin Core terms mappings (static values, unaltered values and altered values) and for each one we will use <code>mutate()</code> and <code>%&lt;&gt;%</code> (double pipe).</p>
+</div>
+<div id="static-values" class="section level2">
+<h2><span class="header-section-number">4.3</span> Static values</h2>
+<p>Static values are used for Darwin Core terms that need the same value for all records. Most often, they are absent in <code>raw_data</code>. This mostly concerns <strong>metadata fields</strong> in the taxon core file:</p>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(language = &quot;en&quot;)</code></pre>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(license = &quot;http://creativecommons.org/publicdomain/zero/1.0/&quot;)</code></pre>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(rightsHolder = &quot;Ghent University Aquatic Ecology&quot;)</code></pre>
+<pre class="r"><code>taxon  %&lt;&gt;% mutate(datasetID = &quot;https://doi.org/10.15468/yxcq07&quot;)</code></pre>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(datasetName = &quot;Inventory of alien macroinvertebrates in Flanders, Belgium&quot;)</code></pre>
+<p>Other, non-metadata fields:</p>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(kingdom = &quot;Animalia&quot;)</code></pre>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(nomenclaturalCode = &quot;ICZN&quot;)</code></pre>
+<p>All these fields are added as extra columns to the data frame, in the same order as they were added:</p>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_taxon_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_phylum"],"name":[2],"type":["chr"],"align":["left"]},{"label":["raw_order"],"name":[3],"type":["chr"],"align":["left"]},{"label":["raw_family"],"name":[4],"type":["chr"],"align":["left"]},{"label":["raw_species"],"name":[5],"type":["chr"],"align":["left"]},{"label":["raw_origin"],"name":[6],"type":["chr"],"align":["left"]},{"label":["raw_first_occurrence_in_flanders"],"name":[7],"type":["chr"],"align":["left"]},{"label":["raw_pathway_of_introduction"],"name":[8],"type":["chr"],"align":["left"]},{"label":["raw_pathway_mapping"],"name":[9],"type":["chr"],"align":["left"]},{"label":["raw_salinity_zone"],"name":[10],"type":["chr"],"align":["left"]},{"label":["raw_reference"],"name":[11],"type":["chr"],"align":["left"]},{"label":["raw_pathway_mapping_remarks"],"name":[12],"type":["chr"],"align":["left"]},{"label":["language"],"name":[13],"type":["chr"],"align":["left"]},{"label":["license"],"name":[14],"type":["chr"],"align":["left"]},{"label":["rightsHolder"],"name":[15],"type":["chr"],"align":["left"]},{"label":["datasetID"],"name":[16],"type":["chr"],"align":["left"]},{"label":["datasetName"],"name":[17],"type":["chr"],"align":["left"]},{"label":["kingdom"],"name":[18],"type":["chr"],"align":["left"]},{"label":["nomenclaturalCode"],"name":[19],"type":["chr"],"align":["left"]}],"data":[{"1":"SAGAEFWEV","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus amphitrite","6":"South-Europe","7":"1952","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"SFGSTHSIM","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus improvisus","6":"West-Atlantic","7":"before 1700","8":"shipping","9":"Ship/boat hull fouling | Ship/boat ballast water | Contaminant on animals (except parasites, species transported by host/vector)","10":"M","11":"Kerckhof and Catrijsse 2001","12":"considered transport with oyster lots as 'Contaminant on animals'","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"XIGXULXGI","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus reticulatus","6":"Tropical and warm seas","7":"1997","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZVJOBJJJX","2":"Crustacea","3":"Decapoda","4":"Astacidae","5":"Astacus leptodactylus","6":"East-Europe","7":"1986","8":"aquaculture","9":"Aquaculture | Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Gerard 1986","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LBWPWBADN","2":"Crustacea","3":"Decapoda","4":"Atyidae","5":"Atyaephyra desmaresti","6":"South-Europe","7":"1895","8":"aquarium trade","9":"Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"VSXTPIXXJ","2":"Crustacea","3":"Sessilia","4":"Austrobalanidae","5":"Austrominius modestus","6":"Australia, Asia","7":"1950","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Leloup and Lefevre 1952","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="unaltered-values" class="section level2">
+<h2><span class="header-section-number">4.4</span> Unaltered values</h2>
+<p>Unaltered values are used for Darwin Core terms for which the content is an exact copy of the corresponding field in <code>raw_data</code>. This contrasts with <strong>altered fields</strong>, in which use a certain field in <code>raw_data</code> is the <strong>basis</strong> for further processing.</p>
+<p>Before deciding whether or not some basic processing is required, it is useful to screen the variables in <code>raw_data</code> for their specific content. <code>distinct()</code> is a useful function to show the unique values for a field:</p>
+<pre class="r"><code>taxon %&gt;% distinct(raw_phylum)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_phylum"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Crustacea"},{"1":"Annelida"},{"1":"Mollusca"},{"1":"Platyhelminthes"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="alert alert-warning">
+<p><strong>Note</strong></p>
+<p>We use <code>%&gt;%</code> instead of <code>%&lt;&gt;%</code>, as we don’t want to add a new column to <code>taxon</code>.</p>
+</div>
+<p>Some unaltered fields:</p>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(taxonID = raw_taxon_id)</code></pre>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(scientificName = raw_species)</code></pre>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(family = raw_family)</code></pre>
+<p>View those 3 fields:</p>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_taxon_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_phylum"],"name":[2],"type":["chr"],"align":["left"]},{"label":["raw_order"],"name":[3],"type":["chr"],"align":["left"]},{"label":["raw_family"],"name":[4],"type":["chr"],"align":["left"]},{"label":["raw_species"],"name":[5],"type":["chr"],"align":["left"]},{"label":["raw_origin"],"name":[6],"type":["chr"],"align":["left"]},{"label":["raw_first_occurrence_in_flanders"],"name":[7],"type":["chr"],"align":["left"]},{"label":["raw_pathway_of_introduction"],"name":[8],"type":["chr"],"align":["left"]},{"label":["raw_pathway_mapping"],"name":[9],"type":["chr"],"align":["left"]},{"label":["raw_salinity_zone"],"name":[10],"type":["chr"],"align":["left"]},{"label":["raw_reference"],"name":[11],"type":["chr"],"align":["left"]},{"label":["raw_pathway_mapping_remarks"],"name":[12],"type":["chr"],"align":["left"]},{"label":["language"],"name":[13],"type":["chr"],"align":["left"]},{"label":["license"],"name":[14],"type":["chr"],"align":["left"]},{"label":["rightsHolder"],"name":[15],"type":["chr"],"align":["left"]},{"label":["datasetID"],"name":[16],"type":["chr"],"align":["left"]},{"label":["datasetName"],"name":[17],"type":["chr"],"align":["left"]},{"label":["kingdom"],"name":[18],"type":["chr"],"align":["left"]},{"label":["nomenclaturalCode"],"name":[19],"type":["chr"],"align":["left"]}],"data":[{"1":"SAGAEFWEV","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus amphitrite","6":"South-Europe","7":"1952","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"SFGSTHSIM","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus improvisus","6":"West-Atlantic","7":"before 1700","8":"shipping","9":"Ship/boat hull fouling | Ship/boat ballast water | Contaminant on animals (except parasites, species transported by host/vector)","10":"M","11":"Kerckhof and Catrijsse 2001","12":"considered transport with oyster lots as 'Contaminant on animals'","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"XIGXULXGI","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Amphibalanus reticulatus","6":"Tropical and warm seas","7":"1997","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZVJOBJJJX","2":"Crustacea","3":"Decapoda","4":"Astacidae","5":"Astacus leptodactylus","6":"East-Europe","7":"1986","8":"aquaculture","9":"Aquaculture | Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Gerard 1986","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LBWPWBADN","2":"Crustacea","3":"Decapoda","4":"Atyidae","5":"Atyaephyra desmaresti","6":"South-Europe","7":"1895","8":"aquarium trade","9":"Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"VSXTPIXXJ","2":"Crustacea","3":"Sessilia","4":"Austrobalanidae","5":"Austrominius modestus","6":"Australia, Asia","7":"1950","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Leloup and Lefevre 1952","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"MPBVRIOZA","2":"Annelida","3":"Tubficida","4":"Naididae","5":"Branchiodrilus hortensis","6":"Asia, Africa, Australia","7":"2010","8":"shipping, corridors","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"JUGZFMTVM","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Branchiura sowerbyi","6":"East-Asia","7":"1931","8":"shipping","9":"Ship/boat ballast water","10":"F/B","11":"Damas 1938","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"TPNQWRWHV","2":"Annelida","3":"Tubficida","4":"Naididae","5":"Bratislavia dadayi","6":"Southern hemisphere, China, USA","7":"2002","8":"shipping, corridors","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"KFIFPOBCX","2":"Crustacea","3":"Decapoda","4":"Portunidae","5":"Callinectes sapidus","6":"North-America","7":"1993","8":"shipping","9":"Ship/boat hull fouling | Other means of transport","10":"B/M","11":"Van Damme and Maes 1993","12":"considered floating as 'Other means of transport', exact pathway is unknown but could be 'Hitchhikers on ship/boat (excluding ballast water and hull fouling)' \\n","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"CJAHOJDUT","2":"Crustacea","3":"Amphipoda","4":"Caprellidae","5":"Caprella mutica","6":"Northeast-Asia","7":"1998","8":"shipping, aquaculture","9":"Ship/boat hull fouling | Aquaculture / mariculture","10":"M","11":"Cook et al. 2007","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ISLKNDFHO","2":"Crustacea","3":"Amphipoda","4":"Corophiidae","5":"Chelicorophium curvispinum","6":"Ponto-Caspian","7":"1990","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F/B","11":"Vercauteren et al. 2006","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZUDBJVOEQ","2":"Mollusca","3":"Veneroidea","4":"Corbiculidae","5":"Corbicula fluminalis","6":"Asia","7":"1992","8":"shipping, corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Swinnen et al. 1998","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"HZIQHDLNT","2":"Mollusca","3":"Veneroidea","4":"Corbiculidae","5":"Corbicula fluminea","6":"Asia","7":"1992","8":"shipping, corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Swinnen et al. 1998","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"DVSJIVHYP","2":"Crustacea","3":"Amphipoda","4":"Crangonyctidae","5":"Crangonyx pseudogracilis","6":"North-America","7":"1992","8":"shipping","9":"Ship/boat hull fouling","10":"F","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"CYIXRFGAQ","2":"Mollusca","3":"Ostreoida","4":"Ostreidae","5":"Crassostrea gigas","6":"Southeast-Asia","7":"1969","8":"aquaculture","9":"Mariculture","10":"B/M","11":"Leloup 1971","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LQQVQCDGT","2":"Mollusca","3":"Littorinimorpha","4":"Calyptraeidae","5":"Crepidula fornicata","6":"North-America","7":"1911","8":"shipping, other","9":"Ship/boat hull fouling | Other means of transport","10":"M","11":"Adam  and Leloup 1934","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"GYVBUSLBE","2":"Platyhelminthes","3":"Seriata","4":"Dendrocoelidae","5":"Dendrocoelum romanodanubiale","6":"Ponto-Caspian","7":"2001","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Vercauteren et al. 2005","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"MUOYYMIET","2":"Crustacea","3":"Amphipoda","4":"Gammaridae","5":"Dikerogammarus villosus","6":"Ponto-Caspian","7":"1997","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F/B","11":"Messiaen et al. 2010","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"DXHARGKXJ","2":"Mollusca","3":"Veneroidea","4":"Dreissenidae","5":"Dreissena polymorpha","6":"Ponto-Caspian","7":"1834","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Adam 1947","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LQLVEHSUL","2":"Mollusca","3":"Veneroidea","4":"Dreissenidae","5":"Dreissena rostriformis bugensis","6":"Ponto-Caspian","7":"2009","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Sablon et al. 2010b","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"CXXGOPTNO","2":"Platyhelminthes","3":"Seriata","4":"Dugesiidae","5":"Dugesia tigrina","6":"North-America","7":"2004","8":"other","9":"Other means of transport","10":"F","11":"Vercauteren et al. 2006","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"VHXKXSYYZ","2":"Crustacea","3":"Amphipoda","4":"Gammaridae","5":"Echinogammarus berilloni","6":"South-Europe","7":"1925","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"JDSYYQTJC","2":"Crustacea","3":"Amphipoda","4":"Gammaridae","5":"Echinogammarus trichiatus","6":"Ponto-Caspian","7":"2009","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Boets et al. 2012c","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"VNWJGRLUW","2":"Mollusca","3":"Euheterodonta","4":"Pharidae","5":"Ensis directus","6":"North-America","7":"1987","8":"shipping, other","9":"Ship/boat ballast water | Other means of transport","10":"M","11":"Kerckhof and Dumoulin 1987","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"XTSNCXLIJ","2":"Crustacea","3":"Decapoda","4":"Varunidae","5":"Eriocheir sinensis","6":"Southeast-Asia","7":"1933","8":"shipping","9":"Ship/boat ballast water","10":"F/B","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"JBPLOUSWY","2":"Mollusca","3":"Pulmonata","4":"Planorbidae","5":"Ferrissia fragilis","6":"North-Africa","7":"1937","8":"aquarium trade","9":"Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Van Goethem and Sablon 1986","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"GWHLOCHKQ","2":"Annelida","3":"Sabellida","4":"Serpulidae","5":"Ficopomatus enigmaticus","6":"Asia","7":"1950","8":"shipping","9":"Ship/boat ballast water | Ship/boat hull fouling","10":"F/B","11":"Leloup and Lefevre 1952","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"JXXYERCXL","2":"Crustacea","3":"Amphipoda","4":"Gammaridae","5":"Gammarus roeseli","6":"South-Europe","7":"1937","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Collection RBINS","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"NBDHRUZKF","2":"Crustacea","3":"Amphipoda","4":"Gammaridae","5":"Gammarus tigrinus","6":"North-America","7":"1991","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F/B","11":"Messiaen et al. 2010","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LNZRRVWPY","2":"Crustacea","3":"Decapoda","4":"Varunidae","5":"Hemigrapsus sanguineus","6":"North-America","7":"2006","8":"shipping, aquaculture","9":"Ship/boat ballast water","10":"M","11":"Nuyttens et al. 2006","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"NGDZRWTVD","2":"Crustacea","3":"Decapoda","4":"Varunidae","5":"Hemigrapsus takanoi","6":"North-America","7":"2003","8":"shipping, aquaculture","9":"Ship/boat ballast water","10":"M","11":"Dumoulin 2004","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"GWCXMQKSO","2":"Crustacea","3":"Mysida","4":"Mysidae","5":"Hemimysis anomala","6":"Ponto-Caspian","7":"1999","8":"shipping, others","9":"Ship/boat ballast water | Other means of transport","10":"F/B","11":"Verslycke et al. 2000","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"IMSLEEDDS","2":"Annelida","3":"Terebellida","4":"Ampharetidae","5":"Hypania invalida","6":"Ponto-Caspian","7":"2000","8":"shipping","9":"Ship/boat hull fouling","10":"F","11":"Vercauteren et al. 2005","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"MLOFKZQTS","2":"Crustacea","3":"Amphipoda","4":"Pleustidae","5":"Incisocalliope aestuarius","6":"North-America","7":"1996","8":"shipping","9":"Ship/boat ballast water","10":"B/M","11":"Faasse and Van Moorsel 2003","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"UBLCPGMPK","2":"Crustacea","3":"Isopoda","4":"Janiridae","5":"Jaera istri","6":"Ponto-Caspian","7":"2000","8":"shipping, corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Messiaen et al. 2010","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"CGGMCDZAG","2":"Annelida","3":"Sabellida","4":"Sabellidae","5":"Laonome calida","6":"Australia","7":"2014","8":"shipping","9":"Ship/boat ballast water","10":"F/B","11":"This study","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"FMEVOECFG","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Limnodrilus cervix","6":"North-America","7":"2009","8":"shipping","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZLHGIIUEG","2":"Crustacea","3":"Mysida","4":"Mysidae","5":"Limnomysis benedeni","6":"Ponto-Caspian","7":"2005","8":"shipping, corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Lock et al. 2007","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"MTUSILEVV","2":"Mollusca","3":"Neotaenioglossa","4":"Hydrobiidae","5":"Lithoglyphus naticoides","6":"Ponto-Caspian","7":"1924","8":"corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Adam 1947","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LBFJDTUWI","2":"Annelida","3":"Spionida","4":"Spionidae","5":"Marenzelleria neglecta","6":"North-America","7":"2008","8":"shipping","9":"Ship/boat ballast water","10":"B","11":"Soors et al. 2013","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"CVBKXOOZN","2":"Annelida","3":"Spionida","4":"Spionidae","5":"Marenzelleria viridis","6":"North-America","7":"1995","8":"shipping","9":"Ship/boat ballast water","10":"B","11":"Ysebaert et al. 1997","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"GWWZROEJS","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Megabalanus coccopoma","6":"South-America","7":"1997","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZHKGCEJMB","2":"Crustacea","3":"Sessilia","4":"Balanidae","5":"Megabalanus tintinnabulum","6":"West-Africa, Indio-Pacific","7":"1998","8":"shipping","9":"Ship/boat hull fouling","10":"M","11":"Kerckhof and Catrijsse 2001","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"OMNKWMZSN","2":"Crustacea","3":"Amphipoda","4":"Melitidae","5":"Melita nitida","6":"North-America","7":"1996","8":"shipping","9":"Ship/boat ballast water","10":"M","11":"Faasse and Van Moorsel 2003","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"SVPXEDLBJ","2":"Mollusca","3":"Pulmonata","4":"Planorbidae","5":"Menetus dilatatus","6":"North-America","7":"1998","8":"shipping, corridors","9":"Interconnected waterways/basins/seas","10":"F","11":"Sablon et al. 2010a","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"YWLWDSWRC","2":"Mollusca","3":"Veneroidea","4":"Veneridae","5":"Mercenaria mercenaria","6":"North-America","7":"1933","8":"shipping","9":"Ship/boat ballast water","10":"M","11":"Vandepitte et al. 2012","12":"assumed ballast water was pathway for Belgium as no mariculture on our coast","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"EWTOLRAFU","2":"Crustacea","3":"Amphipoda","4":"Corophiidae","5":"Monocorophium sextonae","6":"New Zealand","7":"1993","8":"shipping","9":"Ship/boat ballast water | Contaminant on animals (except parasites, species transported by host/vector)","10":"B/M","11":"Dewicke 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"UUGIWJEBE","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Monopylephorus limosus","6":"Asia","7":"2002","8":"shipping","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"PKBIGYQPW","2":"Mollusca","3":"Myoida","4":"Myidae","5":"Mya arenaria","6":"North-America","7":"< 1700","8":"shipping, other","9":"Ship/boat hull fouling | Ship/boat ballast water | Contaminant on animals (except parasites, species transported by host/vector)","10":"M","11":"Kerckhof et al. 2007","12":"considered transport with oyster lots as 'Contaminant on animals'","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"KTPRVRQYP","2":"Mollusca","3":"Veneroidea","4":"Dreissenidae","5":"Mytilopsis leucophaeata","6":"North-America","7":"1835","8":"shipping","9":"Ship/boat hull fouling | Ship/boat ballast water","10":"F/B","11":"Nyst 1835; Adam 1947","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"UMCYDAQST","2":"Crustacea","3":"Amphipoda","4":"Talitridae","5":"Orchestia cavimana","6":"Ponto-Caspian","7":"1927","8":"shipping, corridors","9":"Interconnected waterways/basins/seas","10":"F/B","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"PJTYQQHSZ","2":"Crustacea","3":"Decapoda","4":"Cambaridae","5":"Orconectes limosus","6":"North-America","7":"1977","8":"aquaculture, aquarium trade","9":"Aquaculture | Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Wouters 2002","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"UNLWMDVEJ","2":"Crustacea","3":"Decapoda","4":"Astacidae","5":"Pacifastacus leniusculus","6":"North-America","7":"1986","8":"aquaculture","9":"Aquaculture","10":"F","11":"Gerard 1986","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZZFRZBMBS","2":"Crustacea","3":"Decapoda","4":"Palaemonidae","5":"Palaemon macrodactylus","6":"Southeast-Asia","7":"1999","8":"shipping","9":"Ship/boat ballast water","10":"F/B","11":"Boets et al. 2011b","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"EHVBGZRSS","2":"Mollusca","3":"Veneroidea","4":"Veneridae","5":"Petricolaria pholadiformis","6":"North-America","7":"1899","8":"aquaculture, other","9":"Contaminant on animals (except parasites, species transported by host/vector)","10":"M","11":"Loppens 1902","12":"considered transport with oyster lots as 'Contaminant on animals'","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"NGCCWXQIG","2":"Mollusca","3":"Pulmonata","4":"Physidae","5":"Physella acuta","6":"North-America","7":"1869","8":"other","9":"Other means of transport","10":"F","11":"Adam 1947","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"TIBLWKNXF","2":"Mollusca","3":"Neotaenioglossa","4":"Hydrobiidae","5":"Potamopyrgus antipodarum","6":"New Zealand","7":"1927","8":"shipping","9":"Ship/boat hull fouling | Ship/boat ballast water | Other means of transport","10":"F/B","11":"Adam 1947","12":"considered drinking barrels transported on vessels as other means of transport","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"QJECOUIFP","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Potamothrix vejdovskyi","6":"Ponto-Caspian","7":"2009","8":"shipping","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"YLLDVSEUS","2":"Crustacea","3":"Isopoda","4":"Asellidae","5":"Proasellus coxalis","6":"South-Europe","7":"1998","8":"shipping, corridors, other","9":"Interconnected waterways/basins/seas | Ship/boat hull fouling | Other means of transport","10":"F/B","11":"Boets et al. unpub data","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"OSUHAXPEK","2":"Crustacea","3":"Isopoda","4":"Asellidae","5":"Proasellus meridianus","6":"South-Europe","7":"1945","8":"shipping, corridors, other","9":"Interconnected waterways/basins/seas | Ship/boat hull fouling | Other means of transport","10":"F/B","11":"Collection RBINS","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"PIDRCFCET","2":"Crustacea","3":"Decapoda","4":"Cambaridae","5":"Procambarus clarkii","6":"North-America","7":"2008","8":"aquaculture, aquarium trade","9":"Aquaculture | Pet/aquarium/terrarium species (including live food for such species )","10":"F","11":"Boets et al. 2009","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"LFMICTWEN","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Psammoryctides moravicus","6":"Ponto-Caspian","7":"2008","8":"shipping","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"JSCBPQYFE","2":"Mollusca","3":"Myoida","4":"Teredinidae","5":"Psiloteredo megotara","6":"__NA__","7":"<1600","8":"shipping, other","9":"Ship/boat hull fouling | Other means of transport","10":"M","11":"Backeljau 1986","12":"considered floating wood as 'Other means of transport'","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"CNOJDEGRB","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Quistadrilus multisetosus","6":"North-America","7":"1996","8":"shipping","9":"Ship/boat ballast water","10":"F","11":"Seys et al. 1999","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"UVCUCFUWH","2":"Mollusca","3":"Veneroidea","4":"Mactridae","5":"Rangia cuneata","6":"North-America","7":"2004","8":"shipping","9":"Ship/boat ballast water","10":"F/B","11":"Verween et al. 2006","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"PLNSZZCHV","2":"Crustacea","3":"Decapoda","4":"Panopeidae","5":"Rhithropanopeus harrisii","6":"North-America","7":"1991","8":"shipping","9":"Ship/boat ballast water","10":"F/B","11":"Van Damme et al. 1992","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"KRMFPVNTG","2":"Mollusca","3":"Unionoida","4":"Unionidae","5":"Sinanodonta woodiana","6":"Asia","7":"1999","8":"aquaculture","9":"Contaminant on animals (except parasites, species transported by host/vector) | Aquaculture","10":"F","11":"Keppens and Mienis 2004","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"WXBANOUUZ","2":"Crustacea","3":"Tanaidacea","4":"Tanaidae","5":"Sinelobus vanhaareni","6":"__NA__","7":"2007","8":"shipping, aquaculture","9":"Ship/boat ballast water | Ship/boat hull fouling | Aquaculture","10":"B","11":"Van  Haaren and Soors 2009","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"ZUICKVPLO","2":"Crustacea","3":"Isopoda","4":"Idoteidae","5":"Synidotea laticauda","6":"North-America","7":"2005","8":"shipping","9":"Ship/boat ballast water","10":"B","11":"Soors et al. 2010","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"KOHUABHTW","2":"Crustacea","3":"Amphipoda","4":"Crangonyctidae","5":"Synurella ambulans","6":"Ponto-Caspian","7":"2003","8":"aquaculture","9":"Aquaculture","10":"F","11":"Boets et al. 2010b","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"YIHDUUGIP","2":"Annelida","3":"Tubficida","4":"Tubificidae","5":"Tasserkidrilus americanus","6":"North-America","7":"2006","8":"shipping","9":"Ship/boat ballast water","10":"F","11":"Soors et al. 2013","12":"based on reference","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"},{"1":"NTPDCMRKG","2":"Mollusca","3":"Myoida","4":"Teredinidae","5":"Teredo navalis","6":"__NA__","7":"1730-1732","8":"shipping, other","9":"Ship/boat hull fouling | Other means of transport","10":"M","11":"Sellius 1733","12":"NA","13":"en","14":"http://creativecommons.org/publicdomain/zero/1.0/","15":"Ghent University Aquatic Ecology","16":"https://doi.org/10.15468/yxcq07","17":"Inventory of alien macroinvertebrates in Flanders, Belgium","18":"Animalia","19":"ICZN"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="altered-values" class="section level2">
+<h2><span class="header-section-number">4.5</span> Altered values</h2>
+<p>Altered values are used for Darwin Core terms for which the content in <code>raw_data</code> is used as a basis, but it needs to be standardized. This applies to Darwin Core terms for which we use a <a href="http://rs.gbif.org/vocabulary/gbif/">vocabulary</a> or where we want to transform for clarity or to correct obvious mistakes.</p>
+<p>The main functions we use for these are: <code>mutate()</code> + <code>recode()</code> or <code>mutate()</code> + <code>case_when()</code>.</p>
+<div id="mutate-recode" class="section level3">
+<h3><span class="header-section-number">4.5.1</span> <code>mutate()</code> + <code>recode()</code></h3>
+<p>In this case, we aim to replace specific information in <code>raw_data</code> by new information specified in the code. For instance, <code>raw_order</code> will be mapped to the Darwin Core term <code>order</code>:</p>
+<pre class="r"><code>taxon %&gt;% distinct(raw_order)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_order"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Sessilia"},{"1":"Decapoda"},{"1":"Tubficida"},{"1":"Amphipoda"},{"1":"Veneroidea"},{"1":"Ostreoida"},{"1":"Littorinimorpha"},{"1":"Seriata"},{"1":"Euheterodonta"},{"1":"Pulmonata"},{"1":"Sabellida"},{"1":"Mysida"},{"1":"Terebellida"},{"1":"Isopoda"},{"1":"Neotaenioglossa"},{"1":"Spionida"},{"1":"Myoida"},{"1":"Unionoida"},{"1":"Tanaidacea"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><code>Veneroida</code> is a typo. We need to replace this by <code>Venerida</code>:</p>
+<pre class="r"><code>taxon %&lt;&gt;% 
+  mutate(order = recode(raw_order, &quot;Veneroidea&quot; = &quot;Venerida&quot;)) </code></pre>
+<p>We use <code>select()</code>, <code>group_by_all()</code> and <code>summarize()</code>to compare our newly mapped data with the original data. Note that the other values remain unaltered:</p>
+<pre class="r"><code>taxon %&gt;%
+  select(raw_order, order) %&gt;%
+  group_by_all() %&gt;% 
+  summarize()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_order"],"name":[1],"type":["chr"],"align":["left"]},{"label":["order"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"Amphipoda","2":"Amphipoda"},{"1":"Decapoda","2":"Decapoda"},{"1":"Euheterodonta","2":"Euheterodonta"},{"1":"Isopoda","2":"Isopoda"},{"1":"Littorinimorpha","2":"Littorinimorpha"},{"1":"Myoida","2":"Myoida"},{"1":"Mysida","2":"Mysida"},{"1":"Neotaenioglossa","2":"Neotaenioglossa"},{"1":"Ostreoida","2":"Ostreoida"},{"1":"Pulmonata","2":"Pulmonata"},{"1":"Sabellida","2":"Sabellida"},{"1":"Seriata","2":"Seriata"},{"1":"Sessilia","2":"Sessilia"},{"1":"Spionida","2":"Spionida"},{"1":"Tanaidacea","2":"Tanaidacea"},{"1":"Terebellida","2":"Terebellida"},{"1":"Tubficida","2":"Tubficida"},{"1":"Unionoida","2":"Unionoida"},{"1":"Veneroidea","2":"Venerida"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Another use case:</p>
+<p><code>raw_phylum</code> will be mapped to to Darwin Core term <code>phylum</code>.</p>
+<pre class="r"><code>taxon %&gt;% distinct(raw_phylum)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_phylum"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Crustacea"},{"1":"Annelida"},{"1":"Mollusca"},{"1":"Platyhelminthes"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>However, Crustacea is not a phylum but a subphylum. The phylum to which crustaceans belong is <code>Arthropoda</code>. We can correct this with <code>recode()</code>:</p>
+<pre class="r"><code>taxon %&lt;&gt;% mutate (phylum = recode(raw_phylum, &quot;Crustacea&quot; = &quot;Arthropoda&quot;))</code></pre>
+<p>Other use cases (not applicable to our data):</p>
+<pre class="r"><code>distribution %&lt;&gt;% mutate(description = recode(raw_d_n,
+  &quot;Ext.?&quot;     = &quot;Ext.&quot;,
+  &quot;Ext./Cas.&quot; = &quot;Cas.&quot;,
+  &quot;Cas.?&quot;     = &quot;Cas.&quot;,
+  &quot;Nat.?&quot;     = &quot;Nat.&quot;,
+  .missing = &quot;&quot;))
+
+distribution %&lt;&gt;% mutate(locality = recode(value,
+  &quot;AF&quot;     = &quot;Africa (WGSRPD:2)&quot;,
+  &quot;AM&quot;     = &quot;pan-American&quot;,
+  &quot;AS&quot;     = &quot;Asia&quot;,
+  &quot;AS-Te&quot;  = &quot;temperate Asia (WGSRPD:3)&quot;,
+  &quot;AS-Tr&quot;  = &quot;tropical Asia (WGSRPD:4)&quot;,
+  &quot;AUS&quot;    = &quot;Australasia (WGSRPD:5)&quot;,
+  &quot;Cult.&quot;  = &quot;cultivated origin&quot;,
+  &quot;E&quot;      = &quot;Europe (WGSRPD:1)&quot;,
+  &quot;Hybr.&quot;  = &quot;hybrid origin&quot;,
+  &quot;NAM&quot;    = &quot;Northern America (WGSRPD:7)&quot;,
+  &quot;SAM&quot;    = &quot;Southern America (WGSRPD:8)&quot;,
+  &quot;Trop.&quot;  = &quot;Pantropical&quot;,
+  .default = &quot;&quot;,
+  .missing = &quot;&quot;
+))</code></pre>
+</div>
+<div id="mutate-case_when" class="section level3">
+<h3><span class="header-section-number">4.5.2</span> <code>mutate()</code> + <code>case_when()</code></h3>
+<p><code>case_when</code> is often used together with <code>mutate()</code> when you want to make a new column (or change an existing one) based on the content of other existing variables.</p>
+<p>For instance, <a href="http://rs.gbif.org/vocabulary/gbif/rank_2015-04-24.xml">taxonRank</a> information is lacking in <code>raw_data</code>. We need to generate this information based on the information contained in <code>raw_species</code>:</p>
+<p>Inspect <code>raw_species</code>:</p>
+<pre class="r"><code>taxon %&gt;% distinct(raw_species)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_species"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Amphibalanus amphitrite"},{"1":"Amphibalanus improvisus"},{"1":"Amphibalanus reticulatus"},{"1":"Astacus leptodactylus"},{"1":"Atyaephyra desmaresti"},{"1":"Austrominius modestus"},{"1":"Branchiodrilus hortensis"},{"1":"Branchiura sowerbyi"},{"1":"Bratislavia dadayi"},{"1":"Callinectes sapidus"},{"1":"Caprella mutica"},{"1":"Chelicorophium curvispinum"},{"1":"Corbicula fluminalis"},{"1":"Corbicula fluminea"},{"1":"Crangonyx pseudogracilis"},{"1":"Crassostrea gigas"},{"1":"Crepidula fornicata"},{"1":"Dendrocoelum romanodanubiale"},{"1":"Dikerogammarus villosus"},{"1":"Dreissena polymorpha"},{"1":"Dreissena rostriformis bugensis"},{"1":"Dugesia tigrina"},{"1":"Echinogammarus berilloni"},{"1":"Echinogammarus trichiatus"},{"1":"Ensis directus"},{"1":"Eriocheir sinensis"},{"1":"Ferrissia fragilis"},{"1":"Ficopomatus enigmaticus"},{"1":"Gammarus roeseli"},{"1":"Gammarus tigrinus"},{"1":"Hemigrapsus sanguineus"},{"1":"Hemigrapsus takanoi"},{"1":"Hemimysis anomala"},{"1":"Hypania invalida"},{"1":"Incisocalliope aestuarius"},{"1":"Jaera istri"},{"1":"Laonome calida"},{"1":"Limnodrilus cervix"},{"1":"Limnomysis benedeni"},{"1":"Lithoglyphus naticoides"},{"1":"Marenzelleria neglecta"},{"1":"Marenzelleria viridis"},{"1":"Megabalanus coccopoma"},{"1":"Megabalanus tintinnabulum"},{"1":"Melita nitida"},{"1":"Menetus dilatatus"},{"1":"Mercenaria mercenaria"},{"1":"Monocorophium sextonae"},{"1":"Monopylephorus limosus"},{"1":"Mya arenaria"},{"1":"Mytilopsis leucophaeata"},{"1":"Orchestia cavimana"},{"1":"Orconectes limosus"},{"1":"Pacifastacus leniusculus"},{"1":"Palaemon macrodactylus"},{"1":"Petricolaria pholadiformis"},{"1":"Physella acuta"},{"1":"Potamopyrgus antipodarum"},{"1":"Potamothrix vejdovskyi"},{"1":"Proasellus coxalis"},{"1":"Proasellus meridianus"},{"1":"Procambarus clarkii"},{"1":"Psammoryctides moravicus"},{"1":"Psiloteredo megotara"},{"1":"Quistadrilus multisetosus"},{"1":"Rangia cuneata"},{"1":"Rhithropanopeus harrisii"},{"1":"Sinanodonta woodiana"},{"1":"Sinelobus vanhaareni"},{"1":"Synidotea laticauda"},{"1":"Synurella ambulans"},{"1":"Tasserkidrilus americanus"},{"1":"Teredo navalis"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Although most <code>raw_species</code> are in fact species, <code>Dreissena rostriformis bugensis</code> is not a species but a subspecies. We need to make this distinction in the mapping process:</p>
+<pre class="r"><code>taxon %&lt;&gt;% mutate(taxonRank = case_when(
+  raw_species == &quot;Dreissena rostriformis bugensis&quot; ~ &quot;subspecies&quot;,
+  raw_species != &quot;Dreissena rostriformis bugensis&quot; ~ &quot;species&quot;)
+)</code></pre>
+<p>We use <code>select()</code>, <code>group_by_all()</code> and <code>summarize()</code>to compare our newly mapped data with the original data:</p>
+<pre class="r"><code>taxon %&gt;% select(raw_species, taxonRank) %&gt;%
+  group_by_all() %&gt;% 
+  summarize()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["raw_species"],"name":[1],"type":["chr"],"align":["left"]},{"label":["taxonRank"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"Amphibalanus amphitrite","2":"species"},{"1":"Amphibalanus improvisus","2":"species"},{"1":"Amphibalanus reticulatus","2":"species"},{"1":"Astacus leptodactylus","2":"species"},{"1":"Atyaephyra desmaresti","2":"species"},{"1":"Austrominius modestus","2":"species"},{"1":"Branchiodrilus hortensis","2":"species"},{"1":"Branchiura sowerbyi","2":"species"},{"1":"Bratislavia dadayi","2":"species"},{"1":"Callinectes sapidus","2":"species"},{"1":"Caprella mutica","2":"species"},{"1":"Chelicorophium curvispinum","2":"species"},{"1":"Corbicula fluminalis","2":"species"},{"1":"Corbicula fluminea","2":"species"},{"1":"Crangonyx pseudogracilis","2":"species"},{"1":"Crassostrea gigas","2":"species"},{"1":"Crepidula fornicata","2":"species"},{"1":"Dendrocoelum romanodanubiale","2":"species"},{"1":"Dikerogammarus villosus","2":"species"},{"1":"Dreissena polymorpha","2":"species"},{"1":"Dreissena rostriformis bugensis","2":"subspecies"},{"1":"Dugesia tigrina","2":"species"},{"1":"Echinogammarus berilloni","2":"species"},{"1":"Echinogammarus trichiatus","2":"species"},{"1":"Ensis directus","2":"species"},{"1":"Eriocheir sinensis","2":"species"},{"1":"Ferrissia fragilis","2":"species"},{"1":"Ficopomatus enigmaticus","2":"species"},{"1":"Gammarus roeseli","2":"species"},{"1":"Gammarus tigrinus","2":"species"},{"1":"Hemigrapsus sanguineus","2":"species"},{"1":"Hemigrapsus takanoi","2":"species"},{"1":"Hemimysis anomala","2":"species"},{"1":"Hypania invalida","2":"species"},{"1":"Incisocalliope aestuarius","2":"species"},{"1":"Jaera istri","2":"species"},{"1":"Laonome calida","2":"species"},{"1":"Limnodrilus cervix","2":"species"},{"1":"Limnomysis benedeni","2":"species"},{"1":"Lithoglyphus naticoides","2":"species"},{"1":"Marenzelleria neglecta","2":"species"},{"1":"Marenzelleria viridis","2":"species"},{"1":"Megabalanus coccopoma","2":"species"},{"1":"Megabalanus tintinnabulum","2":"species"},{"1":"Melita nitida","2":"species"},{"1":"Menetus dilatatus","2":"species"},{"1":"Mercenaria mercenaria","2":"species"},{"1":"Monocorophium sextonae","2":"species"},{"1":"Monopylephorus limosus","2":"species"},{"1":"Mya arenaria","2":"species"},{"1":"Mytilopsis leucophaeata","2":"species"},{"1":"Orchestia cavimana","2":"species"},{"1":"Orconectes limosus","2":"species"},{"1":"Pacifastacus leniusculus","2":"species"},{"1":"Palaemon macrodactylus","2":"species"},{"1":"Petricolaria pholadiformis","2":"species"},{"1":"Physella acuta","2":"species"},{"1":"Potamopyrgus antipodarum","2":"species"},{"1":"Potamothrix vejdovskyi","2":"species"},{"1":"Proasellus coxalis","2":"species"},{"1":"Proasellus meridianus","2":"species"},{"1":"Procambarus clarkii","2":"species"},{"1":"Psammoryctides moravicus","2":"species"},{"1":"Psiloteredo megotara","2":"species"},{"1":"Quistadrilus multisetosus","2":"species"},{"1":"Rangia cuneata","2":"species"},{"1":"Rhithropanopeus harrisii","2":"species"},{"1":"Sinanodonta woodiana","2":"species"},{"1":"Sinelobus vanhaareni","2":"species"},{"1":"Synidotea laticauda","2":"species"},{"1":"Synurella ambulans","2":"species"},{"1":"Tasserkidrilus americanus","2":"species"},{"1":"Teredo navalis","2":"species"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Other use cases (not applicable to our data):</p>
+<pre class="r"><code>invasion_stage %&lt;&gt;% mutate(description = case_when(
+  raw_status == &quot;A&quot; ~ &quot;casual&quot;,
+  raw_status == &quot;A*&quot; ~ &quot;casual&quot;,
+  raw_status == &quot;N&quot; ~ &quot;established&quot;
+))
+
+distribution %&lt;&gt;% 
+  mutate(Flanders = case_when(
+    raw_presence_fl == &quot;X&quot; &amp; (is.na(raw_presence_br) | raw_presence_br == &quot;?&quot;) &amp; (is.na(raw_presence_wa) | raw_presence_wa == &quot;?&quot;) ~ &quot;S&quot;,
+    raw_presence_fl == &quot;?&quot; ~ &quot;?&quot;,
+    is.na(raw_presence_fl) ~ &quot;NA&quot;,
+    TRUE ~ &quot;M&quot;)) %&gt;%
+  mutate(Brussels = case_when(
+    (is.na(raw_presence_fl) | raw_presence_fl == &quot;?&quot;) &amp; raw_presence_br == &quot;X&quot; &amp; (is.na(raw_presence_wa) | raw_presence_wa == &quot;?&quot;) ~ &quot;S&quot;,
+    raw_presence_br == &quot;?&quot; ~ &quot;?&quot;,
+    is.na(raw_presence_br) ~ &quot;NA&quot;,
+    TRUE ~ &quot;M&quot;)) %&gt;%
+  mutate(Wallonia = case_when(
+    (is.na(raw_presence_fl) | raw_presence_fl == &quot;?&quot;) &amp; (is.na(raw_presence_br) | raw_presence_br == &quot;?&quot;) &amp; raw_presence_wa == &quot;X&quot; ~ &quot;S&quot;,
+    raw_presence_wa == &quot;?&quot; ~ &quot;?&quot;,
+    is.na(raw_presence_wa) ~ &quot;NA&quot;,
+    TRUE ~ &quot;M&quot;)) %&gt;%
+  mutate(Belgium = case_when(
+    raw_presence_fl == &quot;X&quot; | raw_presence_br == &quot;X&quot; | raw_presence_wa == &quot;X&quot; ~ &quot;S&quot;, # One is &quot;X&quot;
+    raw_presence_fl == &quot;?&quot; | raw_presence_br == &quot;?&quot; | raw_presence_wa == &quot;?&quot; ~ &quot;?&quot; # One is &quot;?&quot;
+  ))</code></pre>
+</div>
+</div>
+<div id="post-processing" class="section level2">
+<h2><span class="header-section-number">4.6</span> Post-processing</h2>
+<p>When all terms have been mapped, we remove the raw column names from <code>taxon</code>:</p>
+<pre class="r"><code>taxon %&lt;&gt;% select(-starts_with(&quot;raw_&quot;))</code></pre>
+<p>Inspect <code>taxon</code>:</p>
+<pre class="r"><code>head(taxon)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["language"],"name":[1],"type":["chr"],"align":["left"]},{"label":["license"],"name":[2],"type":["chr"],"align":["left"]},{"label":["rightsHolder"],"name":[3],"type":["chr"],"align":["left"]},{"label":["datasetID"],"name":[4],"type":["chr"],"align":["left"]},{"label":["datasetName"],"name":[5],"type":["chr"],"align":["left"]},{"label":["kingdom"],"name":[6],"type":["chr"],"align":["left"]},{"label":["nomenclaturalCode"],"name":[7],"type":["chr"],"align":["left"]},{"label":["taxonID"],"name":[8],"type":["chr"],"align":["left"]},{"label":["scientificName"],"name":[9],"type":["chr"],"align":["left"]},{"label":["family"],"name":[10],"type":["chr"],"align":["left"]},{"label":["order"],"name":[11],"type":["chr"],"align":["left"]},{"label":["phylum"],"name":[12],"type":["chr"],"align":["left"]},{"label":["taxonRank"],"name":[13],"type":["chr"],"align":["left"]}],"data":[{"1":"en","2":"http://creativecommons.org/publicdomain/zero/1.0/","3":"Ghent University Aquatic Ecology","4":"https://doi.org/10.15468/yxcq07","5":"Inventory of alien macroinvertebrates in Flanders, Belgium","6":"Animalia","7":"ICZN","8":"SAGAEFWEV","9":"Amphibalanus amphitrite","10":"Balanidae","11":"Sessilia","12":"Arthropoda","13":"species"},{"1":"en","2":"http://creativecommons.org/publicdomain/zero/1.0/","3":"Ghent University Aquatic Ecology","4":"https://doi.org/10.15468/yxcq07","5":"Inventory of alien macroinvertebrates in Flanders, Belgium","6":"Animalia","7":"ICZN","8":"SFGSTHSIM","9":"Amphibalanus improvisus","10":"Balanidae","11":"Sessilia","12":"Arthropoda","13":"species"},{"1":"en","2":"http://creativecommons.org/publicdomain/zero/1.0/","3":"Ghent University Aquatic Ecology","4":"https://doi.org/10.15468/yxcq07","5":"Inventory of alien macroinvertebrates in Flanders, Belgium","6":"Animalia","7":"ICZN","8":"XIGXULXGI","9":"Amphibalanus reticulatus","10":"Balanidae","11":"Sessilia","12":"Arthropoda","13":"species"},{"1":"en","2":"http://creativecommons.org/publicdomain/zero/1.0/","3":"Ghent University Aquatic Ecology","4":"https://doi.org/10.15468/yxcq07","5":"Inventory of alien macroinvertebrates in Flanders, Belgium","6":"Animalia","7":"ICZN","8":"ZVJOBJJJX","9":"Astacus leptodactylus","10":"Astacidae","11":"Decapoda","12":"Arthropoda","13":"species"},{"1":"en","2":"http://creativecommons.org/publicdomain/zero/1.0/","3":"Ghent University Aquatic Ecology","4":"https://doi.org/10.15468/yxcq07","5":"Inventory of alien macroinvertebrates in Flanders, Belgium","6":"Animalia","7":"ICZN","8":"LBWPWBADN","9":"Atyaephyra desmaresti","10":"Atyidae","11":"Decapoda","12":"Arthropoda","13":"species"},{"1":"en","2":"http://creativecommons.org/publicdomain/zero/1.0/","3":"Ghent University Aquatic Ecology","4":"https://doi.org/10.15468/yxcq07","5":"Inventory of alien macroinvertebrates in Flanders, Belgium","6":"Animalia","7":"ICZN","8":"VSXTPIXXJ","9":"Austrominius modestus","10":"Austrobalanidae","11":"Sessilia","12":"Arthropoda","13":"species"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>As indicated before, it is good practise to keep the order of the Darwin Core fields as specified on the GBIF Resources web page. The mapping process will be a mixture of mapping static fields, unaltered and altered fields.</p>
+<p>Save <code>taxon</code> as a csv file. For this, we need to define the path to the taxon core file (relative to this script):</p>
+<pre class="r"><code>dwc_taxon_file = &quot;../data/processed/taxon.csv&quot;</code></pre>
+<p>Write as a csv:</p>
+<pre class="r"><code>write.csv(taxon, file = dwc_taxon_file, na = &quot;&quot;, row.names = FALSE, fileEncoding = &quot;UTF-8&quot;)</code></pre>
+<div class="alert alert-warning">
+<p><strong>Note</strong></p>
+<p>Make sure to set <code>na = &quot;&quot;</code> and <code>row.names = FALSE</code> when writing to a CSV file.</p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
