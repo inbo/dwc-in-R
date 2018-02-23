@@ -87,7 +87,7 @@ head(raw_data) # Displays the first 6 lines of the dataframe
 
 ### Clean data
 
-We assume here that your dataset is tidy. If this is not the case, we refer to the previous session on *tidyverse* for a full overview of data cleaning skills. Unfortunately, starting with untidy data will make your script a lot more complex, with many preparatory steps before you can even start mapping! In a tidy dataset, you can start the mapping immediately.
+We assume here that your dataset is tidy. If this is not the case, we refer to the [Tidy data exercise]. Unfortunately, starting with untidy data will make your script a lot more complex, with many preparatory steps before you can even start mapping! In a tidy dataset, you can start the mapping immediately.
 
 In some cases, some small cleaning steps could be made to clean `raw_data`. Here, the column names of `raw_data` contain capital letters:
 
@@ -118,134 +118,123 @@ colnames(raw_data)
 
 We're now all set to start mapping!
 
+## Map to Darwin Core Archive
 
+Even though `raw_data` contains all necessary information in a single data frame, a Darwin Core Archive might consist of multiple files, e.g. a core and extensions. We recommend to create the core file first and then the extensions. For each file, there are 3 steps:
 
-## Mapping process:
+1. **Pre-processing step**: basic preparations before the mapping
+2. **Mapping**: sequential addition of the Darwin Core fields based on the raw values
+3. **Post-processing step**: removing the raw values and saving the file
 
-### General concept:
+![_Schematic overview of the mapping process_](static/images/scheme_mapping_process.png)
 
-The mapping process is **sequential**: we add the Darwin Core terms to `taxon` step by step. The Darwin Core terms for each file (core or extension) can be found on the [GBIF Resources page](http://rs.gbif.org/):
+This is repeated for each core/extension file. Below, we'll use the **taxon core** as an example.
 
-![](../docs/static/images/darwin_core_taxon.png)
+### Pre-processing
 
-It is good practice to inspect the Darwin Core terms on this webpage **one by one** to see whether a particular term can be used in your checklist. We respect the order of the terms as they listed on the GBIF resource page.
+We use a **copy** of `raw_data` as the starting point for the mapping of the taxon core. This is because `raw_data` is the **starting point** for the mapping of both the taxon core and the extensions. It needs to be untouched each time we start the mapping process.
 
-For each term we add to `taxon`, we use `mutate` and %<>% pipes` as basic tools.
-
-To illustrate:
-
-```{r, eval = F}
-# Add nomenclaturalCode:
-taxon %<>% mutate(nomenclaturalCode = "ICZN")
-
-# Add taxonID:
-taxon %<>% mutate(taxonID = raw_taxonID)
-
+```{r}
+taxon <- raw_data # Generate taxon by making a copy of raw_data
 ```
 
-We distinguish three types of Darwin Core fields:
+Sometimes there are further pre-processing steps needed. E.g. in a vernacular name extension each name is a _row_, while in the original data the names could be _columns_ or _delimited values within a column_. That kind of data requires `separate()` en `gather()` steps first. Here however, each record is taxon and no further pre-processing steps are required.
 
-1. Static Darwin Core fields
-2. Unaltered Darwin Core fields
-3. Altered Darwin Core fields
+### Mapping
 
-### Static Darwin Core fields
+The mapping process is **sequential**: we add the Darwin Core terms to `taxon` step by step. The Darwin Core terms for each core/extension file can be found on the [GBIF Resources page](http://rs.gbif.org/):
 
-Static Darwin Core fields contain values that remain fixed, i.e. they are independent from the record (row) in the dataset. Most often, they are absent in `raw_data`. This mostly concerns **metadata fields** in the Taxon Core file. 
+[![rs.gbif.org](static/images/darwin_core_taxon.png)](http://rs.gbif.org)
 
-#### language:
+It is good practice to inspect the Darwin Core terms on this webpage one by one to see whether a particular term can be used in your checklist. We respect the order of the terms as they listed on the GBIF resource page.
+
+We distinguish **three types** of Darwin Core terms mappings (static values, unaltered values and altered values) and for each one we will use `mutate()` and `%<>%` (double pipe).
+
+### Static values
+
+Static values are used for Darwin Core terms that need the same value for all records. Most often, they are absent in `raw_data`. This mostly concerns **metadata fields** in the taxon core file:
 
 ```{r}
 taxon %<>% mutate(language = "en")
 ```
 
-#### license:
-
 ```{r}
 taxon %<>% mutate(license = "http://creativecommons.org/publicdomain/zero/1.0/")
 ```
-
-#### rightsHolder:
 
 ```{r}
 taxon %<>% mutate(rightsHolder = "Ghent University Aquatic Ecology")
 ```
 
-#### datasetID
-
 ```{r}
 taxon  %<>% mutate(datasetID = "https://doi.org/10.15468/yxcq07")
 ```
  
-#### datasetName
-
 ```{r}
 taxon %<>% mutate(datasetName = "Inventory of alien macroinvertebrates in Flanders, Belgium")
 ```
 
 Other, non-metadata fields:
 
-#### kingdom
-
 ```{r}
 taxon %<>% mutate(kingdom = "Animalia")
 ```
 
-View newly mapped fields in `taxon`:
-
 ```{r}
+taxon %<>% mutate(nomenclaturalCode = "ICZN")
+```
+
+All these fields are added as extra columns to the data frame, in the same order as they were added:
+
+```{r echo = FALSE}
 head(taxon)
 ```
 
-### Unaltered fields: 
+### Unaltered values
 
-Unaltered fields are Darwin Core fields for which the content is an exact copy of the corresponding field in `raw_data`. This contrasts with **altered fields**, in which use a certain field in `raw_data` as a **basis** for further processing. 
+Unaltered values are used for Darwin Core terms for which the content is an exact copy of the corresponding field in `raw_data`. This contrasts with **altered fields**, in which use a certain field in `raw_data` is the **basis** for further processing.
 
-Before deciding whether or not some basic processing is required, it is useful to screen the variables in `raw_data` for their specific content. A good method is to use the tool `distinct()` from `dplyr`, which returns the unique content of the variable:
+Before deciding whether or not some basic processing is required, it is useful to screen the variables in `raw_data` for their specific content. `distinct()` is a useful function to show the unique values for a field:
 
 ```{r}
 taxon %>% distinct(raw_phylum)
 ```
 
-(Remark: we use `%>%` instead of `%<>%`, as we don't want to add a new column to `taxon`)
+<div class="alert alert-warning">
+**Note**
+
+We use `%>%` instead of `%<>%`, as we don't want to add a new column to `taxon`.
+</div>
 
 Some unaltered fields:
-
-#### taxonID
 
 ```{r}
 taxon %<>% mutate(taxonID = raw_taxon_id)
 ```
 
-#### scientificName
-
 ```{r}
 taxon %<>% mutate(scientificName = raw_species)
 ```
 
-#### family
-
 ```{r}
 taxon %<>% mutate(family = raw_family)
-
 ```
 
-View newly mapped fields in `taxon`:
+View those 3 fields:
 
-```{r}
-head(taxon)
+```{r echo = FALSE}
+taxon %>% select(-(taxonID:family))
 ```
 
-### Altered fields
+### Altered values
 
-These Darwin Core fields use the raw data as a basis, but the content of the raw data has been remapped. This applies to Darwin Core terms for which we use a [vocabulary](http://rs.gbif.org/vocabulary/gbif/). In other cases, we want to transform our data or correct some obvious mistakes. 
+Altered values are used for Darwin Core terms for which the content  in `raw_data` is used as a basis, but it needs to be standardized. This applies to Darwin Core terms for which we use a [vocabulary](http://rs.gbif.org/vocabulary/gbif/) or where we want to transform for clarity or to correct obvious mistakes.
 
-We use `mutate()` + `recode()` or  `mutate()` + `case_when()` as basic tools.
+The main functions we use for these are: `mutate()` + `recode()` or  `mutate()` + `case_when()`.
 
-1. `mutate()` + `recode()`
+#### `mutate()` + `recode()`
 
-In this case, we aim to replace specific information in `raw_data` by new information specified in the code.
-For instance, `raw_order` will be mapped to the Darwin Core term `order`:
+In this case, we aim to replace specific information in `raw_data` by new information specified in the code. For instance, `raw_order` will be mapped to the Darwin Core term `order`:
 
 ```{r}
 taxon %>% distinct(raw_order)
@@ -258,10 +247,11 @@ taxon %<>%
   mutate(order = recode(raw_order, "Veneroidea" = "Venerida")) 
 ```
 
-We use `select()`, `group_by_all()` and `summarize()`to compare our newly mapped data with the original data:
+We use `select()`, `group_by_all()` and `summarize()`to compare our newly mapped data with the original data. Note that the other values remain unaltered:
 
 ```{r}
-taxon %>% select(raw_order, order) %>%
+taxon %>%
+  select(raw_order, order) %>%
   group_by_all() %>% 
   summarize()
 ```
@@ -274,15 +264,15 @@ Another use case:
 taxon %>% distinct(raw_phylum)
 ```
 
-However, Crustacea is not a phylum but a subphylum. The phylum to which crustaceans belong is "Arthropoda". We use `recode()`:
+However, Crustacea is not a phylum but a subphylum. The phylum to which crustaceans belong is `Arthropoda`. We can correct this with `recode()`:
 
 ```{r}
-taxon %<>% mutate (phylum = recode (raw_phylum, "Crustacea" = "Arthropoda"))
+taxon %<>% mutate (phylum = recode(raw_phylum, "Crustacea" = "Arthropoda"))
 ```
 
 Other use cases (not applicable to our data):
 
-``` {r, eval = F}
+``` {r, eval = FALSE}
 distribution %<>% mutate(description = recode(raw_d_n,
   "Ext.?"     = "Ext.",
   "Ext./Cas." = "Cas.",
@@ -304,12 +294,11 @@ distribution %<>% mutate(locality = recode(value,
   "SAM"    = "Southern America (WGSRPD:8)",
   "Trop."  = "Pantropical",
   .default = "",
-  .missing = "" # As result of stripping, records with no native range already removed by gather()
+  .missing = ""
 ))
 ```
 
-
-2. `mutate()` + `case_when()`
+#### `mutate()` + `case_when()`
 
 `case_when` is often used together with `mutate()` when you want to make a new column (or change an existing one) based on the content of other existing variables.
 
@@ -347,7 +336,6 @@ invasion_stage %<>% mutate(description = case_when(
   raw_status == "N" ~ "established"
 ))
 
-
 distribution %<>% 
   mutate(Flanders = case_when(
     raw_presence_fl == "X" & (is.na(raw_presence_br) | raw_presence_br == "?") & (is.na(raw_presence_wa) | raw_presence_wa == "?") ~ "S",
@@ -370,12 +358,12 @@ distribution %<>%
   ))
 ```
 
-## Post-processing
+### Post-processing
 
-When all terms have been mapped, we remove `raw_colnames()` from `taxon`:
+When all terms have been mapped, we remove the raw column names from `taxon`:
 
 ```{r}
-taxon %<>% select(-one_of(raw_colnames))
+taxon %<>% select(-starts_with("raw_"))
 ```
 
 Inspect `taxon`:
@@ -386,19 +374,20 @@ head(taxon)
 
 As indicated before, it is good practise to keep the order of the Darwin Core fields as specified on the GBIF Resources web page. The mapping process will be a mixture of mapping static fields, unaltered and altered fields.
 
-Save `taxon` as a .csv file. For this, we need to define the path for the taxon core:
+Save `taxon` as a csv file. For this, we need to define the path to the taxon core file (relative to this script):
 
 ```{r}
 dwc_taxon_file = "../data/processed/taxon.csv"
 ```
 
-Write as a .csv:
+Write as a csv:
 
 ```{r}
 write.csv(taxon, file = dwc_taxon_file, na = "", row.names = FALSE, fileEncoding = "UTF-8")
 ```
 
+<div class="alert alert-warning">
+**Note**
 
-# Exercise: 
-
-
+Make sure to set `na = ""` and `row.names = FALSE` when writing to a CSV file.
+</div>
