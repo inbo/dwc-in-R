@@ -166,9 +166,10 @@ To select rows use `filter()`. Again, one or multiple filters can be applied to 
 
 ```{r select_rows}
 filter(CO2, 
-       Type == "Quebec", 
-       Treatment == "nonchilled", 
-       conc  < 200)
+  Type == "Quebec", 
+  Treatment == "nonchilled", 
+  conc  < 200
+)
 ```
 
 A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to get only those rows for which the `weight_in_g` is smaller than 40, use `filter(data, weight_in_g < 40)`.
@@ -268,6 +269,9 @@ We apply all steps on the right of `%<>%` to `df` and overwrite it with the fina
 
 ```{r double_pipes}
 small_uptakes %<>% filter(uptake < 31)
+```
+
+```{r show_uptakes}
 small_uptakes
 ```
 
@@ -277,8 +281,9 @@ Notice that `%<>%` is part of magrittr package.
 
 1. Display the column `weight_in_g` with values > 30 using pipes:
 
-data %>% select(weight_in_g) %>%
 ```{r display_weight_pipes, exercise = TRUE}
+data %>%
+  select(weight_in_g) %>%
   filter(weight_in_g > 30)
 ```
 
@@ -357,20 +362,24 @@ But what if you want to calculate the minimum and maximum uptake for each plant?
 ```{r group_and_summarize}
 CO2 %>%
   group_by(Plant) %>%
-  summarize(min_uptake = min(uptake),
-            max_uptake = max(uptake))
+  summarize(
+    min_uptake = min(uptake),
+    max_uptake = max(uptake)
+  )
 ```
 
 Theoretically this kind of workflow is called the *split-apply-combine paradigm*: *split* the data into groups, *apply* some analysis to each group, and then *combine* the results together.Interesting to notice that `group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
 
 ```{r class_after_groupby}
-class(CO2%>% group_by(Plant))
+class(CO2 %>% group_by(Plant))
 ```
 
 For counting how many rows (with unique) in each group you can use `count()` instead of `summarize()`:
 
-CO2 %>% group_by(Plant) %>% count()
 ```{r count}
+CO2 %>%
+  group_by(Plant) %>%
+  count()
 ```
 
 Or even more compact:
@@ -403,8 +412,9 @@ data %>%
 
 4. Show mean weight per sex and species:
 
-data %>% filter(!is.na(weight_in_g)) %>% 
 ```{r mean_weight_sex_species, exercise = TRUE}
+data %>%
+  filter(!is.na(weight_in_g)) %>% 
   group_by(sex, species) %>% 
   summarize(mean_weight = mean(weight_in_g))
 ```
@@ -415,9 +425,12 @@ data %>% filter(!is.na(weight_in_g)) %>%
 weight_per_species_sex <- data %>% 
   filter(!is.na(weight_in_g)) %>% 
   group_by(sex, species) %>% 
-  summarize(min_weight = min(weight_in_g),
-            max_weight = max(weight_in_g),
-            mean_weight = mean(weight_in_g))
+  summarize(
+    min_weight = min(weight_in_g),
+    max_weight = max(weight_in_g),
+    mean_weight = mean(weight_in_g)
+  )
+
 weight_per_species_sex
 ```
 
@@ -438,6 +451,7 @@ Notice that  `spread()` and `gather()` aren't dplyr functions but come from the 
 ```{r spread_sex_mean_weight, exercise = TRUE}
 weight_per_species_sex_spread <- weight_per_species_sex %>% 
   spread(key = sex, value = mean_weight)
+
 head(weight_per_species_sex_spread, n = 10)
 ```
 
@@ -446,8 +460,11 @@ head(weight_per_species_sex_spread, n = 10)
 ```{r gather_back, exercise = TRUE}
 weight_per_species_sex_gather <- weight_per_species_sex_spread %>%
   gather(sex, mean_weight, "F", "M", na.rm = TRUE, convert = TRUE)
+
 head(weight_per_species_sex_gather, n = 10)
+
 head(weight_per_species_sex, n = 10)
+
 colnames(weight_per_species_sex_gather) == colnames(weight_per_species_sex)
 ```
 
@@ -485,6 +502,7 @@ df %<>% mutate(new_column = ...)
 
 ```{r mutate_save}
 CO2 %<>% mutate(dev_mean_uptake = uptake - mean(uptake))
+
 head(CO2)
 ```
 
@@ -492,6 +510,7 @@ You can also use `mutate()` to change the values in a column without creating a 
 
 ```{r mutate_update}
 CO2 %<>% mutate(dev_mean_uptake = abs(dev_mean_uptake))
+
 head(CO2)
 ```
 
@@ -501,6 +520,7 @@ head(CO2)
 
 ```{r rename_weight, exercise = TRUE}
 data %<>% rename(weight = weight_in_g)
+
 colnames(data)
 ```
 
@@ -526,30 +546,32 @@ data %>% mutate(parsed_date = as.Date(date))
 
 Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example:
 
-types <- CO2$Type # extract Type from dataframe
 ```{r recode}
+types <- CO2$Type # Extract Type from dataframe
+
 recode(types, 
-       Quebec = "Canada",
-       Mississippi = "USA")
+  Quebec = "Canada",
+  Mississippi = "USA"
+)
 ```
 
 You can specify a `default` value: it will be given to all values not otherwise matched. And if you want replace missing values (NA), then you can specify a value to the parameter `missing`.
 
 ```{r recode_default}
 recode(types, 
-       Quebec = "Canada",
-       .default = "World")
+  Quebec = "Canada",
+  .default = "World"
+)
 ```
 
 A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. `case_when()` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing variables. An example:
 
-CO2 %>% mutate(
-    response_level = case_when(
-      uptake / conc > 0.15 ~ "high",
-      uptake / conc > 0.1 ~ "medium",
-      TRUE ~  "low")
-    )
 ```{r case_when}
+CO2 %>% mutate(response_level = case_when(
+  uptake / conc > 0.15 ~ "high",
+  uptake / conc > 0.1 ~ "medium",
+  TRUE ~  "low")
+)
 ```
 
 Based on the ratio between uptake and carbon dioxide concentration, a new variable, `response_level`, is created with values based on the conditions listed in `case_when()`.
@@ -570,21 +592,18 @@ OT | Ottoicus dissitus Drake, 1960
 OX | Oxybelus pallidus Arnold, 1927
 NA | Not Available
 
-
-data_scientificname <- data %>% 
-  mutate(scientific_name = case_when(
-    species == "DM" ~ "Dimarella riparia (Navás, 1918)",
-    species == "DO" ~ "Dondice occidentalis (Engel, 1925)",
-    species == "DS" ~ "Distonemurus desertus Krivokhatsky, 1992",
-    species == "OL" ~ "Olios scepticus Chamberlin, 1924",
-    species == "PE" ~ "Petrochelidon nigricans (Vieillot, 1817)",
-    species == "PF" ~ "Piffliella eduardi Hammer, 1979",
-    species == "OT" ~ "Ottoicus dissitus Drake, 1960",
-    species == "OX" ~ "Oxybelus pallidus Arnold, 1927",
-    is.na(species) ~ "Not Available"
-    )
-  )
 ```{r translate_scientific_name, exercise = TRUE}
+data_scientificname <- data %>% mutate(scientific_name = case_when(
+  species == "DM" ~ "Dimarella riparia (Navás, 1918)",
+  species == "DO" ~ "Dondice occidentalis (Engel, 1925)",
+  species == "DS" ~ "Distonemurus desertus Krivokhatsky, 1992",
+  species == "OL" ~ "Olios scepticus Chamberlin, 1924",
+  species == "PE" ~ "Petrochelidon nigricans (Vieillot, 1817)",
+  species == "PF" ~ "Piffliella eduardi Hammer, 1979",
+  species == "OT" ~ "Ottoicus dissitus Drake, 1960",
+  species == "OX" ~ "Oxybelus pallidus Arnold, 1927",
+  is.na(species) ~ "Not Available"
+  ))
 ```
 
 # Export your data
@@ -598,15 +617,13 @@ When satisfied about the cleaned data, maybe you would like to save the output. 
 
 1. Export `females_weight_above_30` to `../data/processed/females_weight_above_30.csv`. Notice that the dataframe has only one column, so the choice of the separator makes no difference:
 
-write_tsv(females_weight_above_30, 
-          path = "../data/processed/females_weight_above_30.csv")
 ```{r export_weight_30_females, exercise = TRUE}
+write_tsv(females_weight_above_30, path = "../data/processed/females_weight_above_30.csv")
 ```
 
 2. Export `data_scientificname` to a comma separated file with name
-`../data/processed/data_scientificname.csv` and include column names.
+`../data/processed/data_scientificname.csv` and include column names:
 
-write_csv(data_scientificname, 
-          path = "../data/processed/data_scientificname.csv")
 ```{r export_scientificname, exercise = TRUE}
+write_csv(data_scientificname, path = "../data/processed/data_scientificname.csv")
 ```
