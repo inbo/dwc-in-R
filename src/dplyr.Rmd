@@ -2,9 +2,9 @@
 title: "dplyr"
 author:
 - Damiano Oldoni
-- Peter Desmet
 - Stijn Van Hoey
 - Lien Reyserhove
+- Peter Desmet
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -12,14 +12,13 @@ output:
     toc_depth: 3
     toc_float: true
     number_sections: true
-    theme: yeti
-    df_print: paged
-knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding = encoding, output_file = paste0("../docs/",sub(".Rmd", ".html", basename(input_file))))})
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
+
+## Introduction
 
 This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
 
