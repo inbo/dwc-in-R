@@ -30,7 +30,7 @@ This tutorial describes how to standardize or map data to Darwin Core using R. W
   - Post-processing
 ```
 
-We'll walk through the tutorial step-by-step by using the [Inventory of alien macroinvertebrates in Flanders, Belgium](https://doi.org/10.15468/yxcq07) as an example. Afterwards, you can try it yourself by mapping the [Checklist of non-native freshwater fishes in Flanders, Belgium](https://doi.org/10.15468/xvuzfh).
+We'll walk through the tutorial step-by-step by using the [Inventory of alien macroinvertebrates in Flanders, Belgium](https://doi.org/10.15468/yxcq07) as an example.
 
 # Setup
 
@@ -360,7 +360,7 @@ distribution %<>%
 
 ## Post-processing
 
-When all terms have been mapped, we remove the raw column names from `taxon`:
+When all terms have been mapped, we remove the raw columns from `taxon` in order to retain the mapped Darwin Core terms only:
 
 ```{r}
 taxon %<>% select(-starts_with("raw_"))
@@ -391,3 +391,7 @@ write.csv(taxon, file = dwc_taxon_file, na = "", row.names = FALSE, fileEncoding
 
 Make sure to set `na = ""` and `row.names = FALSE` when writing to a CSV file.
 </div>
+
+# Exercise
+
+You now know the basics to [try yourself](dwc-mapping-exercise.html)!

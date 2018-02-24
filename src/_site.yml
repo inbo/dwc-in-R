@@ -1,15 +1,19 @@
-name: "Standardizing to Darwin Core with R"
+name: "Standardizing data to Darwin Core using R"
 output_dir: "../docs"
 include: ["static/", "tidy.html"]
 navbar:
-  title: "Standardizing to Darwin Core with R"
+  title: "Standardizing data to Darwin Core using R"
   left:
     - text: "Tidy data"
       href: tidy.html
     - text: "dplyr"
       href: dplyr.html
     - text: "Darwin Core mapping"
-      href: dwc-mapping.html
+      menu:
+        - text: "Tutorial"
+          href: dwc-mapping.html
+        - text: "Exercise"
+          href: dwc-mapping-exercise.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/inbo/dwc-in-R

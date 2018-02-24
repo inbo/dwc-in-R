@@ -12,7 +12,7 @@
 <meta name="author" content="Lien Reyserhove" />
 <meta name="author" content="Peter Desmet" />
 
-<meta name="date" content="2018-02-23" />
+<meta name="date" content="2018-02-24" />
 
 <title>Darwin Core mapping</title>
 
@@ -278,7 +278,7 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Standardizing to Darwin Core with R</a>
+      <a class="navbar-brand" href="index.html">Standardizing data to Darwin Core using R</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -288,8 +288,20 @@ div.tocify {
 <li>
   <a href="dplyr.html">dplyr</a>
 </li>
-<li>
-  <a href="dwc-mapping.html">Darwin Core mapping</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Darwin Core mapping
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="dwc-mapping.html">Tutorial</a>
+    </li>
+    <li>
+      <a href="dwc-mapping-exercise.html">Exercise</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -311,46 +323,31 @@ div.tocify {
 <h1 class="title toc-ignore">Darwin Core mapping</h1>
 <h4 class="author"><em>Lien Reyserhove</em></h4>
 <h4 class="author"><em>Peter Desmet</em></h4>
-<h4 class="date"><em>2018-02-23</em></h4>
+<h4 class="date"><em>2018-02-24</em></h4>
 
 </div>
 
 
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
-<p>This tutorial describes how to map checklist data to Darwin Core in a <strong>stepwise manner</strong>. It is good practice to use this approach each time you map your data.</p>
-<ol style="list-style-type: decimal">
-<li>Setup
-<ul>
-<li>Load libraries</li>
-<li>Define locale</li>
-</ul></li>
-<li>Import and clean data
-<ul>
-<li>Import data</li>
-<li>Inspect data</li>
-<li>Clean data</li>
-<li>Further processing</li>
-</ul></li>
-<li>Map to Darwin Core Archive
-<ul>
-<li>Pre-processing</li>
-<li>Mapping
-<ul>
-<li>General concept</li>
-<li>Static Darwin Core fields</li>
-<li>Unaltered Darwin Core fields</li>
-<li>Altered Darwin Core fields</li>
-</ul></li>
-<li>Post-processing</li>
-</ul></li>
-</ol>
-<p>We’ll walk through the tutorial step-by-step by using the <a href="https://doi.org/10.15468/yxcq07">Inventory of alien macroinvertebrates in Flanders, Belgium</a> as an example. Afterwards, you can try it yourself by mapping the <a href="https://doi.org/10.15468/xvuzfh">Checklist of non-native freshwater fishes in Flanders, Belgium</a>.</p>
+<p>This tutorial describes how to standardize or map data to Darwin Core using R. We’ll mainly use functions from the <strong>dplyr package</strong> (see our <a href="dplyr.html">introduction to dplyr</a>). We recommend using a step-by-step approach mapping data to Darwin Core:</p>
+<pre><code>1. Setup
+  - Load libraries
+  - Define locale
+2. Import and clean data
+  - Import data
+  - Inspect data
+  - Clean data
+3. Map to Darwin Core Archive
+  - Pre-processing
+  - Mapping
+  - Post-processing</code></pre>
+<p>We’ll walk through the tutorial step-by-step by using the <a href="https://doi.org/10.15468/yxcq07">Inventory of alien macroinvertebrates in Flanders, Belgium</a> as an example.</p>
 </div>
 <div id="setup" class="section level1">
 <h1><span class="header-section-number">2</span> Setup</h1>
 <p>We load the libraries necessary to <em>import</em>, <em>clean</em> and <em>map</em> the data:</p>
-<pre class="r"><code>library(tidyverse) # For data mapping
+<pre class="r"><code>library(tidyverse) # For data transformation (included dplyr)
 library(magrittr)  # For %&lt;&gt;% pipes
 library(readxl)    # For reading excel files
 library(janitor)   # For basic cleaning of the data</code></pre>
@@ -618,7 +615,7 @@ distribution %&lt;&gt;%
 </div>
 <div id="post-processing" class="section level2">
 <h2><span class="header-section-number">4.6</span> Post-processing</h2>
-<p>When all terms have been mapped, we remove the raw column names from <code>taxon</code>:</p>
+<p>When all terms have been mapped, we remove the raw columns from <code>taxon</code> in order to retain the mapped Darwin Core terms only:</p>
 <pre class="r"><code>taxon %&lt;&gt;% select(-starts_with(&quot;raw_&quot;))</code></pre>
 <p>Inspect <code>taxon</code>:</p>
 <pre class="r"><code>head(taxon)</code></pre>
@@ -637,6 +634,10 @@ distribution %&lt;&gt;%
 <p>Make sure to set <code>na = &quot;&quot;</code> and <code>row.names = FALSE</code> when writing to a CSV file.</p>
 </div>
 </div>
+</div>
+<div id="exercise" class="section level1">
+<h1><span class="header-section-number">5</span> Exercise</h1>
+<p>You now know the basics to <a href="dwc-mapping-exercise.html">try yourself</a>!</p>
 </div>
 
 
