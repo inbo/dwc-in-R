@@ -18,7 +18,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-## Introduction
+# Introduction
 
 This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
 
@@ -313,7 +313,7 @@ females_weight_above_30 <- data %>%
   select(weight_in_g)
 ```
 
-# distinct
+# Distinct values
 
 The function `distinct()` retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows. For example, to know which types of plants were used:
 
@@ -341,7 +341,7 @@ data %>%
   unique()
 ```
 
-# group_by and summarize
+# Summarize data
 
 By using `select()` you can for example calculate minimum or maximum of a specific column.
 
@@ -438,7 +438,7 @@ weight_per_species_sex <- data %>%
 weight_per_species_sex
 ```
 
-# Reshaping: spread and gather
+# Reshape data
 
 These two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
@@ -472,7 +472,7 @@ head(weight_per_species_sex, n = 10)
 colnames(weight_per_species_sex_gather) == colnames(weight_per_species_sex)
 ```
 
-# rename and mutate
+# Rename, add and update columns
 
 Sometimes you need to rename one or more columns. You can do it using function `rename()`:
 
@@ -546,7 +546,7 @@ data %>% mutate(country = "US")
 data %>% mutate(parsed_date = as.Date(date))
 ```
 
-# Recode your data: recode and case_when
+# Translate data
 
 Have you ever wanted to use a kind of *find and replace* function in R? Then it's time to use the dplyr functions `recode()` and  `case_when`: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example:
 
@@ -610,7 +610,7 @@ data_scientificname <- data %>% mutate(scientific_name = case_when(
   ))
 ```
 
-# Export your data
+# Export data
 
 When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of following functions:
 
