@@ -14,7 +14,7 @@ output:
 
 # Introduction
 
-This tutorial describes how to map checklist data to Darwin Core in a **stepwise manner**. It is good practice to use this approach each time you map your data.
+This tutorial describes how to standardize or map data to Darwin Core using R. We'll mainly use functions from the **dplyr package** (see our [introduction to dplyr](dplyr.html)). We recommend using a step-by-step approach mapping data to Darwin Core:
 
 1. Setup
     - Load libraries
@@ -44,7 +44,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 We load the libraries necessary to _import_, _clean_ and _map_ the data:
 
 ```{r}
-library(tidyverse) # For data mapping
+library(tidyverse) # For data transformation (included dplyr)
 library(magrittr)  # For %<>% pipes
 library(readxl)    # For reading excel files
 library(janitor)   # For basic cleaning of the data
