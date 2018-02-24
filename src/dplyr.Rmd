@@ -47,15 +47,15 @@ We suggest to use this graphic interface at the beginning in order to be familia
 ## Exercises
 
 1. Read `survey_data_spreadsheet_tidy.csv`. Check whether the columns match the following types:
-    1. `date`: `double`
-    2. `species`: `character`
-    3. `plot`: `integer`
-    4. `sex`: `character`
-    5. `weight_in_g`: `integer`
-    6. `device_remarks`: `character`
-2. Save the data into `data`
+    - `date`: `double`
+    - `species`: `character`
+    - `plot`: `integer`
+    - `sex`: `character`
+    - `weight_in_g`: `integer`
+    - `device_remarks`: `character`
+2. Save the data into `data`:
 
-```{r read_and_save_data}
+```{r import_dataset, exercise = TRUE}
 data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
   escape_double = FALSE, 
   trim_ws = TRUE
@@ -65,7 +65,6 @@ data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";",
 ```{r read_csv, exercise = TRUE}
 data <- read_csv2 ("../data/interim/survey_data_spreadsheet_tidy.csv")
 ```
-
 
 # Explore data
 
@@ -83,7 +82,7 @@ Before to start manipulate data, it is best practice exploring the imported data
 
 Test the functions introduced above to our dataframe `data`. In particular:
 
-1. Display column names
+1. Display column names:
 
 ```{r display_columns, exercise = TRUE}
 colnames(data)
@@ -101,19 +100,19 @@ ncol(data)
 nrow(data)
 ```
 
-4. Display the first 10 records
+4. Display the first 10 records:
 
 ```{r head, exercise = TRUE}
 head(data, n = 10)
 ```
 
-5. Display data in viewer
+5. Display data in viewer:
 
 ```{r viewer, eval = FALSE, exercise = TRUE}
 View(data)
 ```
 
-6. Display structure of data
+6. Display structure of data:
 
 ```{r structure, exercise = TRUE}
 str(data)
@@ -122,6 +121,7 @@ str(data)
 # Sort data
 
 It is normally useful to sort data. The package `dplyr` offers the function `arrange()` to do it:
+
 ```{r sort}
 arrange(CO2, conc, uptake)
 ```
@@ -132,17 +132,16 @@ Use parameter `desc(col_name)` to sort in descending order:
 arrange(CO2, desc(conc), desc(uptake))
 ```
 
-
 ## Exercises
 
-1. Sort by `date` in ascending order
+1. Sort by `date` in ascending order:
 
 ```{r sort_by_date, exercise = TRUE}
 arrange(data)
 data <- arrange(data)
 ```
 
-2. Overwrite `data` with sorted output
+2. Overwrite `data` with sorted output:
 
 ```{r sort_by_date_and_overwrite, exercise = TRUE}
 arrange(data)
@@ -171,42 +170,43 @@ filter(CO2,
        Treatment == "nonchilled", 
        conc  < 200)
 ```
+
 A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to get only those rows for which the `weight_in_g` is smaller than 40, use `filter(data, weight_in_g < 40)`.
 
 ## Exercises
 
-1. Display the column `weight_in_g`
+1. Display the column `weight_in_g`:
 
 ```{r display_weight, exercise = TRUE}
 select(data, weight_in_g)
 ```
 
-2. Display only the records with `weight_in_g > 30`
+2. Display only the records with `weight_in_g > 30`:
 
 ```{r weight_30, exercise = TRUE}
 filter(data, weight_in_g > 30)
 ```
 
-3. Select females with `weight_in_g > 30`
+3. Select females with `weight_in_g > 30`:
 
 ```{r weight_30_females, exercise = TRUE}
 filter(data, weight_in_g > 30, sex == "F")
 ```
 
-4. Display only `weight_in_g` of females with `weight_in_g > 30`
+4. Display only `weight_in_g` of females with `weight_in_g > 30`:
 
 ```{r weight_30_females_weight, exercise = TRUE}
 females_weight_above_30_all <- filter(data, weight_in_g > 30, sex == "F")
 select(females_weight_above_30_all, weight_in_g)
 ```
 
-5. Save output of (4) as `females_weight_above_30`
+5. Save output of (4) as `females_weight_above_30`:
 
 ```{r weight_30_females_save, exercise = TRUE}
 females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
 ```
 
-6. Select all columns from `data` except the `device_remarks` column
+6. Select all columns from `data` except the `device_remarks` column:
 
 ```{r select_all_except, exercise = TRUE}
 select(data, -device_remark)
@@ -241,6 +241,7 @@ CO2 %>%
 ```
 
 Easy, isn't?
+
 As Stefan Milton, author of magrittr, wrote in [this](https://www.r-statistics.com/2014/08/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/) blogpost:
 
 > The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.
@@ -274,7 +275,7 @@ Notice that `%<>%` is part of magrittr package.
 
 ## Exercises
 
-1. Display the column `weight_in_g` with values > 30 using pipes
+1. Display the column `weight_in_g` with values > 30 using pipes:
 
 data %>% select(weight_in_g) %>%
 ```{r display_weight_pipes, exercise = TRUE}
@@ -287,7 +288,7 @@ data %>% select(weight_in_g) %>%
 data %>% filter(sex == "F", weight_in_g > 30)
 ```
 
-3. Display only weight_in_g of females with weight in g > 30 
+3. Display only weight_in_g of females with weight in g > 30:
 
 ```{r weight_30_females_pipes, exercise = TRUE}
 data %>% 
@@ -295,7 +296,7 @@ data %>%
   select(weight_in_g)
 ```
 
-4. Save output of (3) as a variable: `females_weight_above_30`
+4. Save output of (3) as a variable: `females_weight_above_30`:
 
 ```{r weight_30_females_save_pipes, exercise = TRUE}
 females_weight_above_30 <- data %>% 
@@ -306,6 +307,7 @@ females_weight_above_30 <- data %>%
 # distinct
 
 The function `distinct()` retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows. For example, to know which types of plants were used:
+
 ```{r distinct}
 CO2 %>%
   select(Type) %>%
@@ -314,7 +316,7 @@ CO2 %>%
 
 ## Exercises
 
-1. Show the unique sex values
+1. Show the unique sex values:
 
 ```{r unique_sex, exercise = TRUE}
 data %>% 
@@ -322,7 +324,7 @@ data %>%
   unique()
 ```
 
-2. Show the unique species values
+2. Show the unique species values:
 
 ```{r unique_species, exercise = TRUE}
 data %>% 
@@ -332,7 +334,8 @@ data %>%
 
 # group_by and summarize
 
-By using  `select()` you can for example calculate minimum or maximum of a specific column. 
+By using `select()` you can for example calculate minimum or maximum of a specific column.
+
 The minimum uptake:
 
 ```{r min_uptake}
@@ -349,8 +352,7 @@ CO2 %>%
   max()
 ```
 
-But what if you want to calculate the minimum and maximum uptake for each plant?
-You need then to split the data by `Plant` values and calculate the mimnimum and maximum for each group.  We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarize()`:
+But what if you want to calculate the minimum and maximum uptake for each plant? You need then to split the data by `Plant` values and calculate the mimnimum and maximum for each group. We can do it via `%>%` and two functions from dplyr library: `group_by()` and `summarize()`:
 
 ```{r group_and_summarize}
 CO2 %>%
@@ -359,8 +361,7 @@ CO2 %>%
             max_uptake = max(uptake))
 ```
 
-
-Theoreticallyn this kind of workflow is called the *split-apply-combine paradigm*: *split* the data into groups, *apply* some analysis to each group, and then *combine* the results together.Interesting to notice that `group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
+Theoretically this kind of workflow is called the *split-apply-combine paradigm*: *split* the data into groups, *apply* some analysis to each group, and then *combine* the results together.Interesting to notice that `group_by` actually doesn't modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:
 
 ```{r class_after_groupby}
 class(CO2%>% group_by(Plant))
@@ -372,7 +373,7 @@ CO2 %>% group_by(Plant) %>% count()
 ```{r count}
 ```
 
-or even more compact:
+Or even more compact:
 
 ```{r count_compact}
 CO2 %>% count(Plant)
@@ -380,19 +381,19 @@ CO2 %>% count(Plant)
 
 ## Exercises
 
-1. Count records per sex
+1. Count records per sex:
 
 ```{r count_per_sex, exercise = TRUE}
 data %>% count(sex)
 ```
 
-2. What is the mean weight? Consider to use function `mean()` combined with parameter `na.rm = TRUE` in order to ignore (remove) `NA` while calculating the mean
+2. What is the mean weight? Consider to use function `mean()` combined with parameter `na.rm = TRUE` in order to ignore (remove) `NA` while calculating the mean:
 
 ```{r mean_weight, exercise = TRUE}
 data %>% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))
 ```
 
-3. Show mean weight per sex
+3. Show mean weight per sex:
 
 ```{r mean_weight_sex, exercise = TRUE}
 data %>%
@@ -400,7 +401,7 @@ data %>%
   summarize(mean_weight_in_g = mean(weight_in_g, na.rm = TRUE))
 ```
 
-4. Show mean weight per sex and species
+4. Show mean weight per sex and species:
 
 data %>% filter(!is.na(weight_in_g)) %>% 
 ```{r mean_weight_sex_species, exercise = TRUE}
@@ -408,7 +409,7 @@ data %>% filter(!is.na(weight_in_g)) %>%
   summarize(mean_weight = mean(weight_in_g))
 ```
 
-5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`. Consider to use `min()` and `max()`) combined with parameter `na.rm = TRUE` in order to ignore `NA` while calculating minimum and maximum
+5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`. Consider to use `min()` and `max()`) combined with parameter `na.rm = TRUE` in order to ignore `NA` while calculating minimum and maximum:
 
 ```{r summarize_weight_sex_species, exercise = TRUE}
 weight_per_species_sex <- data %>% 
@@ -425,12 +426,14 @@ weight_per_species_sex
 These two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
 ![spread](../docs/static/images/spread_data_R.png)
+
 ![gather](../docs/static/images/gather_data_R.png)
+
 Notice that  `spread()` and `gather()` aren't dplyr functions but come from the tidyr library.
 
 ## Exercises
 
-1. Spread `weight_per_species_sex` to key on  `sex` and values from `mean_weight` and save output as `weight_per_species_sex_spread`
+1. Spread `weight_per_species_sex` to key on `sex` and values from `mean_weight` and save output as `weight_per_species_sex_spread`:
 
 ```{r spread_sex_mean_weight, exercise = TRUE}
 weight_per_species_sex_spread <- weight_per_species_sex %>% 
@@ -455,6 +458,7 @@ Sometimes you need to rename one or more columns. You can do it using function `
 ```r
 df %>% rename(new_colname = old_colname)
 ```
+
 An example:
 
 ```{r rename}
@@ -466,13 +470,14 @@ Another typical data analysis task is to create new columns based on the values 
 ```r
 new_df <- df %>% mutate(new_column = ...)
 ```
+
 An example using `CO2` dataframe: 
 
 ```{r mutate}
 CO2_dev_mean <- CO2 %>% mutate(dev_mean_uptake = uptake - mean(uptake))
 ```
 
-or you can modify the original dataframe:
+Or you can modify the original dataframe:
 
 ```r
 df %<>% mutate(new_column = ...)
@@ -492,26 +497,26 @@ head(CO2)
 
 ## Exercises
 
-1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`
+1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`:
 
 ```{r rename_weight, exercise = TRUE}
 data %<>% rename(weight = weight_in_g)
 colnames(data)
 ```
 
-2. Convert `weight` values in gram to kg
+2. Convert `weight` values in gram to kg:
 
 ```{r weight_in_kg}
 data %>% mutate(weight = weight / 1000)
 ```
 
-3. Add column `country` with a fixed value `US`
+3. Add column `country` with a fixed value `US`:
 
 ```{r add_country}
 data %>% mutate(country = "US")
 ```
 
-4. Add column `parsed_date` by applying the function `as.Date(column)` to the `date` column
+4. Add column `parsed_date` by applying the function `as.Date(column)` to the `date` column:
 
 ```{r parse_date}
 data %>% mutate(parsed_date = as.Date(date))
@@ -554,7 +559,7 @@ Based on the ratio between uptake and carbon dioxide concentration, a new variab
 1. Add column `scientific_name` with the full scientific name of each species based on the table below and save the output in `data_scientificname`:
 
 species | scientific name
-| --- | --- |
+--- | ---
 DM | Dimarella riparia (Navas, 1918)
 DO | Dondice occidentalis (Engel, 1925)
 DS | Distonemurus desertus Krivokhatsky, 1992
@@ -591,7 +596,7 @@ When satisfied about the cleaned data, maybe you would like to save the output. 
 
 ## Exercises
 
-1. Export `females_weight_above_30` to `../data/processed/females_weight_above_30.csv`. Notice that the dataframe has only one column, so the choice of the separator makes no difference
+1. Export `females_weight_above_30` to `../data/processed/females_weight_above_30.csv`. Notice that the dataframe has only one column, so the choice of the separator makes no difference:
 
 write_tsv(females_weight_above_30, 
           path = "../data/processed/females_weight_above_30.csv")
