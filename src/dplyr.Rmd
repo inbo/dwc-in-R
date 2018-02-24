@@ -112,7 +112,7 @@ head(data, n = 10)
 
 5. Display data in viewer
 
-```{r view}
+```{r view, eval = FALSE}
 View(data)
 ```
 
