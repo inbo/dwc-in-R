@@ -28,7 +28,6 @@ First of all, we need to load some libraries which are part of the tidyverse eco
 library(readr)
 library(dplyr)
 library(tidyr)
-library(magrittr)
 ```
 
 # Read data
@@ -268,6 +267,7 @@ df %<>% f1(...) %>% f2(...)
 We apply all steps on the right of `%<>%` to `df` and overwrite it with the final ouput.
 
 ```{r double_pipes}
+library(magrittr)
 small_uptakes %<>% filter(uptake < 31)
 ```
 
@@ -275,7 +275,11 @@ small_uptakes %<>% filter(uptake < 31)
 small_uptakes
 ```
 
-Notice that `%<>%` is part of magrittr package.
+<div class="alert alert-warning">
+**Note**
+
+`%<>%` is part of the package `magrittr`, which is not loaded with tidyverse or dplyr. You need to load it separately: `library(margrittr)`
+</div>
 
 ## Exercises
 
