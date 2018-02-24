@@ -22,13 +22,10 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
 
-First of all, we need to load some libraries which are part of the tidyr ecosystem:
+First of all, we need to load some libraries which are part of the tidyverse ecosystem:
 
-```{r library_to_read_data}
+```{r load_libraries}
 library(readr)
-```
-
-```{r libraries_to_manipulate_data}
 library(dplyr)
 library(tidyr)
 library(magrittr)
