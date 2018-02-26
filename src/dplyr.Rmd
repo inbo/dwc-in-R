@@ -444,9 +444,9 @@ weight_per_species_sex
 
 These two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
-![spread](../docs/static/images/spread_data_R.png)
+![spread](./static/images/spread_data_R.png)
 
-![gather](../docs/static/images/gather_data_R.png)
+![gather](./static/images/gather_data_R.png)
 
 Notice that  `spread()` and `gather()` aren't dplyr functions but come from the tidyr library.
 
