@@ -30,6 +30,12 @@ library(dplyr)
 library(tidyr)
 ```
 
+Alternatively, you can load all tidyverse libraries at once by:
+
+```r
+library(tidyverse)
+```
+
 # Read data
 
 First of all, we need to import data in R. The most user friendly way to do it is by using the interface provided by RStudio. In the Environment window, click on `Import Dataset` and select `From Text (readr)...`. A window will pop-up. Follow the next steps:
