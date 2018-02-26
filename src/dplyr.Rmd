@@ -61,14 +61,9 @@ We suggest to use this graphic interface at the beginning in order to be familia
 2. Save the data into `data`:
 
 ```{r import_dataset, exercise = TRUE}
-data <- read_delim("../data/interim/survey_data_spreadsheet_tidy.csv", ";", 
-  escape_double = FALSE, 
-  trim_ws = TRUE
-)
 ```
 
 ```{r read_csv, exercise = TRUE}
-data <- read_csv2 ("../data/interim/survey_data_spreadsheet_tidy.csv")
 ```
 
 # Explore data
@@ -90,37 +85,31 @@ Test the functions introduced above to our dataframe `data`. In particular:
 1. Display column names:
 
 ```{r display_columns, exercise = TRUE}
-colnames(data)
 ```
 
 2. How many columns are there?
 
 ```{r number_of_columns, exercise = TRUE}
-ncol(data)
 ```
 
 3. How many rows are there?
 
 ```{r number_of_rows, exercise = TRUE}
-nrow(data)
 ```
 
 4. Display the first 10 records:
 
 ```{r head, exercise = TRUE}
-head(data, n = 10)
 ```
 
 5. Display data in viewer:
 
 ```{r viewer, eval = FALSE, exercise = TRUE}
-View(data)
 ```
 
 6. Display structure of data:
 
 ```{r structure, exercise = TRUE}
-str(data)
 ```
 
 # Sort data
@@ -142,15 +131,11 @@ arrange(CO2, desc(conc), desc(uptake))
 1. Sort by `date` in ascending order:
 
 ```{r sort_by_date, exercise = TRUE}
-arrange(data)
-data <- arrange(data)
 ```
 
 2. Overwrite `data` with sorted output:
 
 ```{r sort_by_date_and_overwrite, exercise = TRUE}
-arrange(data)
-data <- arrange(data)
 ```
 
 # Select columns and rows
@@ -184,38 +169,31 @@ A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to ge
 1. Display the column `weight_in_g`:
 
 ```{r display_weight, exercise = TRUE}
-select(data, weight_in_g)
 ```
 
 2. Display only the records with `weight_in_g > 30`:
 
 ```{r weight_30, exercise = TRUE}
-filter(data, weight_in_g > 30)
 ```
 
 3. Select females with `weight_in_g > 30`:
 
 ```{r weight_30_females, exercise = TRUE}
-filter(data, weight_in_g > 30, sex == "F")
 ```
 
 4. Display only `weight_in_g` of females with `weight_in_g > 30`:
 
 ```{r weight_30_females_weight, exercise = TRUE}
-females_weight_above_30_all <- filter(data, weight_in_g > 30, sex == "F")
-select(females_weight_above_30_all, weight_in_g)
 ```
 
 5. Save output of (4) as `females_weight_above_30`:
 
 ```{r weight_30_females_save, exercise = TRUE}
-females_weight_above_30 <- select(females_weight_above_30_all, weight_in_g)
 ```
 
 6. Select all columns from `data` except the `device_remarks` column:
 
 ```{r select_all_except, exercise = TRUE}
-select(data, -device_remark)
 ```
 
 # Pipes
@@ -292,31 +270,21 @@ small_uptakes
 1. Display the column `weight_in_g` with values > 30 using pipes:
 
 ```{r display_weight_pipes, exercise = TRUE}
-data %>%
-  select(weight_in_g) %>%
-  filter(weight_in_g > 30)
 ```
 
 2. Select females with `weight_in_g > 30` using pipes
 
 ```{r weight_30_pipes, exercise = TRUE}
-data %>% filter(sex == "F", weight_in_g > 30)
 ```
 
 3. Display only weight_in_g of females with weight in g > 30:
 
 ```{r weight_30_females_pipes, exercise = TRUE}
-data %>% 
-  filter(sex == "F", weight_in_g > 30) %>%
-  select(weight_in_g)
 ```
 
 4. Save output of (3) as a new `data.frame`: `females_weight_above_30`:
 
 ```{r weight_30_females_save_pipes, exercise = TRUE}
-females_weight_above_30 <- data %>% 
-  filter(sex == "F", weight_in_g > 30) %>%
-  select(weight_in_g)
 ```
 
 # Distinct values
@@ -334,17 +302,11 @@ CO2 %>%
 1. Show the unique sex values:
 
 ```{r unique_sex, exercise = TRUE}
-data %>% 
-  select(sex) %>%
-  unique()
 ```
 
 2. Show the unique species values:
 
 ```{r unique_species, exercise = TRUE}
-data %>% 
-  select(species) %>% 
-  unique()
 ```
 
 # Summarize data
@@ -397,47 +359,26 @@ CO2 %>%
 1. Count records per sex:
 
 ```{r count_per_sex, exercise = TRUE}
-data %>% 
-  group_by(sex) %>%
-  count()
 ```
 
 2. What is the mean weight? Consider to use function `mean()` combined with parameter `na.rm = TRUE` in order to ignore (remove) `NA` while calculating the mean:
 
 ```{r mean_weight, exercise = TRUE}
-data %>% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))
 ```
 
 3. Show mean weight per sex:
 
 ```{r mean_weight_sex, exercise = TRUE}
-data %>%
-  group_by(sex) %>% 
-  summarize(mean_weight_in_g = mean(weight_in_g, na.rm = TRUE))
 ```
 
 4. Show mean weight per sex and species:
 
 ```{r mean_weight_sex_species, exercise = TRUE}
-data %>%
-  filter(!is.na(weight_in_g)) %>% 
-  group_by(sex, species) %>% 
-  summarize(mean_weight = mean(weight_in_g))
 ```
 
 5. Show minimum, maximum and mean weight per sex and species and save output as `weight_per_species_sex`. Consider to use `min()` and `max()`) combined with parameter `na.rm = TRUE` in order to ignore `NA` while calculating minimum and maximum:
 
 ```{r summarize_weight_sex_species, exercise = TRUE}
-weight_per_species_sex <- data %>% 
-  filter(!is.na(weight_in_g)) %>% 
-  group_by(sex, species) %>% 
-  summarize(
-    min_weight = min(weight_in_g),
-    max_weight = max(weight_in_g),
-    mean_weight = mean(weight_in_g)
-  )
-
-weight_per_species_sex
 ```
 
 # Reshape data
@@ -455,23 +396,11 @@ Notice that  `spread()` and `gather()` aren't dplyr functions but come from the 
 1. Spread `weight_per_species_sex` to key on `sex` and values from `mean_weight` and save output as `weight_per_species_sex_spread`:
 
 ```{r spread_sex_mean_weight, exercise = TRUE}
-weight_per_species_sex_spread <- weight_per_species_sex %>% 
-  spread(key = sex, value = mean_weight)
-
-head(weight_per_species_sex_spread, n = 10)
 ```
 
 2. Gather back the data and save output as `weight_per_species_sex_gather`. Is `weight_per_species_sex_gather` equal to `weight_per_species_sex`?
 
 ```{r gather_back, exercise = TRUE}
-weight_per_species_sex_gather <- weight_per_species_sex_spread %>%
-  gather(sex, mean_weight, "F", "M", na.rm = TRUE, convert = TRUE)
-
-head(weight_per_species_sex_gather, n = 10)
-
-head(weight_per_species_sex, n = 10)
-
-colnames(weight_per_species_sex_gather) == colnames(weight_per_species_sex)
 ```
 
 # Rename, add and update columns
@@ -525,27 +454,21 @@ head(CO2)
 1. Rename column `weight_in_g` of `data` to `weight` and overwrite `data`:
 
 ```{r rename_weight, exercise = TRUE}
-data %<>% rename(weight = weight_in_g)
-
-colnames(data)
 ```
 
 2. Convert `weight` values in gram to kg:
 
 ```{r weight_in_kg, exercise = TRUE}
-data %>% mutate(weight = weight / 1000)
 ```
 
 3. Add column `country` with a fixed value `US`:
 
 ```{r add_country, exercise = TRUE}
-data %>% mutate(country = "US")
 ```
 
 4. Add column `parsed_date` by applying the function `as.Date(column)` to the `date` column:
 
 ```{r parse_date, exercise = TRUE}
-data %>% mutate(parsed_date = as.Date(date))
 ```
 
 # Translate data
@@ -599,17 +522,6 @@ OX | Oxybelus pallidus Arnold, 1927
 NA | Not Available
 
 ```{r translate_scientific_name, exercise = TRUE}
-data_scientificname <- data %>% mutate(scientific_name = case_when(
-  species == "DM" ~ "Dimarella riparia (Navás, 1918)",
-  species == "DO" ~ "Dondice occidentalis (Engel, 1925)",
-  species == "DS" ~ "Distonemurus desertus Krivokhatsky, 1992",
-  species == "OL" ~ "Olios scepticus Chamberlin, 1924",
-  species == "PE" ~ "Petrochelidon nigricans (Vieillot, 1817)",
-  species == "PF" ~ "Piffliella eduardi Hammer, 1979",
-  species == "OT" ~ "Ottoicus dissitus Drake, 1960",
-  species == "OX" ~ "Oxybelus pallidus Arnold, 1927",
-  is.na(species) ~ "Not Available"
-  ))
 ```
 
 # Export data
@@ -624,12 +536,10 @@ When satisfied about the cleaned data, maybe you would like to save the output. 
 1. Export `females_weight_above_30` to `../data/processed/females_weight_above_30.csv`. Notice that the dataframe has only one column, so the choice of the separator makes no difference:
 
 ```{r export_weight_30_females, exercise = TRUE}
-write_tsv(females_weight_above_30, path = "../data/processed/females_weight_above_30.csv")
 ```
 
 2. Export `data_scientificname` to a comma separated file with name
 `../data/processed/data_scientificname.csv` and include column names:
 
 ```{r export_scientificname, exercise = TRUE}
-write_csv(data_scientificname, path = "../data/processed/data_scientificname.csv")
 ```
