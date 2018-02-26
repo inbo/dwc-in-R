@@ -16,16 +16,56 @@ output:
 
 In this exercise you will map the [Checklist of non-native freshwater fishes in Flanders, Belgium](https://doi.org/10.15468/xvuzfh).
 
-```
+
 1. Setup
-  - Load libraries
-  - Define locale
+
+  - Define locale: `UTF-8`
+  - Load libaries: 
+      * `dplyr`
+      * `magritr`
+      * `janitor`
+      * `readxl`
+
 2. Import and clean data
-  - Import data
+  - Import data:
+      * `raw_data` = "dwc-in-R/data/raw/ExotischeVissenVlaanderen2016.xlsx"
   - Inspect data
   - Clean data
-3. Map to Darwin Core Archive
+      * Remove spaces in column names
+      * use lower case letters only
+      
+3. Map `raw_data` to Darwin Core Archive
   - Pre-processing
   - Mapping
-  - Post-processing
-```
+      * Taxon Core: see table for terms
+      * Distribution Extension: see table for terms
+  - Post-processing:
+      * Save as `taxon.csv` and `distribution.csv` respectively
+      * Save in folder "dwc-in-R/data/processed"
+
+
+Overview of the Darwin Core tems to be mapped:
+
+DwC term  |  content
+--- | ---
+**Taxon** |
+language   |  `en`
+license:   |  `http://creativecommons.org/publicdomain/zero/1.0/`
+rightsHolder   |  `INBO`
+accessRights  |  `http://www.inbo.be/en/norms-for-data-use`
+datasetID   |  `https://doi.org/10.15468/xvuzfh`
+datasetName   |  `Checklist of alien fishes in Flanders, Belgium`
+taxonID   |  copy of `Taxon ID`
+scientificName  |  copy of `Latin Name`
+kingdom  |  `Animalia`
+taxonRank  |  `species`
+nomenclaturalCode  |  `ICZN`
+**Distribution** | 
+taxonID   |  copy of `Taxon ID`
+locationID	|	`ISO_3166-2:BE-VLG`
+locality	|	`Flanders`
+countryCode	|	`BE`
+occurrenceStatus	|	`present`
+eventDate	|	Copy of `Introduction` BUT recode `20xx` = 2000, `17h c.` = 1601, `1980s` = 1980, `13th c.`= 1201
+
+
