@@ -14,7 +14,7 @@ This script provides the functionality to clean all chunks with a given identifi
 
 We advice you to provide a file name that informs about the solutions, e.g. `dplyr-solutions.Rmd`
 
-2. As the function is not part of any package, the easiest way to use the functionality is to `source` the functio `empty_exercises.R`:
+2. As the function is not part of any package, the easiest way to use the functionality is to `source` the function `empty_exercises.R`:
 
 ```R
 source("./src/build/empty_exercises.R")
@@ -23,6 +23,7 @@ source("./src/build/empty_exercises.R")
 3. Apply the function `empty_exercises` on all files with the exercise chunks to render the cleaned version:
 
 ```R
-empty_exercises("./src/dplyr-solutions.Rmd", "./src/dplyr.Rmd")
+empty_exercises(solutions_file = "./src/dplyr-solutions.Rmd",
+                output_file = "./src/dplyr.Rmd")
 ```
-which will convert the file `dplyr-solutions.Rmd` to `dplyr.Rmd` while removing the exercise solution chunks. The latter can be used for teaching itself, while keeping the solutions available in the solutions file. 
+which will convert the file `dplyr-solutions.Rmd` to `dplyr.Rmd` while removing the exercise solution chunks. The cleaned file without solutions (`dplyr.Rmd`) can be used for teaching itself, while keeping the solutions available in the solutions file. 

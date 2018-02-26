@@ -573,7 +573,7 @@ select(females_weight_above_30_all, weight_in_g)</code></pre>
 </div>
 <div id="pipes" class="section level1">
 <h1><span class="header-section-number">6</span> Pipes</h1>
-<p>As you probably noticed, we need to create new <code>data.frame</code> everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, high memory space usage, and higher chance of typos.</p>
+<p>As you probably noticed, we need to create new <code>data.frame</code> everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, higher chance of typos,…</p>
 <p>An alternative is to wrap (<em>nest</em>) functions one within each other, so that the output of a function would be considered the input of the other one. For example, if we have to apply <code>f1</code> to a dataframe <code>df</code> and <code>f2</code> to the output of <code>f1</code>, we write:</p>
 <pre class="r"><code>f2(f1(df, ...), ...)</code></pre>
 <pre class="r"><code>filter(select(CO2, uptake), uptake &gt; 30, uptake &lt; 31.8)</code></pre>
