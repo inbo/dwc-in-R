@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 # Introduction
 
-This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
+This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionalities. There is no better way to improve your programming skills than trying it yourself. Don't be shy to make faults and take a look to the [base R cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf) and the [dplyr cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf): we do it constantly.
 
 First of all, we need to load some libraries which are part of the tidyverse ecosystem:
 
@@ -28,6 +28,12 @@ First of all, we need to load some libraries which are part of the tidyverse eco
 library(readr)
 library(dplyr)
 library(tidyr)
+```
+
+Alternatively, you can load all tidyverse libraries at once by:
+
+```r
+library(tidyverse)
 ```
 
 # Read data
@@ -386,18 +392,14 @@ CO2 %>%
   count()
 ```
 
-Or even more compact:
-
-```{r count_compact}
-CO2 %>% count(Plant)
-```
-
 ## Exercises
 
 1. Count records per sex:
 
 ```{r count_per_sex, exercise = TRUE}
-data %>% count(sex)
+data %>% 
+  group_by(sex) %>%
+  count()
 ```
 
 2. What is the mean weight? Consider to use function `mean()` combined with parameter `na.rm = TRUE` in order to ignore (remove) `NA` while calculating the mean:
@@ -442,9 +444,9 @@ weight_per_species_sex
 
 These two functions provide opposite functionalities. While `spread()` *spreads* rows into columns,  `gather()` *gathers* columns into rows. An example can be found in these two images from [Data Carpentry](http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread):
 
-![spread](../docs/static/images/spread_data_R.png)
+![spread](./static/images/spread_data_R.png)
 
-![gather](../docs/static/images/gather_data_R.png)
+![gather](./static/images/gather_data_R.png)
 
 Notice that  `spread()` and `gather()` aren't dplyr functions but come from the tidyr library.
 
