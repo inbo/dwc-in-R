@@ -23,6 +23,7 @@ source("./src/build/empty_exercises.R")
 3. Apply the function `empty_exercises` on all files with the exercise chunks to render the cleaned version:
 
 ```R
-empty_exercises("./src/dplyr-solutions.Rmd", "./src/dplyr.Rmd")
+empty_exercises(solutions_file = "./src/dplyr-solutions.Rmd",
+                output_file = "./src/dplyr.Rmd")
 ```
 which will convert the file `dplyr-solutions.Rmd` to `dplyr.Rmd` while removing the exercise solution chunks. The latter can be used for teaching itself, while keeping the solutions available in the solutions file. 
