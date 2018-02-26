@@ -532,19 +532,19 @@ colnames(data)
 
 2. Convert `weight` values in gram to kg:
 
-```{r weight_in_kg}
+```{r weight_in_kg, exercise = TRUE}
 data %>% mutate(weight = weight / 1000)
 ```
 
 3. Add column `country` with a fixed value `US`:
 
-```{r add_country}
+```{r add_country, exercise = TRUE}
 data %>% mutate(country = "US")
 ```
 
 4. Add column `parsed_date` by applying the function `as.Date(column)` to the `date` column:
 
-```{r parse_date}
+```{r parse_date, exercise = TRUE}
 data %>% mutate(parsed_date = as.Date(date))
 ```
 
