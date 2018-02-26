@@ -26,4 +26,4 @@ source("./src/build/empty_exercises.R")
 empty_exercises(solutions_file = "./src/dplyr-solutions.Rmd",
                 output_file = "./src/dplyr.Rmd")
 ```
-which will convert the file `dplyr-solutions.Rmd` to `dplyr.Rmd` while removing the exercise solution chunks. The latter can be used for teaching itself, while keeping the solutions available in the solutions file. 
+which will convert the file `dplyr-solutions.Rmd` to `dplyr.Rmd` while removing the exercise solution chunks. The cleaned file without solutions (`dplyr.Rmd`) can be used for teaching itself, while keeping the solutions available in the solutions file. 
