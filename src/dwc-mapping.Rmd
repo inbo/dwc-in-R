@@ -150,7 +150,7 @@ It is good practice to inspect the Darwin Core terms on this webpage one by one 
 
 We distinguish **three types** of Darwin Core terms mappings (static values, unaltered values and altered values) and for each one we will use `mutate()` and `%<>%` (double pipe).
 
-## Static values
+### Static values
 
 Static values are used for Darwin Core terms that need the same value for all records. Most often, they are absent in `raw_data`. This mostly concerns **metadata fields** in the taxon core file:
 
@@ -190,7 +190,7 @@ All these fields are added as extra columns to the data frame, in the same order
 head(taxon)
 ```
 
-## Unaltered values
+### Unaltered values
 
 Unaltered values are used for Darwin Core terms for which the content is an exact copy of the corresponding field in `raw_data`. This contrasts with **altered fields**, in which use a certain field in `raw_data` is the **basis** for further processing.
 
@@ -226,13 +226,13 @@ View those 3 fields:
 taxon %>% select(-(taxonID:family))
 ```
 
-## Altered values
+### Altered values
 
 Altered values are used for Darwin Core terms for which the content  in `raw_data` is used as a basis, but it needs to be standardized. This applies to Darwin Core terms for which we use a [vocabulary](http://rs.gbif.org/vocabulary/gbif/) or where we want to transform for clarity or to correct obvious mistakes.
 
 The main functions we use for these are: `mutate()` + `recode()` or  `mutate()` + `case_when()`.
 
-### `mutate()` + `recode()`
+#### `mutate()` + `recode()`
 
 In this case, we aim to replace specific information in `raw_data` by new information specified in the code. For instance, `raw_order` will be mapped to the Darwin Core term `order`:
 
@@ -298,7 +298,7 @@ distribution %<>% mutate(locality = recode(value,
 ))
 ```
 
-### `mutate()` + `case_when()`
+#### `mutate()` + `case_when()`
 
 `case_when` is often used together with `mutate()` when you want to make a new column (or change an existing one) based on the content of other existing variables.
 
