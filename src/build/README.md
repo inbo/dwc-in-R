@@ -14,7 +14,7 @@ This script provides the functionality to clean all chunks with a given identifi
 
 We advice you to provide a file name that informs about the solutions, e.g. `dplyr-solutions.Rmd`
 
-2. As the function is not part of any package, the easiest way to use the functionality is to `source` the functio `empty_exercises.R`:
+2. As the function is not part of any package, the easiest way to use the functionality is to `source` the function `empty_exercises.R`:
 
 ```R
 source("./src/build/empty_exercises.R")
