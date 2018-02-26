@@ -41,7 +41,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 We load the libraries necessary to _import_, _clean_ and _map_ the data:
 
 ```{r}
-library(tidyverse) # For data transformation (included dplyr)
+library(tidyverse) # For data transformation (includes dplyr)
 library(magrittr)  # For %<>% pipes
 library(readxl)    # For reading excel files
 library(janitor)   # For basic cleaning of the data
