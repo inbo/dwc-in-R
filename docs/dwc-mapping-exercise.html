@@ -12,7 +12,7 @@
 <meta name="author" content="Lien Reyserhove" />
 <meta name="author" content="Peter Desmet" />
 
-<meta name="date" content="2018-02-24" />
+<meta name="date" content="2018-02-26" />
 
 <title>Darwin Core mapping exercise</title>
 
@@ -26,8 +26,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 <link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
 <script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -39,12 +39,10 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
 }
 </script>
 
@@ -77,7 +75,7 @@ h6 {
 }
 </style>
 
-<link rel="stylesheet" href="static/css/inbo.css" type="text/css" />
+<link rel="stylesheet" href="static\css\inbo.css" type="text/css" />
 
 </head>
 
@@ -323,7 +321,7 @@ div.tocify {
 <h1 class="title toc-ignore">Darwin Core mapping exercise</h1>
 <h4 class="author"><em>Lien Reyserhove</em></h4>
 <h4 class="author"><em>Peter Desmet</em></h4>
-<h4 class="date"><em>2018-02-24</em></h4>
+<h4 class="date"><em>2018-02-26</em></h4>
 
 </div>
 
@@ -331,17 +329,141 @@ div.tocify {
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>In this exercise you will map the <a href="https://doi.org/10.15468/xvuzfh">Checklist of non-native freshwater fishes in Flanders, Belgium</a>.</p>
-<pre><code>1. Setup
-  - Load libraries
-  - Define locale
-2. Import and clean data
-  - Import data
-  - Inspect data
-  - Clean data
-3. Map to Darwin Core Archive
-  - Pre-processing
-  - Mapping
-  - Post-processing</code></pre>
+<ol style="list-style-type: decimal">
+<li>Setup</li>
+</ol>
+<ul>
+<li>Define locale: <code>UTF-8</code></li>
+<li>Load libaries:
+<ul>
+<li><code>dplyr</code></li>
+<li><code>magritr</code></li>
+<li><code>janitor</code></li>
+<li><code>readxl</code></li>
+</ul></li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Import and clean data</li>
+</ol>
+<ul>
+<li>Import data:
+<ul>
+<li><code>raw_data</code> = “dwc-in-R/data/raw/ExotischeVissenVlaanderen2016.xlsx”</li>
+</ul></li>
+<li>Inspect data</li>
+<li>Clean data
+<ul>
+<li>Remove spaces in column names</li>
+<li>use lower case letters only</li>
+</ul></li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Map <code>raw_data</code> to Darwin Core Archive</li>
+</ol>
+<ul>
+<li>Pre-processing</li>
+<li>Mapping
+<ul>
+<li>Taxon Core: see table for terms</li>
+<li>Distribution Extension: see table for terms</li>
+</ul></li>
+<li>Post-processing:
+<ul>
+<li>Save as <code>taxon.csv</code> and <code>distribution.csv</code> respectively</li>
+<li>Save in folder “dwc-in-R/data/processed”</li>
+</ul></li>
+</ul>
+<p>Overview of the Darwin Core tems to be mapped:</p>
+<table style="width:11%;">
+<colgroup>
+<col width="5%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>DwC term</th>
+<th>content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Taxon</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>language</td>
+<td><code>en</code></td>
+</tr>
+<tr class="odd">
+<td>license:</td>
+<td><code>http://creativecommons.org/publicdomain/zero/1.0/</code></td>
+</tr>
+<tr class="even">
+<td>rightsHolder</td>
+<td><code>INBO</code></td>
+</tr>
+<tr class="odd">
+<td>accessRights</td>
+<td><code>http://www.inbo.be/en/norms-for-data-use</code></td>
+</tr>
+<tr class="even">
+<td>datasetID</td>
+<td><code>https://doi.org/10.15468/xvuzfh</code></td>
+</tr>
+<tr class="odd">
+<td>datasetName</td>
+<td><code>Checklist of alien fishes in Flanders, Belgium</code></td>
+</tr>
+<tr class="even">
+<td>taxonID</td>
+<td>copy of <code>Taxon ID</code></td>
+</tr>
+<tr class="odd">
+<td>scientificName</td>
+<td>copy of <code>Latin Name</code></td>
+</tr>
+<tr class="even">
+<td>kingdom</td>
+<td><code>Animalia</code></td>
+</tr>
+<tr class="odd">
+<td>taxonRank</td>
+<td><code>species</code></td>
+</tr>
+<tr class="even">
+<td>nomenclaturalCode</td>
+<td><code>ICZN</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Distribution</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>taxonID</td>
+<td>copy of <code>Taxon ID</code></td>
+</tr>
+<tr class="odd">
+<td>locationID</td>
+<td><code>ISO_3166-2:BE-VLG</code></td>
+</tr>
+<tr class="even">
+<td>locality</td>
+<td><code>Flanders</code></td>
+</tr>
+<tr class="odd">
+<td>countryCode</td>
+<td><code>BE</code></td>
+</tr>
+<tr class="even">
+<td>occurrenceStatus</td>
+<td><code>present</code></td>
+</tr>
+<tr class="odd">
+<td>eventDate</td>
+<td>Copy of <code>Introduction</code> BUT recode <code>20xx</code> = 2000, <code>17h c.</code> = 1601, <code>1980s</code> = 1980, <code>13th c.</code>= 1201</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
