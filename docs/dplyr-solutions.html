@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Damiano Oldoni" />
+<meta name="author" content="Stijn Van Hoey" />
+<meta name="author" content="Lien Reyserhove" />
+<meta name="author" content="Peter Desmet" />
+
+<meta name="date" content="2018-02-26" />
+
+<title>dplyr</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="static/css/inbo.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Standardizing data to Darwin Core using R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="tidy.html">Tidy data</a>
+</li>
+<li>
+  <a href="dplyr.html">dplyr</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Darwin Core mapping
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="dwc-mapping.html">Tutorial</a>
+    </li>
+    <li>
+      <a href="dwc-mapping-exercise.html">Exercise</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/inbo/dwc-in-R">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">dplyr</h1>
+<h4 class="author"><em>Damiano Oldoni</em></h4>
+<h4 class="author"><em>Stijn Van Hoey</em></h4>
+<h4 class="author"><em>Lien Reyserhove</em></h4>
+<h4 class="author"><em>Peter Desmet</em></h4>
+<h4 class="date"><em>2018-02-26</em></h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionalities. There is no better way to improve your programming skills than trying it yourself. Don’t be shy to make faults and take a look to the <a href="https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf">base R cheatsheet</a> and the <a href="https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf">dplyr cheatsheet</a>: we do it constantly.</p>
+<p>First of all, we need to load some libraries which are part of the tidyverse ecosystem:</p>
+<pre class="r"><code>library(readr)
+library(dplyr)
+library(tidyr)</code></pre>
+<p>Alternatively, you can load all tidyverse libraries at once by:</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+</div>
+<div id="read-data" class="section level1">
+<h1><span class="header-section-number">2</span> Read data</h1>
+<p>First of all, we need to import data in R. The most user friendly way to do it is by using the interface provided by RStudio. In the Environment window, click on <code>Import Dataset</code> and select <code>From Text (readr)...</code>. A window will pop-up. Follow the next steps:</p>
+<ol style="list-style-type: decimal">
+<li>Click on <code>Browse</code> to selet the text file you want to import</li>
+<li>Select the right delimiter</li>
+<li>Check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name</li>
+<li>Change the name in <code>code preview</code> if you prefer to save the data with a different name than filename</li>
+<li>Click on <code>Import</code></li>
+</ol>
+<p>A dataframe is automatically generated and, very handy, the code to generate it as well! We suggest to use this graphic interface at the beginning in order to be familiar with the most typical parameters (e.g. <code>sep</code>, <code>col_types</code>, <code>col_names</code>, <code>row_names</code>). After a while you will find that writing the code is way faster than a long series of mouse clicks.</p>
+<div id="exercises" class="section level2">
+<h2><span class="header-section-number">2.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Read <code>survey_data_spreadsheet_tidy.csv</code>. Check whether the columns match the following types:
+<ul>
+<li><code>date</code>: <code>double</code></li>
+<li><code>species</code>: <code>character</code></li>
+<li><code>plot</code>: <code>integer</code></li>
+<li><code>sex</code>: <code>character</code></li>
+<li><code>weight_in_g</code>: <code>integer</code></li>
+<li><code>device_remarks</code>: <code>character</code></li>
+</ul></li>
+<li>Save the data into <code>data</code>:</li>
+</ol>
+<pre class="r"><code>data &lt;- read_delim(&quot;../data/interim/survey_data_spreadsheet_tidy.csv&quot;, &quot;;&quot;, 
+  escape_double = FALSE, 
+  trim_ws = TRUE
+)</code></pre>
+<pre class="r"><code>data &lt;- read_csv2 (&quot;../data/interim/survey_data_spreadsheet_tidy.csv&quot;)</code></pre>
+</div>
+</div>
+<div id="explore-data" class="section level1">
+<h1><span class="header-section-number">3</span> Explore data</h1>
+<p>Before to start manipulate data, it is best practice exploring the imported dataframe in order to check whether everything is corectly imported and to have an idea about the data we are going to analyse/manipulate. R gives us several tools to do it, which you can test immediately by using one of the many dataframes from the <a href="https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html">R Datasets package</a>, automatically loaded when you open R. We will use the <code>CO2</code> dataframe about the carbon dioxide uptake in grass plant <em>Echinochloa crus-galli</em> (details can be found <a href="https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/zCO2.html">here</a>)</p>
+<ol style="list-style-type: decimal">
+<li><strong><code>head(CO2)</code></strong> returns the first part of a data frame. It works with several other data types (vectors, tables, …). Specifiy how many rows to display with parameter <code>n</code>: <code>haed(CO2, n = )</code>, default <code>n = 6</code></li>
+<li><strong><code>view(CO2)</code></strong> opens the entire dataframe in viewer. If dataframe is very big, then your computer can slow down sensibly and Rstudio can eventually crash. Be aware of it!</li>
+<li><strong><code>class(CO2)</code></strong> if <code>CO2</code> is a dataframe then <code>&quot;data.frame&quot;</code> will show up</li>
+<li><strong><code>str(CO2)</code></strong> displays the internal structure of the dataframe</li>
+<li><strong><code>col_names(CO2)</code></strong> display column names</li>
+<li><strong><code>nrow(CO2)</code></strong> returns the number of rows of the dataframe</li>
+<li><strong><code>ncol(CO2)</code></strong> return the number of rows of the dataframe</li>
+</ol>
+<div id="exercises-1" class="section level2">
+<h2><span class="header-section-number">3.1</span> Exercises</h2>
+<p>Test the functions introduced above to our dataframe <code>data</code>. In particular:</p>
+<ol style="list-style-type: decimal">
+<li>Display column names:</li>
+</ol>
+<pre class="r"><code>colnames(data)</code></pre>
+<pre><code>## [1] &quot;date&quot;          &quot;species&quot;       &quot;plot&quot;          &quot;sex&quot;          
+## [5] &quot;weight_in_g&quot;   &quot;device_remark&quot;</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>How many columns are there?</li>
+</ol>
+<pre class="r"><code>ncol(data)</code></pre>
+<pre><code>## [1] 6</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>How many rows are there?</li>
+</ol>
+<pre class="r"><code>nrow(data)</code></pre>
+<pre><code>## [1] 88</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Display the first 10 records:</li>
+</ol>
+<pre class="r"><code>head(data, n = 10)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33","6":"NA"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA","6":"NA"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"29","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="5" style="list-style-type: decimal">
+<li>Display data in viewer:</li>
+</ol>
+<pre class="r"><code>View(data)</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Display structure of data:</li>
+</ol>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    88 obs. of  6 variables:
+##  $ date         : Date, format: &quot;2013-07-16&quot; &quot;2013-07-16&quot; ...
+##  $ species      : chr  &quot;DM&quot; &quot;DM&quot; &quot;DM&quot; &quot;DM&quot; ...
+##  $ plot         : int  2 7 3 1 3 7 4 4 7 7 ...
+##  $ sex          : chr  &quot;F&quot; &quot;M&quot; &quot;M&quot; &quot;M&quot; ...
+##  $ weight_in_g  : int  NA 33 NA NA 40 48 29 46 36 35 ...
+##  $ device_remark: chr  NA NA NA NA ...
+##  - attr(*, &quot;spec&quot;)=List of 2
+##   ..$ cols   :List of 6
+##   .. ..$ date         :List of 1
+##   .. .. ..$ format: chr &quot;&quot;
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_date&quot; &quot;collector&quot;
+##   .. ..$ species      : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ plot         : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ sex          : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ weight_in_g  : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ device_remark: list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   ..$ default: list()
+##   .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_guess&quot; &quot;collector&quot;
+##   ..- attr(*, &quot;class&quot;)= chr &quot;col_spec&quot;</code></pre>
+</div>
+</div>
+<div id="sort-data" class="section level1">
+<h1><span class="header-section-number">4</span> Sort data</h1>
+<p>It is normally useful to sort data. The package <code>dplyr</code> offers the function <code>arrange()</code> to do it:</p>
+<pre class="r"><code>arrange(CO2, conc, uptake)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Mc2","2":"Mississippi","3":"chilled","4":"95","5":"7.7","6":"19.51309524"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"95","5":"9.3","6":"17.91309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"95","5":"10.5","6":"16.71309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"95","5":"10.6","6":"16.61309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"95","5":"10.6","6":"16.61309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"95","5":"11.3","6":"15.91309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"95","5":"12.0","6":"15.21309524"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"95","5":"13.6","6":"13.61309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"95","5":"14.2","6":"13.01309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"95","5":"15.1","6":"12.11309524"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"11.21309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"95","5":"16.2","6":"11.01309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"175","5":"11.4","6":"15.81309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"175","5":"14.9","6":"12.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"175","5":"18.0","6":"9.21309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"175","5":"19.2","6":"8.01309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"175","5":"19.4","6":"7.81309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"175","5":"21.0","6":"6.21309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"175","5":"22.0","6":"5.21309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"175","5":"24.1","6":"3.11309524"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.18690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"175","5":"32.4","6":"5.18690476"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"250","5":"12.3","6":"14.91309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"250","5":"17.9","6":"9.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"250","5":"18.1","6":"9.11309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"250","5":"25.8","6":"1.41309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"250","5":"26.2","6":"1.01309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"250","5":"30.3","6":"3.08690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"250","5":"30.6","6":"3.38690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"34.8","6":"7.58690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"250","5":"35.0","6":"7.78690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"250","5":"37.1","6":"9.88690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"250","5":"38.1","6":"10.88690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"250","5":"40.3","6":"13.08690476"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"350","5":"13.0","6":"14.21309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"350","5":"17.9","6":"9.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"350","5":"18.9","6":"8.31309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"350","5":"27.9","6":"0.68690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"350","5":"30.0","6":"2.78690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"350","5":"31.8","6":"4.58690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"350","5":"34.0","6":"6.78690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"350","5":"34.6","6":"7.38690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"37.2","6":"9.98690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"350","5":"38.8","6":"11.58690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"350","5":"41.8","6":"14.58690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"350","5":"42.1","6":"14.88690476"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"500","5":"12.5","6":"14.71309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"500","5":"17.9","6":"9.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"500","5":"19.5","6":"7.71309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"500","5":"28.5","6":"1.28690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"500","5":"30.9","6":"3.68690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"500","5":"32.4","6":"5.18690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"500","5":"32.5","6":"5.28690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"35.3","6":"8.08690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"500","5":"38.6","6":"11.38690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"500","5":"38.9","6":"11.68690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"500","5":"40.6","6":"13.38690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"500","5":"42.9","6":"15.68690476"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"675","5":"13.7","6":"13.51309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"675","5":"18.9","6":"8.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"675","5":"22.2","6":"5.01309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"675","5":"28.1","6":"0.88690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"675","5":"31.1","6":"3.88690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"675","5":"32.4","6":"5.18690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"675","5":"35.4","6":"8.18690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"675","5":"37.5","6":"10.28690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"39.2","6":"11.98690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"675","5":"39.6","6":"12.38690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"675","5":"41.4","6":"14.18690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"675","5":"43.9","6":"16.68690476"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"1000","5":"14.4","6":"12.81309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"1000","5":"19.9","6":"7.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"1000","5":"21.9","6":"5.31309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"1000","5":"27.8","6":"0.58690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"1000","5":"31.5","6":"4.28690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"1000","5":"35.5","6":"8.28690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"1000","5":"38.7","6":"11.48690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"1000","5":"39.7","6":"12.48690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"1000","5":"41.4","6":"14.18690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"1000","5":"42.4","6":"15.18690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"1000","5":"44.3","6":"17.08690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"1000","5":"45.5","6":"18.28690476"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Use parameter <code>desc(col_name)</code> to sort in descending order:</p>
+<pre class="r"><code>arrange(CO2, desc(conc), desc(uptake))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"1000","5":"45.5","6":"18.28690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"1000","5":"44.3","6":"17.08690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"1000","5":"42.4","6":"15.18690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"1000","5":"41.4","6":"14.18690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"1000","5":"39.7","6":"12.48690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"1000","5":"38.7","6":"11.48690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"1000","5":"35.5","6":"8.28690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"1000","5":"31.5","6":"4.28690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"1000","5":"27.8","6":"0.58690476"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"1000","5":"21.9","6":"5.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"1000","5":"19.9","6":"7.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"1000","5":"14.4","6":"12.81309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"675","5":"43.9","6":"16.68690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"675","5":"41.4","6":"14.18690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"675","5":"39.6","6":"12.38690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"39.2","6":"11.98690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"675","5":"37.5","6":"10.28690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"675","5":"35.4","6":"8.18690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"675","5":"32.4","6":"5.18690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"675","5":"31.1","6":"3.88690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"675","5":"28.1","6":"0.88690476"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"675","5":"22.2","6":"5.01309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"675","5":"18.9","6":"8.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"675","5":"13.7","6":"13.51309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"500","5":"42.9","6":"15.68690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"500","5":"40.6","6":"13.38690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"500","5":"38.9","6":"11.68690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"500","5":"38.6","6":"11.38690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"35.3","6":"8.08690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"500","5":"32.5","6":"5.28690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"500","5":"32.4","6":"5.18690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"500","5":"30.9","6":"3.68690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"500","5":"28.5","6":"1.28690476"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"500","5":"19.5","6":"7.71309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"500","5":"17.9","6":"9.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"500","5":"12.5","6":"14.71309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"350","5":"42.1","6":"14.88690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"350","5":"41.8","6":"14.58690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"350","5":"38.8","6":"11.58690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"37.2","6":"9.98690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"350","5":"34.6","6":"7.38690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"350","5":"34.0","6":"6.78690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"350","5":"31.8","6":"4.58690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"350","5":"30.0","6":"2.78690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"350","5":"27.9","6":"0.68690476"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"350","5":"18.9","6":"8.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"350","5":"17.9","6":"9.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"350","5":"13.0","6":"14.21309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"250","5":"40.3","6":"13.08690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"250","5":"38.1","6":"10.88690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"250","5":"37.1","6":"9.88690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"250","5":"35.0","6":"7.78690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"34.8","6":"7.58690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"250","5":"30.6","6":"3.38690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"250","5":"30.3","6":"3.08690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"250","5":"26.2","6":"1.01309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"250","5":"25.8","6":"1.41309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"250","5":"18.1","6":"9.11309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"250","5":"17.9","6":"9.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"250","5":"12.3","6":"14.91309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"175","5":"32.4","6":"5.18690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.18690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"175","5":"24.1","6":"3.11309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"175","5":"22.0","6":"5.21309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"175","5":"21.0","6":"6.21309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"175","5":"19.4","6":"7.81309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"175","5":"19.2","6":"8.01309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"175","5":"18.0","6":"9.21309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"175","5":"14.9","6":"12.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"175","5":"11.4","6":"15.81309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"95","5":"16.2","6":"11.01309524"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"11.21309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"95","5":"15.1","6":"12.11309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"95","5":"14.2","6":"13.01309524"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"95","5":"13.6","6":"13.61309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"95","5":"12.0","6":"15.21309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"95","5":"11.3","6":"15.91309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"95","5":"10.6","6":"16.61309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"95","5":"10.6","6":"16.61309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"95","5":"10.5","6":"16.71309524"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"95","5":"9.3","6":"17.91309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"95","5":"7.7","6":"19.51309524"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div id="exercises-2" class="section level2">
+<h2><span class="header-section-number">4.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Sort by <code>date</code> in ascending order:</li>
+</ol>
+<pre class="r"><code>arrange(data)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33","6":"NA"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA","6":"NA"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"29","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA"},{"1":"2013-07-18","2":"DM","3":"8","4":"F","5":"22","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"48","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"115","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"132","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"45","6":"NA"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2014-01-08","2":"NA","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"44","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA"},{"1":"2014-01-08","2":"OL","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"PE","3":"2","4":"M","5":"22","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"48","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"PF","3":"2","4":"F","5":"7","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"45","6":"NA"},{"1":"2014-01-08","2":"OT","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"157","6":"scale not calibrated"},{"1":"2014-01-08","2":"OX","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"PF","3":"3","4":"M","5":"7","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"40","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"37","6":"NA"},{"1":"2014-01-12","2":"DM","3":"4","4":"M","5":"NA","6":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"45","6":"NA"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"52","6":"NA"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"35","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"43","6":"NA"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"218","6":"scale not calibrated"},{"1":"2014-02-18","2":"PF","3":"2","4":"F","5":"7","6":"NA"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"52","6":"NA"},{"1":"2014-02-18","2":"OT","3":"3","4":"M","5":"24","6":"NA"},{"1":"2014-02-18","2":"OT","3":"3","4":"F","5":"23","6":"NA"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"232","6":"NA"},{"1":"2014-03-11","2":"OT","3":"3","4":"F","5":"22","6":"NA"},{"1":"2014-03-11","2":"OT","3":"3","4":"M","5":"26","6":"NA"},{"1":"2014-03-11","2":"PF","3":"3","4":"M","5":"8","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA"},{"1":"2014-04-08","2":"NA","3":"3","4":"F","5":"NA","6":"NA"},{"1":"2014-05-06","2":"NA","3":"3","4":"NA","5":"NA","6":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA"},{"1":"2014-06-09","2":"OT","3":"3","4":"F","5":"29","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"190","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>data &lt;- arrange(data)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Overwrite <code>data</code> with sorted output:</li>
+</ol>
+<pre class="r"><code>arrange(data)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33","6":"NA"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA","6":"NA"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"29","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA"},{"1":"2013-07-18","2":"DM","3":"8","4":"F","5":"22","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"48","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"115","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"132","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"45","6":"NA"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2014-01-08","2":"NA","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"44","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA"},{"1":"2014-01-08","2":"OL","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"PE","3":"2","4":"M","5":"22","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"48","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"PF","3":"2","4":"F","5":"7","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"45","6":"NA"},{"1":"2014-01-08","2":"OT","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"157","6":"scale not calibrated"},{"1":"2014-01-08","2":"OX","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"PF","3":"3","4":"M","5":"7","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"40","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"37","6":"NA"},{"1":"2014-01-12","2":"DM","3":"4","4":"M","5":"NA","6":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"45","6":"NA"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"52","6":"NA"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"35","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"43","6":"NA"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"218","6":"scale not calibrated"},{"1":"2014-02-18","2":"PF","3":"2","4":"F","5":"7","6":"NA"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"52","6":"NA"},{"1":"2014-02-18","2":"OT","3":"3","4":"M","5":"24","6":"NA"},{"1":"2014-02-18","2":"OT","3":"3","4":"F","5":"23","6":"NA"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"232","6":"NA"},{"1":"2014-03-11","2":"OT","3":"3","4":"F","5":"22","6":"NA"},{"1":"2014-03-11","2":"OT","3":"3","4":"M","5":"26","6":"NA"},{"1":"2014-03-11","2":"PF","3":"3","4":"M","5":"8","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA"},{"1":"2014-04-08","2":"NA","3":"3","4":"F","5":"NA","6":"NA"},{"1":"2014-05-06","2":"NA","3":"3","4":"NA","5":"NA","6":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA"},{"1":"2014-06-09","2":"OT","3":"3","4":"F","5":"29","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"190","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>data &lt;- arrange(data)</code></pre>
+</div>
+</div>
+<div id="select-columns-and-rows" class="section level1">
+<h1><span class="header-section-number">5</span> Select columns and rows</h1>
+<p>You can select specific columns of a dataframe by <code>select()</code>. Only columns where conditions are true are selected. For example, selecting a column by its column name:</p>
+<pre class="r"><code>select(CO2, uptake)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["uptake"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"16.0"},{"1":"30.4"},{"1":"34.8"},{"1":"37.2"},{"1":"35.3"},{"1":"39.2"},{"1":"39.7"},{"1":"13.6"},{"1":"27.3"},{"1":"37.1"},{"1":"41.8"},{"1":"40.6"},{"1":"41.4"},{"1":"44.3"},{"1":"16.2"},{"1":"32.4"},{"1":"40.3"},{"1":"42.1"},{"1":"42.9"},{"1":"43.9"},{"1":"45.5"},{"1":"14.2"},{"1":"24.1"},{"1":"30.3"},{"1":"34.6"},{"1":"32.5"},{"1":"35.4"},{"1":"38.7"},{"1":"9.3"},{"1":"27.3"},{"1":"35.0"},{"1":"38.8"},{"1":"38.6"},{"1":"37.5"},{"1":"42.4"},{"1":"15.1"},{"1":"21.0"},{"1":"38.1"},{"1":"34.0"},{"1":"38.9"},{"1":"39.6"},{"1":"41.4"},{"1":"10.6"},{"1":"19.2"},{"1":"26.2"},{"1":"30.0"},{"1":"30.9"},{"1":"32.4"},{"1":"35.5"},{"1":"12.0"},{"1":"22.0"},{"1":"30.6"},{"1":"31.8"},{"1":"32.4"},{"1":"31.1"},{"1":"31.5"},{"1":"11.3"},{"1":"19.4"},{"1":"25.8"},{"1":"27.9"},{"1":"28.5"},{"1":"28.1"},{"1":"27.8"},{"1":"10.5"},{"1":"14.9"},{"1":"18.1"},{"1":"18.9"},{"1":"19.5"},{"1":"22.2"},{"1":"21.9"},{"1":"7.7"},{"1":"11.4"},{"1":"12.3"},{"1":"13.0"},{"1":"12.5"},{"1":"13.7"},{"1":"14.4"},{"1":"10.6"},{"1":"18.0"},{"1":"17.9"},{"1":"17.9"},{"1":"17.9"},{"1":"18.9"},{"1":"19.9"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>To select all columns except a specific column use the minus symbol before its name:</p>
+<pre class="r"><code>select(CO2, -uptake)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"11.21309524"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"3.18690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"7.58690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"9.98690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"8.08690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"11.98690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"1000","5":"12.48690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"95","5":"13.61309524"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"175","5":"0.08690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"250","5":"9.88690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"350","5":"14.58690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"500","5":"13.38690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"675","5":"14.18690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"1000","5":"17.08690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"95","5":"11.01309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"175","5":"5.18690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"250","5":"13.08690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"350","5":"14.88690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"500","5":"15.68690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"675","5":"16.68690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"1000","5":"18.28690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"95","5":"13.01309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"175","5":"3.11309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"250","5":"3.08690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"350","5":"7.38690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"500","5":"5.28690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"675","5":"8.18690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"1000","5":"11.48690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"95","5":"17.91309524"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"175","5":"0.08690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"250","5":"7.78690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"350","5":"11.58690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"500","5":"11.38690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"675","5":"10.28690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"1000","5":"15.18690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"95","5":"12.11309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"175","5":"6.21309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"250","5":"10.88690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"350","5":"6.78690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"500","5":"11.68690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"675","5":"12.38690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"1000","5":"14.18690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"95","5":"16.61309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"175","5":"8.01309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"250","5":"1.01309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"350","5":"2.78690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"500","5":"3.68690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"675","5":"5.18690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"1000","5":"8.28690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"95","5":"15.21309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"175","5":"5.21309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"250","5":"3.38690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"350","5":"4.58690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"500","5":"5.18690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"675","5":"3.88690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"1000","5":"4.28690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"95","5":"15.91309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"175","5":"7.81309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"250","5":"1.41309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"350","5":"0.68690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"500","5":"1.28690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"675","5":"0.88690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"1000","5":"0.58690476"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"95","5":"16.71309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"175","5":"12.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"250","5":"9.11309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"350","5":"8.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"500","5":"7.71309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"675","5":"5.01309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"1000","5":"5.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"95","5":"19.51309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"175","5":"15.81309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"250","5":"14.91309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"350","5":"14.21309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"500","5":"14.71309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"675","5":"13.51309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"1000","5":"12.81309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"95","5":"16.61309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"175","5":"9.21309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"250","5":"9.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"350","5":"9.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"500","5":"9.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"675","5":"8.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"1000","5":"7.31309524"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>To select rows use <code>filter()</code>. Again, one or multiple filters can be applied to filter the targeted rows:</p>
+<pre class="r"><code>filter(CO2, 
+  Type == &quot;Quebec&quot;, 
+  Treatment == &quot;nonchilled&quot;, 
+  conc  &lt; 200
+)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"11.21309524"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.18690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"95","5":"13.6","6":"13.61309524"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"95","5":"16.2","6":"11.01309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"175","5":"32.4","6":"5.18690476"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>A condition can be any logical operator (<code>&gt;</code>, <code>&gt;</code>, <code>&lt;=</code>,…). For example, to get only those rows for which the <code>weight_in_g</code> is smaller than 40, use <code>filter(data, weight_in_g &lt; 40)</code>.</p>
+<div id="exercises-3" class="section level2">
+<h2><span class="header-section-number">5.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Display the column <code>weight_in_g</code>:</li>
+</ol>
+<pre class="r"><code>select(data, weight_in_g)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["weight_in_g"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"NA"},{"1":"33"},{"1":"NA"},{"1":"NA"},{"1":"40"},{"1":"48"},{"1":"29"},{"1":"46"},{"1":"36"},{"1":"35"},{"1":"22"},{"1":"42"},{"1":"41"},{"1":"37"},{"1":"52"},{"1":"33"},{"1":"50"},{"1":"48"},{"1":"31"},{"1":"41"},{"1":"44"},{"1":"48"},{"1":"117"},{"1":"121"},{"1":"115"},{"1":"120"},{"1":"118"},{"1":"126"},{"1":"132"},{"1":"113"},{"1":"122"},{"1":"107"},{"1":"115"},{"1":"39"},{"1":"40"},{"1":"45"},{"1":"41"},{"1":"NA"},{"1":"44"},{"1":"38"},{"1":"NA"},{"1":"22"},{"1":"38"},{"1":"48"},{"1":"43"},{"1":"35"},{"1":"43"},{"1":"37"},{"1":"7"},{"1":"45"},{"1":"NA"},{"1":"157"},{"1":"NA"},{"1":"37"},{"1":"7"},{"1":"40"},{"1":"36"},{"1":"135"},{"1":"128"},{"1":"42"},{"1":"37"},{"1":"NA"},{"1":"48"},{"1":"45"},{"1":"42"},{"1":"52"},{"1":"35"},{"1":"39"},{"1":"43"},{"1":"144"},{"1":"218"},{"1":"7"},{"1":"52"},{"1":"24"},{"1":"23"},{"1":"232"},{"1":"22"},{"1":"26"},{"1":"8"},{"1":"51"},{"1":"44"},{"1":"146"},{"1":"NA"},{"1":"NA"},{"1":"182"},{"1":"29"},{"1":"115"},{"1":"190"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Display only the records with <code>weight_in_g &gt; 30</code>:</li>
+</ol>
+<pre class="r"><code>filter(data, weight_in_g &gt; 30)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33","6":"NA"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"48","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"115","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"132","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"45","6":"NA"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"44","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"48","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"45","6":"NA"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"157","6":"scale not calibrated"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"40","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"37","6":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"45","6":"NA"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"52","6":"NA"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"35","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"43","6":"NA"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"218","6":"scale not calibrated"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"52","6":"NA"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"232","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"190","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Select females with <code>weight_in_g &gt; 30</code>:</li>
+</ol>
+<pre class="r"><code>filter(data, weight_in_g &gt; 30, sex == &quot;F&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>Display only <code>weight_in_g</code> of females with <code>weight_in_g &gt; 30</code>:</li>
+</ol>
+<pre class="r"><code>females_weight_above_30_all &lt;- filter(data, weight_in_g &gt; 30, sex == &quot;F&quot;)
+select(females_weight_above_30_all, weight_in_g)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["weight_in_g"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"46"},{"1":"35"},{"1":"42"},{"1":"41"},{"1":"37"},{"1":"52"},{"1":"33"},{"1":"50"},{"1":"48"},{"1":"31"},{"1":"41"},{"1":"44"},{"1":"117"},{"1":"121"},{"1":"120"},{"1":"118"},{"1":"126"},{"1":"113"},{"1":"122"},{"1":"107"},{"1":"115"},{"1":"39"},{"1":"40"},{"1":"41"},{"1":"35"},{"1":"37"},{"1":"37"},{"1":"36"},{"1":"135"},{"1":"128"},{"1":"42"},{"1":"48"},{"1":"42"},{"1":"39"},{"1":"144"},{"1":"51"},{"1":"44"},{"1":"146"},{"1":"182"},{"1":"115"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="5" style="list-style-type: decimal">
+<li>Save output of (4) as <code>females_weight_above_30</code>:</li>
+</ol>
+<pre class="r"><code>females_weight_above_30 &lt;- select(females_weight_above_30_all, weight_in_g)</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Select all columns from <code>data</code> except the <code>device_remarks</code> column:</li>
+</ol>
+<pre class="r"><code>select(data, -device_remark)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"29"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35"},{"1":"2013-07-18","2":"DM","3":"8","4":"F","5":"22"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"48"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"115"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"132"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"45"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41"},{"1":"2014-01-08","2":"NA","3":"2","4":"NA","5":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"44"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38"},{"1":"2014-01-08","2":"OL","3":"2","4":"NA","5":"NA"},{"1":"2014-01-08","2":"PE","3":"2","4":"M","5":"22"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"48"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37"},{"1":"2014-01-08","2":"PF","3":"2","4":"F","5":"7"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"45"},{"1":"2014-01-08","2":"OT","3":"2","4":"NA","5":"NA"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"157"},{"1":"2014-01-08","2":"OX","3":"2","4":"NA","5":"NA"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37"},{"1":"2014-01-08","2":"PF","3":"3","4":"M","5":"7"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"40"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"37"},{"1":"2014-01-12","2":"DM","3":"4","4":"M","5":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"45"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"52"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"35"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"43"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"218"},{"1":"2014-02-18","2":"PF","3":"2","4":"F","5":"7"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"52"},{"1":"2014-02-18","2":"OT","3":"3","4":"M","5":"24"},{"1":"2014-02-18","2":"OT","3":"3","4":"F","5":"23"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"232"},{"1":"2014-03-11","2":"OT","3":"3","4":"F","5":"22"},{"1":"2014-03-11","2":"OT","3":"3","4":"M","5":"26"},{"1":"2014-03-11","2":"PF","3":"3","4":"M","5":"8"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146"},{"1":"2014-04-08","2":"NA","3":"3","4":"F","5":"NA"},{"1":"2014-05-06","2":"NA","3":"3","4":"NA","5":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182"},{"1":"2014-06-09","2":"OT","3":"3","4":"F","5":"29"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"190"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="pipes" class="section level1">
+<h1><span class="header-section-number">6</span> Pipes</h1>
+<p>As you probably noticed, we need to create new <code>data.frame</code> everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, high memory space usage, and higher chance of typos.</p>
+<p>An alternative is to wrap (<em>nest</em>) functions one within each other, so that the output of a function would be considered the input of the other one. For example, if we have to apply <code>f1</code> to a dataframe <code>df</code> and <code>f2</code> to the output of <code>f1</code>, we write:</p>
+<pre class="r"><code>f2(f1(df, ...), ...)</code></pre>
+<pre class="r"><code>filter(select(CO2, uptake), uptake &gt; 30, uptake &lt; 31.8)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["uptake"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"30.4"},{"1":"30.3"},{"1":"30.9"},{"1":"30.6"},{"1":"31.1"},{"1":"31.5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>This way of working with functions is typical of programming and is implemented in many other programming languages. The disadvantage of this approach is readibility: you have to read from right to left in order to understand what happens with our data!</p>
+<p>Can we avoid deciphering nested function calls, and making excessive use of temporary <code>data.frames</code>? The answer is yes, thanks to <em>pipe</em> operators. The most used one is the <em>forward pipe</em>: <code>%&gt;%</code>, from the magrittr package. We can then rewrite the example above by using <code>%&gt;%</code>:</p>
+<pre class="r"><code>df %&gt;% f1(...) %&gt;% f2(...)</code></pre>
+<pre class="r"><code>CO2 %&gt;% 
+  select(uptake) %&gt;% 
+  filter(uptake &gt; 30, uptake &lt; 31.8)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["uptake"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"30.4"},{"1":"30.3"},{"1":"30.9"},{"1":"30.6"},{"1":"31.1"},{"1":"31.5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Easy, isn’t?</p>
+<p>As Stefan Milton, author of magrittr, wrote in <a href="https://www.r-statistics.com/2014/08/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/">this</a> blogpost:</p>
+<blockquote>
+<p>The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.</p>
+</blockquote>
+<p>If you want to create a new object (i.e. <code>data.frame</code>) based on the output of a series of functions:</p>
+<pre class="r"><code>df2 &lt;- df %&gt;% f1(...) %&gt;% f2(...)</code></pre>
+<pre class="r"><code>small_uptakes &lt;- CO2 %&gt;% 
+  select(uptake) %&gt;% 
+  filter(uptake &gt; 30, uptake &lt; 31.8)</code></pre>
+<p>If you want to overwrite the input dataframe, you can use the <em>compound assignment operator</em>, <code>%&lt;&gt;%</code> which can be read as the composition of the forward pipe <code>%&gt;%</code>, and asignment symbol <code>&lt;-</code>:</p>
+<pre class="r"><code>df %&lt;&gt;% f1(...) %&gt;% f2(...)</code></pre>
+<p>We apply all steps on the right of <code>%&lt;&gt;%</code> to <code>df</code> and overwrite it with the final ouput.</p>
+<pre class="r"><code>library(magrittr)
+small_uptakes %&lt;&gt;% filter(uptake &lt; 31)</code></pre>
+<pre class="r"><code>small_uptakes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["uptake"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"30.4"},{"1":"30.3"},{"1":"30.9"},{"1":"30.6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="alert alert-warning">
+<p><strong>Note</strong></p>
+<p><code>%&lt;&gt;%</code> is part of the package <code>magrittr</code>, which is not loaded with tidyverse or dplyr. You need to load it separately: <code>library(margrittr)</code></p>
+</div>
+<div id="exercises-4" class="section level2">
+<h2><span class="header-section-number">6.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Display the column <code>weight_in_g</code> with values &gt; 30 using pipes:</li>
+</ol>
+<pre class="r"><code>data %&gt;%
+  select(weight_in_g) %&gt;%
+  filter(weight_in_g &gt; 30)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["weight_in_g"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"33"},{"1":"40"},{"1":"48"},{"1":"46"},{"1":"36"},{"1":"35"},{"1":"42"},{"1":"41"},{"1":"37"},{"1":"52"},{"1":"33"},{"1":"50"},{"1":"48"},{"1":"31"},{"1":"41"},{"1":"44"},{"1":"48"},{"1":"117"},{"1":"121"},{"1":"115"},{"1":"120"},{"1":"118"},{"1":"126"},{"1":"132"},{"1":"113"},{"1":"122"},{"1":"107"},{"1":"115"},{"1":"39"},{"1":"40"},{"1":"45"},{"1":"41"},{"1":"44"},{"1":"38"},{"1":"38"},{"1":"48"},{"1":"43"},{"1":"35"},{"1":"43"},{"1":"37"},{"1":"45"},{"1":"157"},{"1":"37"},{"1":"40"},{"1":"36"},{"1":"135"},{"1":"128"},{"1":"42"},{"1":"37"},{"1":"48"},{"1":"45"},{"1":"42"},{"1":"52"},{"1":"35"},{"1":"39"},{"1":"43"},{"1":"144"},{"1":"218"},{"1":"52"},{"1":"232"},{"1":"51"},{"1":"44"},{"1":"146"},{"1":"182"},{"1":"115"},{"1":"190"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Select females with <code>weight_in_g &gt; 30</code> using pipes</li>
+</ol>
+<pre class="r"><code>data %&gt;% filter(sex == &quot;F&quot;, weight_in_g &gt; 30)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight_in_g"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Display only weight_in_g of females with weight in g &gt; 30:</li>
+</ol>
+<pre class="r"><code>data %&gt;% 
+  filter(sex == &quot;F&quot;, weight_in_g &gt; 30) %&gt;%
+  select(weight_in_g)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["weight_in_g"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"46"},{"1":"35"},{"1":"42"},{"1":"41"},{"1":"37"},{"1":"52"},{"1":"33"},{"1":"50"},{"1":"48"},{"1":"31"},{"1":"41"},{"1":"44"},{"1":"117"},{"1":"121"},{"1":"120"},{"1":"118"},{"1":"126"},{"1":"113"},{"1":"122"},{"1":"107"},{"1":"115"},{"1":"39"},{"1":"40"},{"1":"41"},{"1":"35"},{"1":"37"},{"1":"37"},{"1":"36"},{"1":"135"},{"1":"128"},{"1":"42"},{"1":"48"},{"1":"42"},{"1":"39"},{"1":"144"},{"1":"51"},{"1":"44"},{"1":"146"},{"1":"182"},{"1":"115"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>Save output of (3) as a new <code>data.frame</code>: <code>females_weight_above_30</code>:</li>
+</ol>
+<pre class="r"><code>females_weight_above_30 &lt;- data %&gt;% 
+  filter(sex == &quot;F&quot;, weight_in_g &gt; 30) %&gt;%
+  select(weight_in_g)</code></pre>
+</div>
+</div>
+<div id="distinct-values" class="section level1">
+<h1><span class="header-section-number">7</span> Distinct values</h1>
+<p>The function <code>distinct()</code> retains only unique/distinct values of an input vector. If applied to dataframe, it retains only unique/distinct rows. For example, to know which types of plants were used:</p>
+<pre class="r"><code>CO2 %&gt;%
+  select(Type) %&gt;%
+  distinct()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Type"],"name":[1],"type":["fctr"],"align":["left"]}],"data":[{"1":"Quebec"},{"1":"Mississippi"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div id="exercises-5" class="section level2">
+<h2><span class="header-section-number">7.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Show the unique sex values:</li>
+</ol>
+<pre class="r"><code>data %&gt;% 
+  select(sex) %&gt;%
+  unique()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sex"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"F"},{"1":"M"},{"1":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Show the unique species values:</li>
+</ol>
+<pre class="r"><code>data %&gt;% 
+  select(species) %&gt;% 
+  unique()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["species"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"DM"},{"1":"DO"},{"1":"DS"},{"1":"NA"},{"1":"OL"},{"1":"PE"},{"1":"PF"},{"1":"OT"},{"1":"OX"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="summarize-data" class="section level1">
+<h1><span class="header-section-number">8</span> Summarize data</h1>
+<p>By using <code>select()</code> you can for example calculate minimum or maximum of a specific column.</p>
+<p>The minimum uptake:</p>
+<pre class="r"><code>CO2 %&gt;% 
+  select(uptake) %&gt;%
+  min()</code></pre>
+<pre><code>## [1] 7.7</code></pre>
+<p>And the maximum uptake:</p>
+<pre class="r"><code>CO2 %&gt;% 
+  select(uptake) %&gt;%
+  max()</code></pre>
+<pre><code>## [1] 45.5</code></pre>
+<p>But what if you want to calculate the minimum and maximum uptake for each plant? You need then to split the data by <code>Plant</code> values and calculate the mimnimum and maximum for each group. We can do it via <code>%&gt;%</code> and two functions from dplyr library: <code>group_by()</code> and <code>summarize()</code>:</p>
+<pre class="r"><code>CO2 %&gt;%
+  group_by(Plant) %&gt;%
+  summarize(
+    min_uptake = min(uptake),
+    max_uptake = max(uptake)
+  )</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["min_uptake"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["max_uptake"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn1","2":"16.0","3":"39.7"},{"1":"Qn2","2":"13.6","3":"44.3"},{"1":"Qn3","2":"16.2","3":"45.5"},{"1":"Qc1","2":"14.2","3":"38.7"},{"1":"Qc3","2":"15.1","3":"41.4"},{"1":"Qc2","2":"9.3","3":"42.4"},{"1":"Mn3","2":"11.3","3":"28.5"},{"1":"Mn2","2":"12.0","3":"32.4"},{"1":"Mn1","2":"10.6","3":"35.5"},{"1":"Mc2","2":"7.7","3":"14.4"},{"1":"Mc3","2":"10.6","3":"19.9"},{"1":"Mc1","2":"10.5","3":"22.2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Theoretically this kind of workflow is called the <em>split-apply-combine paradigm</em>: <em>split</em> the data into groups, <em>apply</em> some analysis to each group, and then <em>combine</em> the results together.Interesting to notice that <code>group_by</code> actually doesn’t modify the data contained in the dataframe, but adds an internal grouping to the dataframe, which is visible if you run:</p>
+<pre class="r"><code>class(CO2 %&gt;% group_by(Plant))</code></pre>
+<pre><code>## [1] &quot;grouped_df&quot; &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>For counting how many rows (with unique) in each group you can use <code>count()</code> instead of <code>summarize()</code>:</p>
+<pre class="r"><code>CO2 %&gt;%
+  group_by(Plant) %&gt;%
+  count()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["n"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Qn1","2":"7"},{"1":"Qn2","2":"7"},{"1":"Qn3","2":"7"},{"1":"Qc1","2":"7"},{"1":"Qc3","2":"7"},{"1":"Qc2","2":"7"},{"1":"Mn3","2":"7"},{"1":"Mn2","2":"7"},{"1":"Mn1","2":"7"},{"1":"Mc2","2":"7"},{"1":"Mc3","2":"7"},{"1":"Mc1","2":"7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div id="exercises-6" class="section level2">
+<h2><span class="header-section-number">8.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Count records per sex:</li>
+</ol>
+<pre class="r"><code>data %&gt;% 
+  group_by(sex) %&gt;%
+  count()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sex"],"name":[1],"type":["chr"],"align":["left"]},{"label":["n"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"F","2":"49"},{"1":"M","2":"34"},{"1":"NA","2":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>What is the mean weight? Consider to use function <code>mean()</code> combined with parameter <code>na.rm = TRUE</code> in order to ignore (remove) <code>NA</code> while calculating the mean:</li>
+</ol>
+<pre class="r"><code>data %&gt;% summarize(mean_weight = mean(weight_in_g, na.rm = TRUE))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["mean_weight"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"64.91026"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Show mean weight per sex:</li>
+</ol>
+<pre class="r"><code>data %&gt;%
+  group_by(sex) %&gt;% 
+  summarize(mean_weight_in_g = mean(weight_in_g, na.rm = TRUE))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sex"],"name":[1],"type":["chr"],"align":["left"]},{"label":["mean_weight_in_g"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"F","2":"65.51064"},{"1":"M","2":"64.00000"},{"1":"NA","2":"NaN"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>Show mean weight per sex and species:</li>
+</ol>
+<pre class="r"><code>data %&gt;%
+  filter(!is.na(weight_in_g)) %&gt;% 
+  group_by(sex, species) %&gt;% 
+  summarize(mean_weight = mean(weight_in_g))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sex"],"name":[1],"type":["chr"],"align":["left"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["mean_weight"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"F","2":"DM","3":"39.00000"},{"1":"F","2":"DO","3":"41.90000"},{"1":"F","2":"DS","3":"124.00000"},{"1":"F","2":"OT","3":"24.66667"},{"1":"F","2":"PF","3":"7.00000"},{"1":"F","2":"NA","3":"148.50000"},{"1":"M","2":"DM","3":"42.06250"},{"1":"M","2":"DO","3":"48.33333"},{"1":"M","2":"DS","3":"134.66667"},{"1":"M","2":"OL","3":"35.00000"},{"1":"M","2":"OT","3":"25.00000"},{"1":"M","2":"PE","3":"22.00000"},{"1":"M","2":"PF","3":"7.50000"},{"1":"M","2":"NA","3":"213.33333"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="5" style="list-style-type: decimal">
+<li>Show minimum, maximum and mean weight per sex and species and save output as <code>weight_per_species_sex</code>. Consider to use <code>min()</code> and <code>max()</code>) combined with parameter <code>na.rm = TRUE</code> in order to ignore <code>NA</code> while calculating minimum and maximum:</li>
+</ol>
+<pre class="r"><code>weight_per_species_sex &lt;- data %&gt;% 
+  filter(!is.na(weight_in_g)) %&gt;% 
+  group_by(sex, species) %&gt;% 
+  summarize(
+    min_weight = min(weight_in_g),
+    max_weight = max(weight_in_g),
+    mean_weight = mean(weight_in_g)
+  )
+
+weight_per_species_sex</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sex"],"name":[1],"type":["chr"],"align":["left"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["min_weight"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["max_weight"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["mean_weight"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"F","2":"DM","3":"22","4":"51","5":"39.00000"},{"1":"F","2":"DO","3":"31","4":"52","5":"41.90000"},{"1":"F","2":"DS","3":"107","4":"146","5":"124.00000"},{"1":"F","2":"OT","3":"22","4":"29","5":"24.66667"},{"1":"F","2":"PF","3":"7","4":"7","5":"7.00000"},{"1":"F","2":"NA","3":"115","4":"182","5":"148.50000"},{"1":"M","2":"DM","3":"33","4":"52","5":"42.06250"},{"1":"M","2":"DO","3":"45","4":"52","5":"48.33333"},{"1":"M","2":"DS","3":"115","4":"157","5":"134.66667"},{"1":"M","2":"OL","3":"35","4":"35","5":"35.00000"},{"1":"M","2":"OT","3":"24","4":"26","5":"25.00000"},{"1":"M","2":"PE","3":"22","4":"22","5":"22.00000"},{"1":"M","2":"PF","3":"7","4":"8","5":"7.50000"},{"1":"M","2":"NA","3":"190","4":"232","5":"213.33333"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="reshape-data" class="section level1">
+<h1><span class="header-section-number">9</span> Reshape data</h1>
+<p>These two functions provide opposite functionalities. While <code>spread()</code> <em>spreads</em> rows into columns, <code>gather()</code> <em>gathers</em> columns into rows. An example can be found in these two images from <a href="http://www.datacarpentry.org/R-ecology-lesson/03-dplyr.html#reshaping_with_gather_and_spread">Data Carpentry</a>:</p>
+<div class="figure">
+<img src="static/images/spread_data_R.png" alt="spread" />
+<p class="caption">spread</p>
+</div>
+<div class="figure">
+<img src="static/images/gather_data_R.png" alt="gather" />
+<p class="caption">gather</p>
+</div>
+<p>Notice that <code>spread()</code> and <code>gather()</code> aren’t dplyr functions but come from the tidyr library.</p>
+<div id="exercises-7" class="section level2">
+<h2><span class="header-section-number">9.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Spread <code>weight_per_species_sex</code> to key on <code>sex</code> and values from <code>mean_weight</code> and save output as <code>weight_per_species_sex_spread</code>:</li>
+</ol>
+<pre class="r"><code>weight_per_species_sex_spread &lt;- weight_per_species_sex %&gt;% 
+  spread(key = sex, value = mean_weight)
+
+head(weight_per_species_sex_spread, n = 10)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["species"],"name":[1],"type":["chr"],"align":["left"]},{"label":["min_weight"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["max_weight"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["M"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"DM","2":"22","3":"51","4":"39.00000","5":"NA"},{"1":"DM","2":"33","3":"52","4":"NA","5":"42.06250"},{"1":"DO","2":"31","3":"52","4":"41.90000","5":"NA"},{"1":"DO","2":"45","3":"52","4":"NA","5":"48.33333"},{"1":"DS","2":"107","3":"146","4":"124.00000","5":"NA"},{"1":"DS","2":"115","3":"157","4":"NA","5":"134.66667"},{"1":"OL","2":"35","3":"35","4":"NA","5":"35.00000"},{"1":"OT","2":"22","3":"29","4":"24.66667","5":"NA"},{"1":"OT","2":"24","3":"26","4":"NA","5":"25.00000"},{"1":"PE","2":"22","3":"22","4":"NA","5":"22.00000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Gather back the data and save output as <code>weight_per_species_sex_gather</code>. Is <code>weight_per_species_sex_gather</code> equal to <code>weight_per_species_sex</code>?</li>
+</ol>
+<pre class="r"><code>weight_per_species_sex_gather &lt;- weight_per_species_sex_spread %&gt;%
+  gather(sex, mean_weight, &quot;F&quot;, &quot;M&quot;, na.rm = TRUE, convert = TRUE)
+
+head(weight_per_species_sex_gather, n = 10)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["species"],"name":[1],"type":["chr"],"align":["left"]},{"label":["min_weight"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["max_weight"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["mean_weight"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"DM","2":"22","3":"51","4":"F","5":"39.00000"},{"1":"DO","2":"31","3":"52","4":"F","5":"41.90000"},{"1":"DS","2":"107","3":"146","4":"F","5":"124.00000"},{"1":"OT","2":"22","3":"29","4":"F","5":"24.66667"},{"1":"PF","2":"7","3":"7","4":"F","5":"7.00000"},{"1":"NA","2":"115","3":"182","4":"F","5":"148.50000"},{"1":"DM","2":"33","3":"52","4":"M","5":"42.06250"},{"1":"DO","2":"45","3":"52","4":"M","5":"48.33333"},{"1":"DS","2":"115","3":"157","4":"M","5":"134.66667"},{"1":"OL","2":"35","3":"35","4":"M","5":"35.00000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>head(weight_per_species_sex, n = 10)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sex"],"name":[1],"type":["chr"],"align":["left"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["min_weight"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["max_weight"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["mean_weight"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"F","2":"DM","3":"22","4":"51","5":"39.00000"},{"1":"F","2":"DO","3":"31","4":"52","5":"41.90000"},{"1":"F","2":"DS","3":"107","4":"146","5":"124.00000"},{"1":"F","2":"OT","3":"22","4":"29","5":"24.66667"},{"1":"F","2":"PF","3":"7","4":"7","5":"7.00000"},{"1":"F","2":"NA","3":"115","4":"182","5":"148.50000"},{"1":"M","2":"DM","3":"33","4":"52","5":"42.06250"},{"1":"M","2":"DO","3":"45","4":"52","5":"48.33333"},{"1":"M","2":"DS","3":"115","4":"157","5":"134.66667"},{"1":"M","2":"OL","3":"35","4":"35","5":"35.00000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>colnames(weight_per_species_sex_gather) == colnames(weight_per_species_sex)</code></pre>
+<pre><code>## [1] FALSE FALSE FALSE FALSE  TRUE</code></pre>
+</div>
+</div>
+<div id="rename-add-and-update-columns" class="section level1">
+<h1><span class="header-section-number">10</span> Rename, add and update columns</h1>
+<p>Sometimes you need to rename one or more columns. You can do it using function <code>rename()</code>:</p>
+<pre class="r"><code>df %&gt;% rename(new_colname = old_colname)</code></pre>
+<p>An example:</p>
+<pre class="r"><code>CO2 %&gt;% rename(Conc = conc)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["Conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"11.21309524"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.18690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"34.8","6":"7.58690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"37.2","6":"9.98690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"35.3","6":"8.08690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"39.2","6":"11.98690476"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"1000","5":"39.7","6":"12.48690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"95","5":"13.6","6":"13.61309524"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"250","5":"37.1","6":"9.88690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"350","5":"41.8","6":"14.58690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"500","5":"40.6","6":"13.38690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"675","5":"41.4","6":"14.18690476"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"1000","5":"44.3","6":"17.08690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"95","5":"16.2","6":"11.01309524"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"175","5":"32.4","6":"5.18690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"250","5":"40.3","6":"13.08690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"350","5":"42.1","6":"14.88690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"500","5":"42.9","6":"15.68690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"675","5":"43.9","6":"16.68690476"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"1000","5":"45.5","6":"18.28690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"95","5":"14.2","6":"13.01309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"175","5":"24.1","6":"3.11309524"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"250","5":"30.3","6":"3.08690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"350","5":"34.6","6":"7.38690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"500","5":"32.5","6":"5.28690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"675","5":"35.4","6":"8.18690476"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"1000","5":"38.7","6":"11.48690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"95","5":"9.3","6":"17.91309524"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"175","5":"27.3","6":"0.08690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"250","5":"35.0","6":"7.78690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"350","5":"38.8","6":"11.58690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"500","5":"38.6","6":"11.38690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"675","5":"37.5","6":"10.28690476"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"1000","5":"42.4","6":"15.18690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"95","5":"15.1","6":"12.11309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"175","5":"21.0","6":"6.21309524"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"250","5":"38.1","6":"10.88690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"350","5":"34.0","6":"6.78690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"500","5":"38.9","6":"11.68690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"675","5":"39.6","6":"12.38690476"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"1000","5":"41.4","6":"14.18690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"95","5":"10.6","6":"16.61309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"175","5":"19.2","6":"8.01309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"250","5":"26.2","6":"1.01309524"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"350","5":"30.0","6":"2.78690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"500","5":"30.9","6":"3.68690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"675","5":"32.4","6":"5.18690476"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"1000","5":"35.5","6":"8.28690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"95","5":"12.0","6":"15.21309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"175","5":"22.0","6":"5.21309524"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"250","5":"30.6","6":"3.38690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"350","5":"31.8","6":"4.58690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"500","5":"32.4","6":"5.18690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"675","5":"31.1","6":"3.88690476"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"1000","5":"31.5","6":"4.28690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"95","5":"11.3","6":"15.91309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"175","5":"19.4","6":"7.81309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"250","5":"25.8","6":"1.41309524"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"350","5":"27.9","6":"0.68690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"500","5":"28.5","6":"1.28690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"675","5":"28.1","6":"0.88690476"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"1000","5":"27.8","6":"0.58690476"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"95","5":"10.5","6":"16.71309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"175","5":"14.9","6":"12.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"250","5":"18.1","6":"9.11309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"350","5":"18.9","6":"8.31309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"500","5":"19.5","6":"7.71309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"675","5":"22.2","6":"5.01309524"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"1000","5":"21.9","6":"5.31309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"95","5":"7.7","6":"19.51309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"175","5":"11.4","6":"15.81309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"250","5":"12.3","6":"14.91309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"350","5":"13.0","6":"14.21309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"500","5":"12.5","6":"14.71309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"675","5":"13.7","6":"13.51309524"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"1000","5":"14.4","6":"12.81309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"95","5":"10.6","6":"16.61309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"175","5":"18.0","6":"9.21309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"250","5":"17.9","6":"9.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"350","5":"17.9","6":"9.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"500","5":"17.9","6":"9.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"675","5":"18.9","6":"8.31309524"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"1000","5":"19.9","6":"7.31309524"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Another typical data analysis task is to create new columns based on the values of existing ones, like converting units or calculating the ratio of values in two columns. We can use the function <code>mutate()</code>:</p>
+<pre class="r"><code>new_df &lt;- df %&gt;% mutate(new_column = ...)</code></pre>
+<p>An example using <code>CO2</code> dataframe:</p>
+<pre class="r"><code>CO2_dev_mean &lt;- CO2 %&gt;% mutate(dev_mean_uptake = uptake - mean(uptake))</code></pre>
+<p>Or you can modify the original dataframe:</p>
+<pre class="r"><code>df %&lt;&gt;% mutate(new_column = ...)</code></pre>
+<pre class="r"><code>CO2 %&lt;&gt;% mutate(dev_mean_uptake = uptake - mean(uptake))
+
+head(CO2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"-11.213095","_rn_":"1"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.186905","_rn_":"2"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"34.8","6":"7.586905","_rn_":"3"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"37.2","6":"9.986905","_rn_":"4"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"35.3","6":"8.086905","_rn_":"5"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"39.2","6":"11.986905","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>You can also use <code>mutate()</code> to change the values in a column without creating a new one. In the example below we change the new column <code>dev_mean_uptake</code> by applying absolute value:</p>
+<pre class="r"><code>CO2 %&lt;&gt;% mutate(dev_mean_uptake = abs(dev_mean_uptake))
+
+head(CO2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"11.213095","_rn_":"1"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.186905","_rn_":"2"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"34.8","6":"7.586905","_rn_":"3"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"37.2","6":"9.986905","_rn_":"4"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"35.3","6":"8.086905","_rn_":"5"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"39.2","6":"11.986905","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div id="exercises-8" class="section level2">
+<h2><span class="header-section-number">10.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Rename column <code>weight_in_g</code> of <code>data</code> to <code>weight</code> and overwrite <code>data</code>:</li>
+</ol>
+<pre class="r"><code>data %&lt;&gt;% rename(weight = weight_in_g)
+
+colnames(data)</code></pre>
+<pre><code>## [1] &quot;date&quot;          &quot;species&quot;       &quot;plot&quot;          &quot;sex&quot;          
+## [5] &quot;weight&quot;        &quot;device_remark&quot;</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Convert <code>weight</code> values in gram to kg:</li>
+</ol>
+<pre class="r"><code>data %&gt;% mutate(weight = weight / 1000)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"0.033","6":"NA"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA","6":"NA"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA","6":"NA"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"0.040","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"0.048","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"0.029","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"0.046","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"0.036","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"0.035","6":"NA"},{"1":"2013-07-18","2":"DM","3":"8","4":"F","5":"0.022","6":"NA"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"0.042","6":"NA"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"0.041","6":"NA"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"0.037","6":"NA"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"0.052","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"0.033","6":"NA"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"0.050","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"0.048","6":"NA"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"0.031","6":"NA"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"0.041","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"0.044","6":"NA"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"0.048","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"0.117","6":"NA"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"0.121","6":"NA"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"0.115","6":"NA"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"0.120","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"0.118","6":"NA"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"0.126","6":"NA"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"0.132","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"0.113","6":"scale not calibrated"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"0.122","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"0.107","6":"NA"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"0.115","6":"NA"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"0.039","6":"NA"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"0.040","6":"NA"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"0.045","6":"NA"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"0.041","6":"NA"},{"1":"2014-01-08","2":"NA","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.044","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.038","6":"NA"},{"1":"2014-01-08","2":"OL","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"PE","3":"2","4":"M","5":"0.022","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.038","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.048","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.043","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"0.035","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.043","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"0.037","6":"NA"},{"1":"2014-01-08","2":"PF","3":"2","4":"F","5":"0.007","6":"NA"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"0.045","6":"NA"},{"1":"2014-01-08","2":"OT","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"0.157","6":"scale not calibrated"},{"1":"2014-01-08","2":"OX","3":"2","4":"NA","5":"NA","6":"NA"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"0.037","6":"NA"},{"1":"2014-01-08","2":"PF","3":"3","4":"M","5":"0.007","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"0.040","6":"NA"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"0.036","6":"NA"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"0.135","6":"NA"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"0.128","6":"NA"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"0.042","6":"NA"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"0.037","6":"NA"},{"1":"2014-01-12","2":"DM","3":"4","4":"M","5":"NA","6":"NA"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"0.048","6":"NA"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"0.045","6":"NA"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"0.042","6":"NA"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"0.052","6":"NA"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"0.035","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"0.039","6":"NA"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"0.043","6":"NA"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"0.144","6":"NA"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"0.218","6":"scale not calibrated"},{"1":"2014-02-18","2":"PF","3":"2","4":"F","5":"0.007","6":"NA"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"0.052","6":"NA"},{"1":"2014-02-18","2":"OT","3":"3","4":"M","5":"0.024","6":"NA"},{"1":"2014-02-18","2":"OT","3":"3","4":"F","5":"0.023","6":"NA"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"0.232","6":"NA"},{"1":"2014-03-11","2":"OT","3":"3","4":"F","5":"0.022","6":"NA"},{"1":"2014-03-11","2":"OT","3":"3","4":"M","5":"0.026","6":"NA"},{"1":"2014-03-11","2":"PF","3":"3","4":"M","5":"0.008","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"0.051","6":"NA"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"0.044","6":"NA"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"0.146","6":"NA"},{"1":"2014-04-08","2":"NA","3":"3","4":"F","5":"NA","6":"NA"},{"1":"2014-05-06","2":"NA","3":"3","4":"NA","5":"NA","6":"NA"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"0.182","6":"NA"},{"1":"2014-06-09","2":"OT","3":"3","4":"F","5":"0.029","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"0.115","6":"NA"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"0.190","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Add column <code>country</code> with a fixed value <code>US</code>:</li>
+</ol>
+<pre class="r"><code>data %&gt;% mutate(country = &quot;US&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]},{"label":["country"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA","6":"NA","7":"US"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33","6":"NA","7":"US"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA","6":"NA","7":"US"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"29","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"8","4":"F","5":"22","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA","7":"US"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA","7":"US"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA","7":"US"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA","7":"US"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA","7":"US"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA","7":"US"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA","7":"US"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA","7":"US"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA","7":"US"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"48","6":"NA","7":"US"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA","7":"US"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA","7":"US"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"115","6":"NA","7":"US"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA","7":"US"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA","7":"US"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA","7":"US"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"132","6":"scale not calibrated","7":"US"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated","7":"US"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA","7":"US"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA","7":"US"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA","7":"US"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA","7":"US"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA","7":"US"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"45","6":"NA","7":"US"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA","7":"US"},{"1":"2014-01-08","2":"NA","3":"2","4":"NA","5":"NA","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"44","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA","7":"US"},{"1":"2014-01-08","2":"OL","3":"2","4":"NA","5":"NA","6":"NA","7":"US"},{"1":"2014-01-08","2":"PE","3":"2","4":"M","5":"22","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"48","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA","7":"US"},{"1":"2014-01-08","2":"PF","3":"2","4":"F","5":"7","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"45","6":"NA","7":"US"},{"1":"2014-01-08","2":"OT","3":"2","4":"NA","5":"NA","6":"NA","7":"US"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"157","6":"scale not calibrated","7":"US"},{"1":"2014-01-08","2":"OX","3":"2","4":"NA","5":"NA","6":"NA","7":"US"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA","7":"US"},{"1":"2014-01-08","2":"PF","3":"3","4":"M","5":"7","6":"NA","7":"US"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"40","6":"NA","7":"US"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA","7":"US"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA","7":"US"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA","7":"US"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA","7":"US"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"37","6":"NA","7":"US"},{"1":"2014-01-12","2":"DM","3":"4","4":"M","5":"NA","6":"NA","7":"US"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA","7":"US"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"45","6":"NA","7":"US"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA","7":"US"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"52","6":"NA","7":"US"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"35","6":"NA","7":"US"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA","7":"US"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"43","6":"NA","7":"US"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA","7":"US"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"218","6":"scale not calibrated","7":"US"},{"1":"2014-02-18","2":"PF","3":"2","4":"F","5":"7","6":"NA","7":"US"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"52","6":"NA","7":"US"},{"1":"2014-02-18","2":"OT","3":"3","4":"M","5":"24","6":"NA","7":"US"},{"1":"2014-02-18","2":"OT","3":"3","4":"F","5":"23","6":"NA","7":"US"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"232","6":"NA","7":"US"},{"1":"2014-03-11","2":"OT","3":"3","4":"F","5":"22","6":"NA","7":"US"},{"1":"2014-03-11","2":"OT","3":"3","4":"M","5":"26","6":"NA","7":"US"},{"1":"2014-03-11","2":"PF","3":"3","4":"M","5":"8","6":"NA","7":"US"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA","7":"US"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA","7":"US"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA","7":"US"},{"1":"2014-04-08","2":"NA","3":"3","4":"F","5":"NA","6":"NA","7":"US"},{"1":"2014-05-06","2":"NA","3":"3","4":"NA","5":"NA","6":"NA","7":"US"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA","7":"US"},{"1":"2014-06-09","2":"OT","3":"3","4":"F","5":"29","6":"NA","7":"US"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA","7":"US"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"190","6":"NA","7":"US"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>Add column <code>parsed_date</code> by applying the function <code>as.Date(column)</code> to the <code>date</code> column:</li>
+</ol>
+<pre class="r"><code>data %&gt;% mutate(parsed_date = as.Date(date))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["species"],"name":[2],"type":["chr"],"align":["left"]},{"label":["plot"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["weight"],"name":[5],"type":["int"],"align":["right"]},{"label":["device_remark"],"name":[6],"type":["chr"],"align":["left"]},{"label":["parsed_date"],"name":[7],"type":["date"],"align":["right"]}],"data":[{"1":"2013-07-16","2":"DM","3":"2","4":"F","5":"NA","6":"NA","7":"2013-07-16"},{"1":"2013-07-16","2":"DM","3":"7","4":"M","5":"33","6":"NA","7":"2013-07-16"},{"1":"2013-07-16","2":"DM","3":"3","4":"M","5":"NA","6":"NA","7":"2013-07-16"},{"1":"2013-07-16","2":"DM","3":"1","4":"M","5":"NA","6":"NA","7":"2013-07-16"},{"1":"2013-07-18","2":"DM","3":"3","4":"M","5":"40","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"48","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"29","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"46","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"7","4":"M","5":"36","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"35","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"8","4":"F","5":"22","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"7","4":"F","5":"42","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"4","4":"F","5":"41","6":"NA","7":"2013-07-18"},{"1":"2013-07-18","2":"DM","3":"6","4":"F","5":"37","6":"NA","7":"2013-07-18"},{"1":"2013-08-19","2":"DO","3":"8","4":"F","5":"52","6":"NA","7":"2013-08-19"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"33","6":"NA","7":"2013-10-17"},{"1":"2013-10-17","2":"DO","3":"3","4":"F","5":"50","6":"NA","7":"2013-10-17"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"48","6":"NA","7":"2013-10-17"},{"1":"2013-10-17","2":"DO","3":"17","4":"F","5":"31","6":"NA","7":"2013-10-17"},{"1":"2013-10-18","2":"DO","3":"8","4":"F","5":"41","6":"NA","7":"2013-10-18"},{"1":"2013-11-12","2":"DO","3":"1","4":"F","5":"44","6":"NA","7":"2013-11-12"},{"1":"2013-11-12","2":"DO","3":"1","4":"M","5":"48","6":"NA","7":"2013-11-12"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"117","6":"NA","7":"2013-11-12"},{"1":"2013-11-12","2":"DS","3":"1","4":"F","5":"121","6":"NA","7":"2013-11-12"},{"1":"2013-11-12","2":"DS","3":"20","4":"M","5":"115","6":"NA","7":"2013-11-12"},{"1":"2013-11-12","2":"DS","3":"9","4":"F","5":"120","6":"NA","7":"2013-11-12"},{"1":"2013-11-13","2":"DS","3":"17","4":"F","5":"118","6":"NA","7":"2013-11-13"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"126","6":"NA","7":"2013-11-13"},{"1":"2013-11-13","2":"DS","3":"17","4":"M","5":"132","6":"scale not calibrated","7":"2013-11-13"},{"1":"2013-11-13","2":"DS","3":"14","4":"F","5":"113","6":"scale not calibrated","7":"2013-11-13"},{"1":"2013-11-13","2":"DS","3":"11","4":"F","5":"122","6":"NA","7":"2013-11-13"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"107","6":"NA","7":"2013-11-13"},{"1":"2013-11-13","2":"DS","3":"4","4":"F","5":"115","6":"NA","7":"2013-11-13"},{"1":"2013-11-14","2":"DO","3":"8","4":"F","5":"39","6":"NA","7":"2013-11-14"},{"1":"2013-12-10","2":"DO","3":"9","4":"F","5":"40","6":"NA","7":"2013-12-10"},{"1":"2013-12-10","2":"DO","3":"1","4":"M","5":"45","6":"NA","7":"2013-12-10"},{"1":"2013-12-11","2":"DO","3":"8","4":"F","5":"41","6":"NA","7":"2013-12-11"},{"1":"2014-01-08","2":"NA","3":"2","4":"NA","5":"NA","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"44","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"OL","3":"2","4":"NA","5":"NA","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"PE","3":"2","4":"M","5":"22","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"38","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"48","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"35","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"43","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"F","5":"37","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"PF","3":"2","4":"F","5":"7","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"2","4":"M","5":"45","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"OT","3":"2","4":"NA","5":"NA","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DS","3":"2","4":"M","5":"157","6":"scale not calibrated","7":"2014-01-08"},{"1":"2014-01-08","2":"OX","3":"2","4":"NA","5":"NA","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"DM","3":"4","4":"F","5":"37","6":"NA","7":"2014-01-08"},{"1":"2014-01-08","2":"PF","3":"3","4":"M","5":"7","6":"NA","7":"2014-01-08"},{"1":"2014-01-09","2":"DM","3":"1","4":"M","5":"40","6":"NA","7":"2014-01-09"},{"1":"2014-01-09","2":"DM","3":"1","4":"F","5":"36","6":"NA","7":"2014-01-09"},{"1":"2014-01-09","2":"DS","3":"1","4":"F","5":"135","6":"NA","7":"2014-01-09"},{"1":"2014-01-09","2":"DS","3":"4","4":"F","5":"128","6":"NA","7":"2014-01-09"},{"1":"2014-01-10","2":"DM","3":"4","4":"F","5":"42","6":"NA","7":"2014-01-10"},{"1":"2014-01-11","2":"DM","3":"4","4":"M","5":"37","6":"NA","7":"2014-01-11"},{"1":"2014-01-12","2":"DM","3":"4","4":"M","5":"NA","6":"NA","7":"2014-01-12"},{"1":"2014-01-13","2":"DM","3":"4","4":"F","5":"48","6":"NA","7":"2014-01-13"},{"1":"2014-01-14","2":"DM","3":"4","4":"M","5":"45","6":"NA","7":"2014-01-14"},{"1":"2014-01-15","2":"DM","3":"4","4":"F","5":"42","6":"NA","7":"2014-01-15"},{"1":"2014-01-16","2":"DO","3":"4","4":"M","5":"52","6":"NA","7":"2014-01-16"},{"1":"2014-01-17","2":"OL","3":"4","4":"M","5":"35","6":"NA","7":"2014-01-17"},{"1":"2014-01-20","2":"DM","3":"1","4":"F","5":"39","6":"NA","7":"2014-01-20"},{"1":"2014-01-20","2":"DM","3":"1","4":"M","5":"43","6":"NA","7":"2014-01-20"},{"1":"2014-01-20","2":"DS","3":"1","4":"F","5":"144","6":"NA","7":"2014-01-20"},{"1":"2014-02-18","2":"NA","3":"2","4":"M","5":"218","6":"scale not calibrated","7":"2014-02-18"},{"1":"2014-02-18","2":"PF","3":"2","4":"F","5":"7","6":"NA","7":"2014-02-18"},{"1":"2014-02-18","2":"DM","3":"2","4":"M","5":"52","6":"NA","7":"2014-02-18"},{"1":"2014-02-18","2":"OT","3":"3","4":"M","5":"24","6":"NA","7":"2014-02-18"},{"1":"2014-02-18","2":"OT","3":"3","4":"F","5":"23","6":"NA","7":"2014-02-18"},{"1":"2014-03-11","2":"NA","3":"3","4":"M","5":"232","6":"NA","7":"2014-03-11"},{"1":"2014-03-11","2":"OT","3":"3","4":"F","5":"22","6":"NA","7":"2014-03-11"},{"1":"2014-03-11","2":"OT","3":"3","4":"M","5":"26","6":"NA","7":"2014-03-11"},{"1":"2014-03-11","2":"PF","3":"3","4":"M","5":"8","6":"NA","7":"2014-03-11"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"51","6":"NA","7":"2014-03-13"},{"1":"2014-03-13","2":"DM","3":"1","4":"F","5":"44","6":"NA","7":"2014-03-13"},{"1":"2014-03-13","2":"DS","3":"1","4":"F","5":"146","6":"NA","7":"2014-03-13"},{"1":"2014-04-08","2":"NA","3":"3","4":"F","5":"NA","6":"NA","7":"2014-04-08"},{"1":"2014-05-06","2":"NA","3":"3","4":"NA","5":"NA","6":"NA","7":"2014-05-06"},{"1":"2014-05-18","2":"NA","3":"3","4":"F","5":"182","6":"NA","7":"2014-05-18"},{"1":"2014-06-09","2":"OT","3":"3","4":"F","5":"29","6":"NA","7":"2014-06-09"},{"1":"2014-07-08","2":"NA","3":"3","4":"F","5":"115","6":"NA","7":"2014-07-08"},{"1":"2014-07-08","2":"NA","3":"3","4":"M","5":"190","6":"NA","7":"2014-07-08"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="translate-data" class="section level1">
+<h1><span class="header-section-number">11</span> Translate data</h1>
+<p>Have you ever wanted to use a kind of <em>find and replace</em> function in R? Then it’s time to use the dplyr functions <code>recode()</code> and <code>case_when</code>: the first function allows you to replace specific values based on a logical condition and it works with vectors. An example:</p>
+<pre class="r"><code>types &lt;- CO2$Type # Extract Type from dataframe
+
+recode(types, 
+  Quebec = &quot;Canada&quot;,
+  Mississippi = &quot;USA&quot;
+)</code></pre>
+<pre><code>##  [1] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [11] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [21] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [31] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [41] Canada Canada USA    USA    USA    USA    USA    USA    USA    USA   
+## [51] USA    USA    USA    USA    USA    USA    USA    USA    USA    USA   
+## [61] USA    USA    USA    USA    USA    USA    USA    USA    USA    USA   
+## [71] USA    USA    USA    USA    USA    USA    USA    USA    USA    USA   
+## [81] USA    USA    USA    USA   
+## Levels: Canada USA</code></pre>
+<p>You can specify a <code>default</code> value: it will be given to all values not otherwise matched. And if you want replace missing values (NA), then you can specify a value to the parameter <code>missing</code>.</p>
+<pre class="r"><code>recode(types, 
+  Quebec = &quot;Canada&quot;,
+  .default = &quot;World&quot;
+)</code></pre>
+<pre><code>##  [1] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [11] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [21] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [31] Canada Canada Canada Canada Canada Canada Canada Canada Canada Canada
+## [41] Canada Canada World  World  World  World  World  World  World  World 
+## [51] World  World  World  World  World  World  World  World  World  World 
+## [61] World  World  World  World  World  World  World  World  World  World 
+## [71] World  World  World  World  World  World  World  World  World  World 
+## [81] World  World  World  World 
+## Levels: Canada World</code></pre>
+<p>A similar function is <code>case_when()</code> which allows you to vectorise multiple <code>if</code> and <code>if else</code> statements and it works with vectors and dataframes as well. <code>case_when()</code> is often used inside <code>mutate()</code> when you want to make a new column (or change an existing one) based on a complex combination of existing column variables. An example:</p>
+<pre class="r"><code>CO2 %&gt;% mutate(response_level = case_when(
+  uptake / conc &gt; 0.15 ~ &quot;high&quot;,
+  uptake / conc &gt; 0.1 ~ &quot;medium&quot;,
+  TRUE ~  &quot;low&quot;)
+)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Plant"],"name":[1],"type":["ord"],"align":["right"]},{"label":["Type"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Treatment"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["conc"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["uptake"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["dev_mean_uptake"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["response_level"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"95","5":"16.0","6":"11.21309524","7":"high"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"175","5":"30.4","6":"3.18690476","7":"high"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"250","5":"34.8","6":"7.58690476","7":"medium"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"350","5":"37.2","6":"9.98690476","7":"medium"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"500","5":"35.3","6":"8.08690476","7":"low"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"675","5":"39.2","6":"11.98690476","7":"low"},{"1":"Qn1","2":"Quebec","3":"nonchilled","4":"1000","5":"39.7","6":"12.48690476","7":"low"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"95","5":"13.6","6":"13.61309524","7":"medium"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"175","5":"27.3","6":"0.08690476","7":"high"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"250","5":"37.1","6":"9.88690476","7":"medium"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"350","5":"41.8","6":"14.58690476","7":"medium"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"500","5":"40.6","6":"13.38690476","7":"low"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"675","5":"41.4","6":"14.18690476","7":"low"},{"1":"Qn2","2":"Quebec","3":"nonchilled","4":"1000","5":"44.3","6":"17.08690476","7":"low"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"95","5":"16.2","6":"11.01309524","7":"high"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"175","5":"32.4","6":"5.18690476","7":"high"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"250","5":"40.3","6":"13.08690476","7":"high"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"350","5":"42.1","6":"14.88690476","7":"medium"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"500","5":"42.9","6":"15.68690476","7":"low"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"675","5":"43.9","6":"16.68690476","7":"low"},{"1":"Qn3","2":"Quebec","3":"nonchilled","4":"1000","5":"45.5","6":"18.28690476","7":"low"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"95","5":"14.2","6":"13.01309524","7":"medium"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"175","5":"24.1","6":"3.11309524","7":"medium"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"250","5":"30.3","6":"3.08690476","7":"medium"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"350","5":"34.6","6":"7.38690476","7":"low"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"500","5":"32.5","6":"5.28690476","7":"low"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"675","5":"35.4","6":"8.18690476","7":"low"},{"1":"Qc1","2":"Quebec","3":"chilled","4":"1000","5":"38.7","6":"11.48690476","7":"low"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"95","5":"9.3","6":"17.91309524","7":"low"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"175","5":"27.3","6":"0.08690476","7":"high"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"250","5":"35.0","6":"7.78690476","7":"medium"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"350","5":"38.8","6":"11.58690476","7":"medium"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"500","5":"38.6","6":"11.38690476","7":"low"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"675","5":"37.5","6":"10.28690476","7":"low"},{"1":"Qc2","2":"Quebec","3":"chilled","4":"1000","5":"42.4","6":"15.18690476","7":"low"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"95","5":"15.1","6":"12.11309524","7":"high"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"175","5":"21.0","6":"6.21309524","7":"medium"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"250","5":"38.1","6":"10.88690476","7":"high"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"350","5":"34.0","6":"6.78690476","7":"low"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"500","5":"38.9","6":"11.68690476","7":"low"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"675","5":"39.6","6":"12.38690476","7":"low"},{"1":"Qc3","2":"Quebec","3":"chilled","4":"1000","5":"41.4","6":"14.18690476","7":"low"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"95","5":"10.6","6":"16.61309524","7":"medium"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"175","5":"19.2","6":"8.01309524","7":"medium"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"250","5":"26.2","6":"1.01309524","7":"medium"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"350","5":"30.0","6":"2.78690476","7":"low"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"500","5":"30.9","6":"3.68690476","7":"low"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"675","5":"32.4","6":"5.18690476","7":"low"},{"1":"Mn1","2":"Mississippi","3":"nonchilled","4":"1000","5":"35.5","6":"8.28690476","7":"low"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"95","5":"12.0","6":"15.21309524","7":"medium"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"175","5":"22.0","6":"5.21309524","7":"medium"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"250","5":"30.6","6":"3.38690476","7":"medium"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"350","5":"31.8","6":"4.58690476","7":"low"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"500","5":"32.4","6":"5.18690476","7":"low"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"675","5":"31.1","6":"3.88690476","7":"low"},{"1":"Mn2","2":"Mississippi","3":"nonchilled","4":"1000","5":"31.5","6":"4.28690476","7":"low"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"95","5":"11.3","6":"15.91309524","7":"medium"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"175","5":"19.4","6":"7.81309524","7":"medium"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"250","5":"25.8","6":"1.41309524","7":"medium"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"350","5":"27.9","6":"0.68690476","7":"low"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"500","5":"28.5","6":"1.28690476","7":"low"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"675","5":"28.1","6":"0.88690476","7":"low"},{"1":"Mn3","2":"Mississippi","3":"nonchilled","4":"1000","5":"27.8","6":"0.58690476","7":"low"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"95","5":"10.5","6":"16.71309524","7":"medium"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"175","5":"14.9","6":"12.31309524","7":"low"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"250","5":"18.1","6":"9.11309524","7":"low"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"350","5":"18.9","6":"8.31309524","7":"low"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"500","5":"19.5","6":"7.71309524","7":"low"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"675","5":"22.2","6":"5.01309524","7":"low"},{"1":"Mc1","2":"Mississippi","3":"chilled","4":"1000","5":"21.9","6":"5.31309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"95","5":"7.7","6":"19.51309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"175","5":"11.4","6":"15.81309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"250","5":"12.3","6":"14.91309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"350","5":"13.0","6":"14.21309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"500","5":"12.5","6":"14.71309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"675","5":"13.7","6":"13.51309524","7":"low"},{"1":"Mc2","2":"Mississippi","3":"chilled","4":"1000","5":"14.4","6":"12.81309524","7":"low"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"95","5":"10.6","6":"16.61309524","7":"medium"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"175","5":"18.0","6":"9.21309524","7":"medium"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"250","5":"17.9","6":"9.31309524","7":"low"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"350","5":"17.9","6":"9.31309524","7":"low"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"500","5":"17.9","6":"9.31309524","7":"low"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"675","5":"18.9","6":"8.31309524","7":"low"},{"1":"Mc3","2":"Mississippi","3":"chilled","4":"1000","5":"19.9","6":"7.31309524","7":"low"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Based on the ratio between uptake and carbon dioxide concentration, a new column variable, <code>response_level</code>, is created with values based on the conditions listed in <code>case_when()</code>.</p>
+<div id="exercise" class="section level2">
+<h2><span class="header-section-number">11.1</span> Exercise</h2>
+<ol style="list-style-type: decimal">
+<li>Add column <code>scientific_name</code> with the full scientific name of each species based on the table below and save the output in <code>data_scientificname</code>:</li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th>species</th>
+<th>scientific name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DM</td>
+<td>Dimarella riparia (Navas, 1918)</td>
+</tr>
+<tr class="even">
+<td>DO</td>
+<td>Dondice occidentalis (Engel, 1925)</td>
+</tr>
+<tr class="odd">
+<td>DS</td>
+<td>Distonemurus desertus Krivokhatsky, 1992</td>
+</tr>
+<tr class="even">
+<td>OL</td>
+<td>Olios scepticus Chamberlin, 1924</td>
+</tr>
+<tr class="odd">
+<td>PE</td>
+<td>Petrochelidon nigricans (Vieillot, 1817)</td>
+</tr>
+<tr class="even">
+<td>PF</td>
+<td>Piffliella eduardi Hammer, 1979</td>
+</tr>
+<tr class="odd">
+<td>OT</td>
+<td>Ottoicus dissitus Drake, 1960</td>
+</tr>
+<tr class="even">
+<td>OX</td>
+<td>Oxybelus pallidus Arnold, 1927</td>
+</tr>
+<tr class="odd">
+<td>NA</td>
+<td>Not Available</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>data_scientificname &lt;- data %&gt;% mutate(scientific_name = case_when(
+  species == &quot;DM&quot; ~ &quot;Dimarella riparia (Navás, 1918)&quot;,
+  species == &quot;DO&quot; ~ &quot;Dondice occidentalis (Engel, 1925)&quot;,
+  species == &quot;DS&quot; ~ &quot;Distonemurus desertus Krivokhatsky, 1992&quot;,
+  species == &quot;OL&quot; ~ &quot;Olios scepticus Chamberlin, 1924&quot;,
+  species == &quot;PE&quot; ~ &quot;Petrochelidon nigricans (Vieillot, 1817)&quot;,
+  species == &quot;PF&quot; ~ &quot;Piffliella eduardi Hammer, 1979&quot;,
+  species == &quot;OT&quot; ~ &quot;Ottoicus dissitus Drake, 1960&quot;,
+  species == &quot;OX&quot; ~ &quot;Oxybelus pallidus Arnold, 1927&quot;,
+  is.na(species) ~ &quot;Not Available&quot;
+  ))</code></pre>
+</div>
+</div>
+<div id="export-data" class="section level1">
+<h1><span class="header-section-number">12</span> Export data</h1>
+<p>When satisfied about the cleaned data, maybe you would like to save the output. You can save a dataframe object by means of following functions:</p>
+<ol style="list-style-type: decimal">
+<li><code>write_tsv()</code> to write tab delimited files</li>
+<li><code>write_csv()</code> to write comma separated files</li>
+</ol>
+<div id="exercises-9" class="section level2">
+<h2><span class="header-section-number">12.1</span> Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>Export <code>females_weight_above_30</code> to <code>../data/processed/females_weight_above_30.csv</code>. Notice that the dataframe has only one column, so the choice of the separator makes no difference:</li>
+</ol>
+<pre class="r"><code>write_tsv(females_weight_above_30, path = &quot;../data/processed/females_weight_above_30.csv&quot;)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Export <code>data_scientificname</code> to a comma separated file with name <code>../data/processed/data_scientificname.csv</code> and include column names:</li>
+</ol>
+<pre class="r"><code>write_csv(data_scientificname, path = &quot;../data/processed/data_scientificname.csv&quot;)</code></pre>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
