@@ -392,18 +392,14 @@ CO2 %>%
   count()
 ```
 
-Or even more compact:
-
-```{r count_compact}
-CO2 %>% count(Plant)
-```
-
 ## Exercises
 
 1. Count records per sex:
 
 ```{r count_per_sex, exercise = TRUE}
-data %>% count(sex)
+data %>% 
+  group_by(sex) %>%
+  count()
 ```
 
 2. What is the mean weight? Consider to use function `mean()` combined with parameter `na.rm = TRUE` in order to ignore (remove) `NA` while calculating the mean:
