@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 # Introduction
 
-This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionlalities. There is no better way to improve your programming skills than trying it yourself.
+This tutorial will provide you the know-how for importing and analysing (tidy) data. We will use the same dataframe to test the most typical dplyr functionalities. There is no better way to improve your programming skills than trying it yourself. Don't be shy to make faults and take a look to the [base R cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf) and the [dplyr cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf): we do it constantly.
 
 First of all, we need to load some libraries which are part of the tidyverse ecosystem:
 
