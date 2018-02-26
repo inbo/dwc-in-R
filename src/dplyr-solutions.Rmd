@@ -220,7 +220,7 @@ select(data, -device_remark)
 
 # Pipes
 
-As you probably noticed, we need to create new `data.frame` everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, high memory space usage, and higher chance of typos.
+As you probably noticed, we need to create new `data.frame` everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, higher chance of typos,...
 
 An alternative is to wrap (*nest*) functions one within each other, so that the output of a function would be considered the input of the other one. For example, if we have to apply `f1` to a dataframe `df` and `f2` to the output of `f1`, we write: 
 
