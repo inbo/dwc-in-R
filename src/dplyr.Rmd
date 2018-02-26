@@ -43,7 +43,7 @@ First of all, we need to import data in R. The most user friendly way to do it i
 1. Click on `Browse` to selet the text file you want to import
 2. Select the right delimiter
 3. Check whether the class of the column values fits your purpose and in case apply changes by clicking on the class name below the column name
-4. Change variable name in `code preview` if you prefer to save the data with a different name than filename
+4. Change the name in `code preview` if you prefer to save the data with a different name than filename
 5. Click on `Import`
 
 A dataframe is automatically generated and, very handy, the code to generate it as well!
@@ -198,7 +198,7 @@ A condition can be any logical operator (`>`, `>`, `<=`,...). For example, to ge
 
 # Pipes
 
-As you probably noticed, we need to create new variables everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, high memory space usage, and higher chance of typos.
+As you probably noticed, we need to create new `data.frame` everytime we want to apply two or more functions. This method has several disadvantages, i.a. messy workspace, high memory space usage, and higher chance of typos.
 
 An alternative is to wrap (*nest*) functions one within each other, so that the output of a function would be considered the input of the other one. For example, if we have to apply `f1` to a dataframe `df` and `f2` to the output of `f1`, we write: 
 
@@ -212,7 +212,7 @@ filter(select(CO2, uptake), uptake > 30, uptake < 31.8)
 
 This way of working with functions is typical of programming and is implemented in many other programming languages. The disadvantage of this approach is readibility: you have to read from right to left in order to understand what happens with our data!
 
-Can we avoid deciphering nested function calls, and making excessive use of temporary variables? The answer is yes, thanks to *pipe* operators. The most used one is the *forward pipe*: `%>%`, from the magrittr package. We can then rewrite the example above by using `%>%`:
+Can we avoid deciphering nested function calls, and making excessive use of temporary `data.frames`? The answer is yes, thanks to *pipe* operators. The most used one is the *forward pipe*: `%>%`, from the magrittr package. We can then rewrite the example above by using `%>%`:
 
 ```r
 df %>% f1(...) %>% f2(...)
@@ -230,7 +230,7 @@ As Stefan Milton, author of magrittr, wrote in [this](https://www.r-statistics.c
 
 > The order in which you’d think of these steps is the same as the order in which they are written, and as the order in which they are executed.
 
-If you want to create a variable based on the output of a series of functions:
+If you want to create a new object (i.e. `data.frame`) based on the output of a series of functions:
 
 ```r
 df2 <- df %>% f1(...) %>% f2(...)
@@ -282,7 +282,7 @@ small_uptakes
 ```{r weight_30_females_pipes, exercise = TRUE}
 ```
 
-4. Save output of (3) as a variable: `females_weight_above_30`:
+4. Save output of (3) as a new `data.frame`: `females_weight_above_30`:
 
 ```{r weight_30_females_save_pipes, exercise = TRUE}
 ```
@@ -493,7 +493,7 @@ recode(types,
 )
 ```
 
-A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. `case_when()` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing variables. An example:
+A similar function is `case_when()` which allows you to vectorise multiple `if` and `if else` statements and it works with vectors and dataframes as well. `case_when()` is often used inside `mutate()` when you want to make a new column (or change an existing one) based on a complex combination of existing column variables. An example:
 
 ```{r case_when}
 CO2 %>% mutate(response_level = case_when(
@@ -503,7 +503,7 @@ CO2 %>% mutate(response_level = case_when(
 )
 ```
 
-Based on the ratio between uptake and carbon dioxide concentration, a new variable, `response_level`, is created with values based on the conditions listed in `case_when()`.
+Based on the ratio between uptake and carbon dioxide concentration, a new column variable, `response_level`, is created with values based on the conditions listed in `case_when()`.
 
 ## Exercise
 
