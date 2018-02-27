@@ -17,7 +17,6 @@ navbar:
   right:
     - icon: fa-github fa-lg
       href: https://github.com/inbo/dwc-in-R
-
 output:
   html_document:
     theme: yeti
