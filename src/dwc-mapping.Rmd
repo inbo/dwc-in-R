@@ -57,7 +57,7 @@ Sys.setlocale("LC_CTYPE", "en_US.UTF-8")
 
 ## Import data
 
-Our raw datasat is an Excel file (`AI_2016_Boets_etal_Supplement.xls`). The import specifications for Excel files are more limited than those for delimited files (`csv`, `tsv`, `txt`). However, we think it's useful to use Excel as a format in this exercise as this is often used to manage datasets.
+Our raw dataset is an Excel file (`AI_2016_Boets_etal_Supplement.xls`). The import specifications for Excel files are more limited than those for delimited files (`csv`, `tsv`, `txt`). However, we think it's useful to use Excel as a format in this exercise as this is often used to manage datasets.
 
 1. Go to `Environment` panel: `Import dataset > From Excel...`
 2. For `File/URL`, click `Browse` and select `AI_2016_Boets_etal_Supplement.xls`
